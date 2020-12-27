@@ -1,27 +1,43 @@
 import React from 'react';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Navbar from './components/Navbar';
-
+import Login from './components/Login'
+// import Admin from './components/Admin'
+import {auth} from './firebase'
+import Usuario from './components/Usuario';
 
 function App() {
-  return (
+
+  const [firebaseUser, setFirebaseUser] = React.useState(false)
+  React.useEffect(() => {
+    console.log('pasando por el App.js');
+    auth.onAuthStateChanged(user => {
+        if(user){
+            setFirebaseUser(user)
+        }else{
+            setFirebaseUser(null)
+        }
+    })
+}, [])
+
+  return firebaseUser !==false ?(
     <Router>
       <div className="container">
-        <Navbar />
         <Switch>
-          <Route path="/login" exact>
-            Ruta de login
+          <Route path="/" exact>
+            <Login />
           </Route>
           <Route path="/admin">
-            Ruta de administracion
+            <Usuario />
           </Route>
-          <Route path="/" exact>
+          <Route path="/home" exact>
+            <Navbar firebaseUser={firebaseUser} />
             Ruta de inicio
           </Route>
         </Switch>
       </div>
     </Router>
-  );
+  ):(<h1>Cargandoo..</h1>);
 }
 
 export default App;
