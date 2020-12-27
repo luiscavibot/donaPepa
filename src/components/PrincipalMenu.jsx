@@ -5,9 +5,11 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import useStyles from '../estilosPropios'
+import {useUsuario} from '../context/menusContext'
 
 const PrincipalMenu = () => {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+
+    const {setMobileOpen, mobileOpen} = useUsuario();
     const classes = useStyles();
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);

@@ -12,13 +12,16 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {useTheme } from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
 import useStyles from '../estilosPropios'
+import {useUsuario} from '../context/menusContext'
+
 
 const SideBarMenu = (props) => {
     const { window } = props;
     const classes = useStyles();
     const theme = useTheme();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [open, setOpen] = React.useState(true);
+
+    const {setMobileOpen, setOpen, mobileOpen,open} = useUsuario();
+
     //Función para desplegable
     const handleClick = () => {
         setOpen(!open);
@@ -39,19 +42,28 @@ const SideBarMenu = (props) => {
                 <ListItem button>
                     <ListItemText primary="DASHBOARD" />
                 </ListItem>
-                <ListItem button>
-                    <ListItemText primary="REPORTES ADMIN" />
-                </ListItem>
                 <ListItem button onClick={handleClick}>
                     <ListItemText primary="REPORTES ADMIN" />
                 </ListItem>
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                    <ListItem button className={classes.nested}>
-                        <ListItemText primary="VENTAS" />
-                    </ListItem>
+                        <ListItem button className={classes.nested}  onClick={mobileOpen?handleDrawerToggle:null}>
+                            <ListItemText primary="VENTAS" />
+                        </ListItem>
+                        <ListItem button className={classes.nested}  onClick={mobileOpen?handleDrawerToggle:null}>
+                            <ListItemText primary="LIQUIDACIÓN MAESTRO" />
+                        </ListItem>
                     </List>
                 </Collapse>
+                <ListItem button>
+                    <ListItemText primary="VENDEDORA" />
+                </ListItem>
+                <ListItem button>
+                    <ListItemText primary="MANTENIMIENTO" />
+                </ListItem>
+                <ListItem button>
+                    <ListItemText primary="CONFIGURACIÓN" />
+                </ListItem>
             </List>
         </div>
     );

@@ -5,10 +5,13 @@ import Login from './components/Login'
 // import Admin from './components/Admin'
 import {auth} from './firebase'
 import Usuario from './components/Usuario';
+import {MenuProvider} from './context/menusContext'
+
+
 
 
 function App() {
-
+  
   const [firebaseUser, setFirebaseUser] = React.useState(false)
   React.useEffect(() => {
     console.log('pasando por el App.js');
@@ -40,5 +43,8 @@ function App() {
     </Router>
   ):(<h1>Cargandoo..</h1>);
 }
-
-export default App;
+const resultado = () => 
+<MenuProvider>
+  <App></App>
+</MenuProvider>
+export default resultado
