@@ -1,39 +1,9 @@
   
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import { auth} from '../firebase'
 import { withRouter } from "react-router-dom";
-import { Alert, AlertTitle } from '@material-ui/lab';
-
-const useStyles = makeStyles((theme) => ({
-    
-    alerta: {
-        marginTop: theme.spacing(1),      
-    },
-    paper: {
-        marginTop: '35%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',       
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(3),
-    },
-    submit: {
-        margin: theme.spacing(1, 0, 2),
-    },
-}));
 
 const Login = (props) => {
-    const classes = useStyles();
     const [email, setEmail] = React.useState('')
     const [pass, setPass] = React.useState('')
     const [error, setError] = React.useState(null)
@@ -60,7 +30,7 @@ const Login = (props) => {
             setEmail('')
             setPass('')
             setError(null)
-            props.history.push('/admin') 
+            props.history.push('/panelcontrol/reportes-ventas') 
         } catch (error) {
             if(error.code === 'auth/user-not-found'){
                 setError('Usuario o contraseña incorrecto')
@@ -72,77 +42,49 @@ const Login = (props) => {
     }, [email, pass, props.history])
 
     return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <div className={classes.paper}>
-                <Typography color= "primary">
-                    Logo de Doña Pepa pendiente
-                </Typography>
-                <Typography component="h1" variant="h5">
-                    Iniciar Sesión
-                </Typography>
-                
-                <form className={classes.form} onSubmit={procesarDatos} >
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                fullWidth
-                                id="email"
-                                label="Usuario"
-                                name="email"
-                                autoComplete="email"
-                                onChange={ e => setEmail(e.target.value) }
-                                value={email}
-                                type="email" 
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                fullWidth
-                                name="password"
-                                label="Contraseña"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                onChange={ e => setPass(e.target.value) }
-                                value={pass}
-                            />
-                        </Grid>
-                    </Grid>
+
+        <div className="container vh-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="col-4 border p-4 rounded">
+              <form onSubmit={procesarDatos}>
+                <div className="d-flex justify-content-around p-3">
+                  <h1 className="fs-3">Iniciar Sesión</h1>
+                  <img src='./img/donapepa.png' className="logo" alt="Doña Pepa"/>
+                </div>
+                <div className="mb-3">
+                  <input type="email" 
+                         className="form-control" 
+                         id="exampleInputEmail1" 
+                         aria-describedby="emailHelp" 
+                         placeholder="Usuario"
+                         onChange={ e => setEmail(e.target.value) }
+                         value={email}/>
+                </div>
+                <div className="mb-3">
+                  <input type="password" 
+                         className="form-control" 
+                         id="exampleInputPassword1" 
+                         placeholder="Contraseña" 
+                         onChange={ e => setPass(e.target.value) }
+                         value={pass}/>
+                </div>
                     {
                         error ? (
-
-                                <Alert className={classes.alerta} 
-                                    severity="error" 
-                                    fullwidth
-                                    m={2}>
-                                <AlertTitle>{error}</AlertTitle>
-                                </Alert>
-                            
+                                    <div className="alert alert-danger" role="alert">
+                                        {error}
+                                    </div>
                         ) : null
                     }
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                    >
-                        INGRESAR
-                    </Button>
-                        
-                </form>
-                <Grid container justify="center">
-                    <Grid item>
-                        <Link href="#" variant="body2">
-                            ¿Olvidaste tu contraseña? Click aquí
-                        </Link>
-                    </Grid>
-                </Grid>
+                <div className="mb-3 form-check">
+                  <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                  <label className="form-check-label">Recordar contraseña</label>
+                </div>
+                <button type="submit" className="btn btn-primary w-100">Ingresar</button>
+                <p className="text-center pt-3 olvidaste">¿Olvidaste tu contraseña? Click aquí</p>
+              </form>
             </div>
-        </Container>
+          </div>
+        </div>
     );
 }
 

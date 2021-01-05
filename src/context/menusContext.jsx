@@ -4,7 +4,7 @@ const MenuContext = React.createContext();
 
 export function MenuProvider(props){
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
 
     const value = React.useMemo(()=>{
         return ({
