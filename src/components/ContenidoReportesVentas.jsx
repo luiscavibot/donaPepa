@@ -18,7 +18,7 @@ import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import Typography from '@material-ui/core/Typography'
+import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 import CallIcon from '@material-ui/icons/Call';

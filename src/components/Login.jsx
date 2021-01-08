@@ -41,6 +41,10 @@ const Login = (props) => {
         }
     }, [email, pass, props.history])
 
+    // const FieldValue = admin.firestore.FieldValue;
+    // const docRef = db.collection('objects').doc('some-id');
+
+
     return (
 
         <div className="container vh-100">
@@ -70,9 +74,9 @@ const Login = (props) => {
                 </div>
                     {
                         error ? (
-                                    <div className="alert alert-danger" role="alert">
-                                        {error}
-                                    </div>
+                                  <div className="alert alert-danger" role="alert">
+                                    {error}
+                                  </div>
                         ) : null
                     }
                 <div className="mb-3 form-check">
