@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,oBAAoB,AAAA,MAAM,CAAC;EACvB,KAAK,EAAE,OAAO;EACd,gBAAgB,EAAE,IAAI;CACzB",
+    "sources": [
+        "../sass/adicional.scss"
+    ],
+    "names": [],
+    "file": "adicional.css"
+}

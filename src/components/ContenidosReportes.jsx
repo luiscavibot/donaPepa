@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import '../css/adicional.css';
 import es from 'date-fns/locale/es';
 import {db} from '../firebase';
 import moment from 'moment'
 import 'moment/locale/es'
+//NO BORRAR HASTA ESTAR SEGURO
+// import { set } from "date-fns";
+//NO BORRAR HASTA ESTAR SEGURO
 registerLocale("es", es);
 
 
@@ -37,7 +41,16 @@ const estilo = {
         width: 'auto',
         fontSize: '20px',
         height: 'auto'
+    },
+
+    hoverModificado: {
+        ':hover': {
+            color: '#0d6efd',
+            background: 'white',
+            borderColor: '#0d6efd',
+        }
     }
+        
     
 };
 
@@ -70,27 +83,63 @@ const ContenidosReportes = (props) => {
     const [whatsapp, setWhatsapp] = React.useState(false);
     const [celular, setCelular] = React.useState(false);
     const [internet, setInternet] = React.useState(false);
+    const [ventasMedioTodos, setVentasMedioTodos] = React.useState(true);
 
     const handleInputVentasmedio = (event) =>{
         const value = event.target.checked;
         const name = event.target.name;
+        let arrayProv = ventasMedio;
+        let indice = 0;
         switch (name) {
             case 'Whatsapp':
-                setWhatsapp(value);
+                if (value&&celular&&internet){
+                    setCelular(false);setInternet(false);setWhatsapp(false);setVentasMedioTodos(true);
+                    setVentasMedio([]);
+                }
+                else{   
+                        setWhatsapp(value);
+                        setVentasMedioTodos(false);
+                        indice = arrayProv.indexOf(name);
+                        value?(arrayProv.push(name)):(arrayProv.splice(indice, 1));
+                        setVentasMedio([...arrayProv])
+                    }
                 break;
             case 'Celular':
-                setCelular(value);
+                if (value&&whatsapp&&internet){
+                    setCelular(false);setInternet(false);setWhatsapp(false);setVentasMedioTodos(true)
+                    setVentasMedio([]);
+                }
+                else{
+                        setCelular(value);
+                        setVentasMedioTodos(false);
+                        indice = arrayProv.indexOf(name);
+                        value?(arrayProv.push(name)):(arrayProv.splice(indice, 1));
+                        setVentasMedio([...arrayProv])
+                    }
                 break;
             case 'Internet':
-                setInternet(value);
+                if (value&&celular&&whatsapp){
+                    setCelular(false);setInternet(false);setWhatsapp(false);setVentasMedioTodos(true)
+                    setVentasMedio([]);
+                }
+                else{
+                        setInternet(value);
+                        setVentasMedioTodos(false);
+                        indice = arrayProv.indexOf(name);
+                        value?(arrayProv.push(name)):(arrayProv.splice(indice, 1));
+                        setVentasMedio([...arrayProv])
+                    }
                 break;
             default:
-                break;
+                if (value) {
+                    setVentasMedioTodos(value);
+                    setWhatsapp(false);
+                    setCelular(false);
+                    setInternet(false);
+                    break;
+                }
+                
         }
-        let arrayProv = ventasMedio;
-        let indice = arrayProv.indexOf(name);
-        value?(arrayProv.push(name)):(arrayProv.splice(indice, 1));
-        setVentasMedio([...arrayProv])
     }
     
     const [dateInicio, setDateInicio] = useState(new Date());
@@ -137,10 +186,6 @@ const ContenidosReportes = (props) => {
             <div className="d-flex justify-content-between">
                 <div className="d-flex">
                     <p className="m-0 me-1" style={estilo.dateLabel}>Fecha de inicio:</p>
-                    {/* <input type="date" id="start" name="trip-start"
-                            value={dateInicio}
-                            onChange ={event => setDateInicio(Date(event.target.value))}
-                    /> */}
                     <DatePicker 
                         selected={dateInicio} 
                         onChange={date => setDateInicio(date)} 
@@ -163,7 +208,6 @@ const ContenidosReportes = (props) => {
                     <p className="m-0 me-1" style={estilo.dateLabel}>Vendedores:</p>
                     <div className="dropdown mt-3">
                         <select value={vendedor} onChange={handleChangeVendedor} className="form-select py-1 lh-1" style={estilo.desplegable}>
-                            {/* <option selected>Open this select menu</option> */}
                             <option value="Todos">Todos</option>
                             <option value="Luis">Luis</option>
                             <option value="Pamela">Pamela</option>
@@ -175,7 +219,6 @@ const ContenidosReportes = (props) => {
                     <p className="m-0 me-2" style={estilo.dateLabel}>Venta mensual:</p>
                     <div className="dropdown mt-3">
                         <select value={ventasMensual} onChange={handleChangeVentasMensual} className="form-select py-1 lh-1" style={estilo.desplegable}>
-                            {/* <option selected>Open this select menu</option> */}
                             <option value="Todos">Todos</option>
                             <option value="Enero">Enero</option>
                             <option value="Febrero">Febrero</option>
@@ -192,7 +235,6 @@ const ContenidosReportes = (props) => {
                     <p className="m-0 me-2" style={estilo.dateLabel}>Métodos de pago:</p>
                     <div className="dropdown mt-3">
                         <select className="form-select py-1 lh-1" value={metodoPago} onChange={handleChangeMetodoPago} style={estilo.desplegable}>
-                            {/* <option selected>Open this select menu</option> */}
                             <option value="Todos">Todos</option>
                             <option value="Transferencia">Transferencia</option>
                             <option value="Efectivo">Efectivo</option>
@@ -202,25 +244,25 @@ const ContenidosReportes = (props) => {
                 </div>
                 <div className="d-flex align-content-center">
                     <p className="m-0 me-2" style={estilo.dateLabel}>Ventas por medio de:</p>
-                    <div class="btn-group d-flex align-content-center " style={{marginTop:'10px'}} role="group">
-                        <input type="checkbox" class="btn-check" checked={whatsapp} id="btncheck1" name="Whatsapp" onChange = {handleInputVentasmedio}/>
-                        <label class="btn btn-outline-primary" for="btncheck1" style={estilo.iconos}><i class="fab fa-whatsapp" ></i></label>
+                    <div className="btn-group d-flex align-content-center" style={{marginTop:'10px'}} role="group">
+                        <input type="checkbox" className="btn-check" checked={whatsapp} id="btncheck1" name="Whatsapp" onChange = {handleInputVentasmedio}/>
+                        <label className="btn btn-outline-primary" for="btncheck1" style={estilo.iconos}><i className="fab fa-whatsapp" ></i></label>
                         
-                        <input type="checkbox" class="btn-check" checked={celular} id="btncheck2" name="Celular"  onChange= {handleInputVentasmedio}/>
-                        <label class="btn btn-outline-primary" for="btncheck2" style={estilo.iconos}><i class="fas fa-phone" ></i></label>
+                        <input type="checkbox" className="btn-check" checked={celular} id="btncheck2" name="Celular" onChange= {handleInputVentasmedio}/>
+                        <label className="btn btn-outline-primary" for="btncheck2" style={estilo.iconos}><i className="fas fa-phone" ></i></label>
                         
-                        <input type="checkbox" class="btn-check" checked={internet} id="btncheck3" name="Internet"  onChange= {handleInputVentasmedio}/>
-                        <label class="btn btn-outline-primary" for="btncheck3" style={estilo.iconos}><i class="fas fa-globe" ></i></label>
-                        
-                        
+                        <input type="checkbox" className="btn-check" checked={internet} id="btncheck3" name="Internet" onChange= {handleInputVentasmedio}/>
+                        <label className="btn btn-outline-primary" for="btncheck3" style={estilo.iconos}><i className="fas fa-globe" ></i></label>
 
+                        <input type="checkbox" className="btn-check" checked={ventasMedioTodos} id="btncheck4" name="Todos" onChange= {handleInputVentasmedio}/>
+                        <label className="btn btn-outline-primary" for="btncheck4" style={estilo.iconos}><i className="fas fa-border-all"></i></label>
+ 
                     </div>
                 </div>
                 <div className="d-flex">
                     <p className="m-0 me-2" style={estilo.dateLabel}>Locales:</p>
                     <div className="dropdown mt-3">
                         <select className="form-select py-1 lh-1" value={locales} onChange={handleChangeLocales} style={estilo.desplegable}>
-                            {/* <option selected>Open this select menu</option> */}
                             <option selected value="Todos">Todos</option>
                             <option value="Pepa grande">Pepa grande</option>
                             <option value="Puntitos del sabor">Puntitos del sabor</option>
@@ -231,7 +273,6 @@ const ContenidosReportes = (props) => {
                     <p className="m-0 me-2" style={estilo.dateLabel}>Producto:</p>
                     <div className="dropdown mt-3">
                         <select className="form-select py-1 lh-1" value={producto} onChange={handleChangeProducto} style={estilo.desplegable}>
-                            {/* <option selected>Open this select menu</option> */}
                             <option selected value="Todos">Todos</option>
                             <option selected value="Turron XL">Turron XL</option>
                             <option value="Don Pepon">Don Pepon</option>
@@ -240,8 +281,8 @@ const ContenidosReportes = (props) => {
                     </div>
                 </div>
             </div>
-            <table class="table">
-                <thead class="table-ligth">
+            <table className="table">
+                <thead className="table-ligth">
                     <tr>
                         <th scope="col">Tipo</th>
                         <th scope="col">Serie</th>
@@ -283,11 +324,11 @@ const ContenidosReportes = (props) => {
             <div className="d-flex justify-content-end">
                 <nav aria-label="Page navigation example">
                     <ul className="pagination">
-                        <li className="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li className="page-item"><a class="page-link" href="#">1</a></li>
-                        <li className="page-item"><a class="page-link" href="#">2</a></li>
-                        <li className="page-item"><a class="page-link" href="#">3</a></li>
-                        <li className="page-item"><a class="page-link" href="#">Next</a></li>
+                        <li className="page-item"><a className="page-link" href="#">Previous</a></li>
+                        <li className="page-item"><a className="page-link" href="#">1</a></li>
+                        <li className="page-item"><a className="page-link" href="#">2</a></li>
+                        <li className="page-item"><a className="page-link" href="#">3</a></li>
+                        <li className="page-item"><a className="page-link" href="#">Next</a></li>
                     </ul>
                 </nav>
             </div>
