@@ -45,27 +45,6 @@ const ContenidosReportes = (props) => {
 
     //Hook de efecto, con ejecución solo al inicio
     const [rows, setRows] = React.useState([])
-    // React.useEffect(() => {
-    //     let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta');
-    //     // let fechaEjemplo = new Date();
-    //     // DocumentoVentaRef.doc('0tAAOZIaYzUNLw4oWtdT').update({
-    //     //     fecha: fechaEjemplo.getTime(),
-    //     // })
-
-    //     DocumentoVentaRef = DocumentoVentaRef.limit(9);
-    //     const obtenerDatos = async () => {
-    //         try {
-    //             const data = await DocumentoVentaRef.get();
-    //             const arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
-    //             console.log(arrayData);  
-    //             setRows(arrayData);        
-    //         } catch (error) {
-    //             console.log(error)
-    //         }
-    //     } 
-    //     obtenerDatos();
-    // }, [])
-
     //Selects
     const [vendedor, setVendedor] = React.useState('Todos');
     const handleChangeVendedor = (event) => {
@@ -105,20 +84,14 @@ const ContenidosReportes = (props) => {
             case 'Internet':
                 setInternet(value);
                 break;
+            default:
+                break;
         }
         let arrayProv = ventasMedio;
         let indice = arrayProv.indexOf(name);
         value?(arrayProv.push(name)):(arrayProv.splice(indice, 1));
         setVentasMedio([...arrayProv])
     }
-
-    // React.useEffect(()=>{
-    //     console.log(whatsapp);
-    //     let arrayProv = ventasMedio;
-    //     let indice = arrayProv.indexOf('Whatsapp');
-    //     whatsapp?(arrayProv.push('Whatsapp')):(arrayProv.splice(indice, 1));
-    //     setVentasMedio([...arrayProv]);
-    // },[whatsapp])
     
     const [dateInicio, setDateInicio] = useState(new Date());
     const [dateFin, setDateFin] = useState(new Date());
@@ -130,20 +103,9 @@ const ContenidosReportes = (props) => {
         DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
         DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
         DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
-        // DocumentoVentaRef = ( whatsapp === true)?(DocumentoVentaRef.where('ventasMedio', '==', 'Whatsapp' )):DocumentoVentaRef;
         DocumentoVentaRef = DocumentoVentaRef.where('fecha', '>=', dateInicio.setHours(0,0,0,0));
         DocumentoVentaRef = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0));
-
         DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
-
-        // let matrizConsultaVentasMedio = [];
-        // // ( whatsapp === true)?(matrizConsultaVentasMedio = [])
-
-        // DocumentoVentaRef = ( whatsapp === true)?(DocumentoVentaRef.where('ventasMedio', 'in', ['Whatsapp', 'Celular','Internet'] )):DocumentoVentaRef;
-        // DocumentoVentaRef = ( celular === true)?(DocumentoVentaRef.where('ventasMedio', 'in', ['Whatsapp', 'Celular','Internet'] )):DocumentoVentaRef;
-        // DocumentoVentaRef = ( internet === true)?(DocumentoVentaRef.where('ventasMedio', 'in', ['Whatsapp', 'Celular','Internet'] )):DocumentoVentaRef;
-
-        
 
         DocumentoVentaRef = DocumentoVentaRef.limit(9);
         
@@ -158,7 +120,7 @@ const ContenidosReportes = (props) => {
             }
         } 
         obtenerDatos();
-    }, [vendedor, ventasMensual, metodoPago, locales, producto, ventasMedio, dateInicio, dateFin])
+    }, [vendedor, ventasMensual, metodoPago, locales, producto, ventasMedio, dateInicio, dateFin, whatsapp, celular, internet ])
     
     const ExampleCustomInput = ({ value, onClick }) => (
         <div className="d-flex border align-items-center justify-content-between mt-3" onClick={onClick}>
@@ -168,25 +130,6 @@ const ContenidosReportes = (props) => {
           </div>
         </div>
     );
-    
-    //Hooks necesarios para poder controlar los cambios de estados generados en los toggles de los botones de medios de venta
-
-    // React.useEffect(()=>{
-    //     console.log(celular);
-    //     let arrayProv = ventasMedio;
-    //     let indice = arrayProv.indexOf('Celular');
-    //     celular?(arrayProv.push('Celular')):(arrayProv.splice(indice, 1));
-    //     setCelular([...arrayProv]);
-    // },[celular]) 
-
-    // React.useEffect(()=>{
-    //     console.log(internet);
-    //     let arrayProv = ventasMedio;
-    //     let indice = arrayProv.indexOf('Internet');
-    //     internet?(arrayProv.push('Internet')):(arrayProv.splice(indice, 1));
-    //     setInternet([...arrayProv]);
-    // },[internet])  
-    
 
     return (
         <>
