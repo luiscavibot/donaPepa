@@ -91,6 +91,34 @@ const ContenidosReportes = (props) => {
     const [whatsapp, setWhatsapp] = React.useState(false);
     const [celular, setCelular] = React.useState(false);
     const [internet, setInternet] = React.useState(false);
+
+    const handleInputVentasmedio = (event) =>{
+        const value = event.target.checked;
+        const name = event.target.name;
+        switch (name) {
+            case 'Whatsapp':
+                setWhatsapp(value);
+                break;
+            case 'Celular':
+                setCelular(value);
+                break;
+            case 'Internet':
+                setInternet(value);
+                break;
+        }
+        let arrayProv = ventasMedio;
+        let indice = arrayProv.indexOf(name);
+        value?(arrayProv.push(name)):(arrayProv.splice(indice, 1));
+        setVentasMedio([...arrayProv])
+    }
+
+    // React.useEffect(()=>{
+    //     console.log(whatsapp);
+    //     let arrayProv = ventasMedio;
+    //     let indice = arrayProv.indexOf('Whatsapp');
+    //     whatsapp?(arrayProv.push('Whatsapp')):(arrayProv.splice(indice, 1));
+    //     setVentasMedio([...arrayProv]);
+    // },[whatsapp])
     
     const [dateInicio, setDateInicio] = useState(new Date());
     const [dateFin, setDateFin] = useState(new Date());
@@ -106,7 +134,7 @@ const ContenidosReportes = (props) => {
         DocumentoVentaRef = DocumentoVentaRef.where('fecha', '>=', dateInicio.setHours(0,0,0,0));
         DocumentoVentaRef = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0));
 
-        DocumentoVentaRef = ( whatsapp === true)?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
+        DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
 
         // let matrizConsultaVentasMedio = [];
         // // ( whatsapp === true)?(matrizConsultaVentasMedio = [])
@@ -142,13 +170,6 @@ const ContenidosReportes = (props) => {
     );
     
     //Hooks necesarios para poder controlar los cambios de estados generados en los toggles de los botones de medios de venta
-    React.useEffect(()=>{
-        console.log(whatsapp);
-        let arrayProv = ventasMedio;
-        let indice = arrayProv.indexOf('Whatsapp');
-        whatsapp?(arrayProv.push('Whatsapp')):(arrayProv.splice(indice, 1));
-        setVentasMedio([...arrayProv]);
-    },[whatsapp])
 
     // React.useEffect(()=>{
     //     console.log(celular);
@@ -239,14 +260,15 @@ const ContenidosReportes = (props) => {
                 <div className="d-flex align-content-center">
                     <p className="m-0 me-2" style={estilo.dateLabel}>Ventas por medio de:</p>
                     <div class="btn-group d-flex align-content-center " style={{marginTop:'10px'}} role="group">
-                        <input type="checkbox" class="btn-check" checked={whatsapp} id="btncheck1" onChange =  { () =>{setWhatsapp(!whatsapp)} }/>
+                        <input type="checkbox" class="btn-check" checked={whatsapp} id="btncheck1" name="Whatsapp" onChange = {handleInputVentasmedio}/>
                         <label class="btn btn-outline-primary" for="btncheck1" style={estilo.iconos}><i class="fab fa-whatsapp" ></i></label>
                         
-                        {/* <input type="checkbox" class="btn-check" checked={celular} id="btncheck2" onChange={ () => {setCelular(!celular)} }/>
+                        <input type="checkbox" class="btn-check" checked={celular} id="btncheck2" name="Celular"  onChange= {handleInputVentasmedio}/>
                         <label class="btn btn-outline-primary" for="btncheck2" style={estilo.iconos}><i class="fas fa-phone" ></i></label>
                         
-                        <input type="checkbox" class="btn-check" checked={internet} id="btncheck3" onChange={ () => {setInternet(!internet)} }/>
-                        <label class="btn btn-outline-primary" for="btncheck3" style={estilo.iconos}><i class="fas fa-globe" ></i></label> */}
+                        <input type="checkbox" class="btn-check" checked={internet} id="btncheck3" name="Internet"  onChange= {handleInputVentasmedio}/>
+                        <label class="btn btn-outline-primary" for="btncheck3" style={estilo.iconos}><i class="fas fa-globe" ></i></label>
+                        
                         
 
                     </div>
