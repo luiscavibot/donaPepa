@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import Login from './components/Login'
 import {auth} from './firebase'
-import PruebaBoostrap from './components/PruebaBoostrap';
+// import PruebaBoostrap from './components/PruebaBoostrap';
 import PanelControl from './components/PanelControl';
 
 
@@ -36,9 +36,9 @@ function App() {
             <Navbar firebaseUser={firebaseUser} />
             Ruta de inicio
           </Route> */}
-          <Route path="/boostrap" exact>
+          {/* <Route path="/boostrap" exact>
             <PruebaBoostrap />
-          </Route>
+          </Route> */}
           <Route path="/panelcontrol" firebaseUser={firebaseUser}>
             <PanelControl />
           </Route>

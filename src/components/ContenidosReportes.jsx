@@ -156,7 +156,7 @@ const ContenidosReportes = (props) => {
         DocumentoVentaRef = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0));
         DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
 
-        DocumentoVentaRef = DocumentoVentaRef.limit(9);
+        DocumentoVentaRef = DocumentoVentaRef.limit(2);
         
         const obtenerDatos = async () => {
             try {
@@ -324,11 +324,13 @@ const ContenidosReportes = (props) => {
             <div className="d-flex justify-content-end">
                 <nav aria-label="Page navigation example">
                     <ul className="pagination">
-                        <li className="page-item"><a className="page-link" href="#">Previous</a></li>
-                        <li className="page-item"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">2</a></li>
-                        <li className="page-item"><a className="page-link" href="#">3</a></li>
-                        <li className="page-item"><a className="page-link" href="#">Next</a></li>
+                        <li className="page-item"><button className="page-link">Previous</button></li>
+                        <li className="page-item"><button className="page-link">1</button></li>
+                        <li className="page-item"><button className="page-link">2</button></li>
+                        <li className="page-item"><button className="page-link">3</button></li>
+                        <li className="page-item">
+                            <button className="page-link">Next</button>
+                        </li>
                     </ul>
                 </nav>
             </div>

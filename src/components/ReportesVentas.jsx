@@ -22,10 +22,10 @@ const ReportesVentas = () => {
             </ul>
             <div className="tab-content" id="myTabContent">
                 <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <ContenidosReportes tab='activos' />
+                    <ContenidosReportes/>
                 </div>
                 <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <ContenidosReportes tab='anulados'/>
+                    <ContenidosReportes/>
                 </div>
             </div>
         </>
