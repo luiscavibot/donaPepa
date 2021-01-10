@@ -145,25 +145,37 @@ const ContenidosReportes = (props) => {
     const [dateInicio, setDateInicio] = useState(new Date());
     const [dateFin, setDateFin] = useState(new Date());
 
+    const [ultimo, setUltimo] = React.useState(null)
+    const [desactivar, setDesactivar] = React.useState(false)
+
     React.useEffect(() => {
-        let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta');
+        setDesactivar(true);
+        let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(2);
         DocumentoVentaRef = (vendedor !== 'Todos')?(DocumentoVentaRef.where('vendedor', '==', vendedor)):DocumentoVentaRef;
         DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('fecha', '==', ventasMensual)):DocumentoVentaRef;
         DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
         DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
         DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
+        DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
         DocumentoVentaRef = DocumentoVentaRef.where('fecha', '>=', dateInicio.setHours(0,0,0,0));
         DocumentoVentaRef = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0));
-        DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
-
-        DocumentoVentaRef = DocumentoVentaRef.limit(2);
+        let query = DocumentoVentaRef.orderBy('fecha');
         
         const obtenerDatos = async () => {
             try {
-                const data = await DocumentoVentaRef.get();
+                const data = await query.get();
+
+                setUltimo(data.docs[data.docs.length - 1]);
                 const arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
                 console.log(arrayData);
-                setRows(arrayData);        
+                setRows(arrayData);
+                
+                if (data.empty) {
+                    setDesactivar(true)
+                }else{
+                    setDesactivar(false)
+                }
+
             } catch (error) {
                 console.log(error)
             }
@@ -171,6 +183,39 @@ const ContenidosReportes = (props) => {
         obtenerDatos();
     }, [vendedor, ventasMensual, metodoPago, locales, producto, ventasMedio, dateInicio, dateFin, whatsapp, celular, internet ])
     
+    const siguiente = async() =>{
+        console.log('siguiente');
+        try {
+            let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(2);
+            DocumentoVentaRef = (vendedor !== 'Todos')?(DocumentoVentaRef.where('vendedor', '==', vendedor)):DocumentoVentaRef;
+            DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('fecha', '==', ventasMensual)):DocumentoVentaRef;
+            DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
+            DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
+            DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
+            DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
+            DocumentoVentaRef = DocumentoVentaRef.where('fecha', '>=', dateInicio.setHours(0,0,0,0));
+            let preQuery = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0)).orderBy('fecha');
+            let query = preQuery.startAfter(ultimo);
+            let data = await query.get();
+            let arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
+            setRows([...rows, ...arrayData]); 
+            setUltimo(data.docs[data.docs.length - 1])
+            
+            let newData = await preQuery.startAfter(data.docs[data.docs.length - 1]).get()
+
+            if (newData.empty) {
+                setDesactivar(true)
+            }else{
+                setDesactivar(false)
+            }
+
+        } catch (error) {
+            
+        }
+    }
+
+
+
     const ExampleCustomInput = ({ value, onClick }) => (
         <div className="d-flex border align-items-center justify-content-between mt-3" onClick={onClick}>
           <div style={estilo.dateContainerValue}>{value}</div>
@@ -329,7 +374,7 @@ const ContenidosReportes = (props) => {
                         <li className="page-item"><button className="page-link">2</button></li>
                         <li className="page-item"><button className="page-link">3</button></li>
                         <li className="page-item">
-                            <button className="page-link">Next</button>
+                            <button className="page-link" onClick={() => siguiente()} disabled={desactivar}>Next</button>
                         </li>
                     </ul>
                 </nav>
