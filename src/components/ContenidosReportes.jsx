@@ -148,6 +148,8 @@ const ContenidosReportes = (props) => {
     const [ultimo, setUltimo] = React.useState(null)
     const [desactivar, setDesactivar] = React.useState(false)
 
+    const [primero, setPrimero] = React.useState(null)
+
     React.useEffect(() => {
         setDesactivar(true);
         let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(2);
@@ -165,11 +167,12 @@ const ContenidosReportes = (props) => {
             try {
                 const data = await query.get();
 
-                setUltimo(data.docs[data.docs.length - 1]);
+                
                 const arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
                 console.log(arrayData);
                 setRows(arrayData);
-                
+                setPrimero(data.docs[0]); console.log('El primero es:', data.docs[0]);
+                setUltimo(data.docs[data.docs.length - 1]); console.log('El último es:', data.docs[data.docs.length - 1]);
                 if (data.empty) {
                     setDesactivar(true)
                 }else{
@@ -198,11 +201,12 @@ const ContenidosReportes = (props) => {
             let query = preQuery.startAfter(ultimo);
             let data = await query.get();
             let arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
-            setRows([...rows, ...arrayData]); 
-            setUltimo(data.docs[data.docs.length - 1])
+            setRows([...arrayData]); 
             
-            let newData = await preQuery.startAfter(data.docs[data.docs.length - 1]).get()
+            setPrimero(data.docs[0]); console.log('El primero es:', data.docs[0]);
+            setUltimo(data.docs[data.docs.length - 1]); console.log('El ultimo es:', data.docs[data.docs.length - 1]);
 
+            let newData = await preQuery.startAfter(data.docs[data.docs.length - 1]).get()
             if (newData.empty) {
                 setDesactivar(true)
             }else{
@@ -210,7 +214,38 @@ const ContenidosReportes = (props) => {
             }
 
         } catch (error) {
-            
+            console.log(error);
+        }
+    }
+
+    const anterior = async() =>{
+        console.log('anterior');
+        try {
+            let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(2);
+            DocumentoVentaRef = (vendedor !== 'Todos')?(DocumentoVentaRef.where('vendedor', '==', vendedor)):DocumentoVentaRef;
+            DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('fecha', '==', ventasMensual)):DocumentoVentaRef;
+            DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
+            DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
+            DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
+            DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
+            DocumentoVentaRef = DocumentoVentaRef.where('fecha', '>=', dateInicio.setHours(0,0,0,0));
+            let preQuery = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0)).orderBy('fecha');
+            let query = preQuery.endBefore(primero);
+            let data = await query.get();
+            let arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
+            setRows([...arrayData]); 
+            setPrimero(data.docs[0]); console.log('El primero es:', data.docs[0]);
+            setUltimo(data.docs[data.docs.length - 1]); console.log('El último es:', data.docs[data.docs.length - 1]);
+            let newData = await preQuery.endBefore(data.docs[data.docs.length - 1]).get()
+
+            // if (newData.empty) {
+            //     setDesactivar(true)
+            // }else{
+            //     setDesactivar(false)
+            // }
+
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -369,12 +404,12 @@ const ContenidosReportes = (props) => {
             <div className="d-flex justify-content-end">
                 <nav aria-label="Page navigation example">
                     <ul className="pagination">
-                        <li className="page-item"><button className="page-link">Previous</button></li>
-                        <li className="page-item"><button className="page-link">1</button></li>
-                        <li className="page-item"><button className="page-link">2</button></li>
-                        <li className="page-item"><button className="page-link">3</button></li>
                         <li className="page-item">
-                            <button className="page-link" onClick={() => siguiente()} disabled={desactivar}>Next</button>
+                            <button className="page-link" onClick={() => anterior()}>Anterior</button>
+                        </li>
+                        <li className="page-item"><input type="text" className="page-link btnPagina"/></li>
+                        <li className="page-item">
+                            <button className="page-link" onClick={() => siguiente()} disabled={desactivar}>Siguiente</button>
                         </li>
                     </ul>
                 </nav>
