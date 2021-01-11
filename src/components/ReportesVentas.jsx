@@ -2,15 +2,22 @@ import React from 'react'
 import ContenidosReportes from './ContenidosReportes'
 
 const ReportesVentas = () => {
+    
+    // const imprimir = () =>{
+
+    //     window.print();
+    // }
+    
+
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h5">Reporte Administrador/ Ventas</h1>
-                <div>
+                {/* <div>
                     <button type="button" className="btn btn-secondary btn-sm me-1">Copiar</button>
-                    <button type="button" className="btn btn-secondary btn-sm me-1">Imprimir</button>
+                    <button type="button" className="btn btn-secondary btn-sm me-1" >Imprimir</button>
                     <button type="button" className="btn btn-secondary btn-sm">Excel</button>
-                </div>
+                </div> */}
             </div>
             <ul className="nav nav-tabs" id="myTab" role="tablist">
                 <li className="nav-item" role="presentation">

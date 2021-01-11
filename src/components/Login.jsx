@@ -2,8 +2,40 @@
 import React from 'react';
 import { auth} from '../firebase'
 import { withRouter } from "react-router-dom";
+// import {db} from '../firebase';
 
 const Login = (props) => {
+    
+    // React.useEffect(() => {
+    //   let cantidadInicial= 19;
+    //   let intervalo = 10; 
+    //   let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta')
+    //   const cargar = async() =>{
+    //     for (let i = cantidadInicial; i < (cantidadInicial+intervalo); i++) {
+    //       await DocumentoVentaRef.add({
+    //               cantidad:i,
+    //               tipoDocumento:"Boleta",
+    //               serie:"B012",
+    //               numero: i,
+    //               cliente:"Ronald(C)",
+    //               categoria:"Galletas",
+    //               producto:"vainilla",
+    //               descuento: 0,
+    //               precioUnitario: 10.5,
+    //               vendedor: "Luis",
+    //               monto:10.8,
+    //               fecha: 1613032899000,                  
+    //               local: "Pepa grande",
+    //               estado:"Creado",
+    //               ventasMedio: "Celular",
+    //               metodoPago: "Tarjeta",
+    //               mes: "Febrero"
+    //       });
+    //     }
+    //   } 
+    //   cargar();
+    // }, []);
+
 
     const [email, setEmail] = React.useState('')
     const [pass, setPass] = React.useState('')

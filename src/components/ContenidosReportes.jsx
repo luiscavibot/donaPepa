@@ -6,6 +6,7 @@ import es from 'date-fns/locale/es';
 import {db} from '../firebase';
 import moment from 'moment'
 import 'moment/locale/es'
+// import { set } from "date-fns";
 //NO BORRAR HASTA ESTAR SEGURO
 // import { set } from "date-fns";
 //NO BORRAR HASTA ESTAR SEGURO
@@ -84,6 +85,52 @@ const ContenidosReportes = (props) => {
     const [celular, setCelular] = React.useState(false);
     const [internet, setInternet] = React.useState(false);
     const [ventasMedioTodos, setVentasMedioTodos] = React.useState(true);
+    const [contador, setContador] = React.useState(1)
+    const [buscador, setBuscador] = useState(false)
+
+    const buscadorGeneral = (event) => {
+        // console.log(event.target.value);
+        // setBuscador(event.target.value);
+        if (event.target.value==="") {
+            setBuscador(true);
+        }else{
+            consultaBuscador(event.target.value);
+        }
+    }
+    const consultaBuscador = async(entrada) =>{
+        
+        try {
+            let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(10);
+            // DocumentoVentaRef = (vendedor !== 'Todos')?(DocumentoVentaRef.where('vendedor', '==', vendedor)):DocumentoVentaRef;
+            // DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('fecha', '==', ventasMensual)):DocumentoVentaRef;
+            // DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
+            // DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
+            // DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
+            // DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
+            // DocumentoVentaRef = DocumentoVentaRef.where('fecha', '>=', dateInicio.setHours(0,0,0,0));
+            // let preQuery = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0)).orderBy('fecha');
+            let query = DocumentoVentaRef.where('cliente', 'in', [entrada]);
+            let data = await query.get();
+            let arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
+            if (data.docs.length===0) {
+             setBuscador(true)  
+            }
+            setRows([...arrayData]); 
+            
+            // setPrimero(data.docs[0]); console.log('El primero es:', data.docs[0]);
+            // setUltimo(data.docs[data.docs.length - 1]); console.log('El ultimo es:', data.docs[data.docs.length - 1]);
+
+            // let newData = await preQuery.startAfter(data.docs[data.docs.length - 1]).get()
+            // if (newData.empty) {
+            //     setDesactivar(true)
+            // }else{
+            //     setDesactivar(false)
+            // }
+
+        } catch (error) {
+            console.log(error);
+        }
+    } 
 
     const handleInputVentasmedio = (event) =>{
         const value = event.target.checked;
@@ -151,10 +198,12 @@ const ContenidosReportes = (props) => {
     const [primero, setPrimero] = React.useState(null)
 
     React.useEffect(() => {
+        console.log('Se activó el Use Efect!!!');
+        setContador(1);
         setDesactivar(true);
-        let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(2);
+        let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(10);
         DocumentoVentaRef = (vendedor !== 'Todos')?(DocumentoVentaRef.where('vendedor', '==', vendedor)):DocumentoVentaRef;
-        DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('fecha', '==', ventasMensual)):DocumentoVentaRef;
+        DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('mes', '==', ventasMensual)):DocumentoVentaRef;
         DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
         DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
         DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
@@ -170,7 +219,7 @@ const ContenidosReportes = (props) => {
                 
                 const arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
                 console.log(arrayData);
-                setRows(arrayData);
+                setRows([...arrayData]);
                 setPrimero(data.docs[0]); console.log('El primero es:', data.docs[0]);
                 setUltimo(data.docs[data.docs.length - 1]); console.log('El último es:', data.docs[data.docs.length - 1]);
                 if (data.empty) {
@@ -184,14 +233,18 @@ const ContenidosReportes = (props) => {
             }
         } 
         obtenerDatos();
-    }, [vendedor, ventasMensual, metodoPago, locales, producto, ventasMedio, dateInicio, dateFin, whatsapp, celular, internet ])
+        setBuscador(false);
+    }, [vendedor, ventasMensual, metodoPago, locales, producto, ventasMedio, dateInicio, dateFin, whatsapp, celular, internet, buscador ])
     
     const siguiente = async() =>{
-        console.log('siguiente');
+        // console.log('siguiente');
+        // console.log('Valor inicial de primero:',primero);
+        // console.log('Valor inicial de ultimo:',ultimo);
+        setContador(contador+1);
         try {
-            let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(2);
+            let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(10);
             DocumentoVentaRef = (vendedor !== 'Todos')?(DocumentoVentaRef.where('vendedor', '==', vendedor)):DocumentoVentaRef;
-            DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('fecha', '==', ventasMensual)):DocumentoVentaRef;
+            DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('mes', '==', ventasMensual)):DocumentoVentaRef;
             DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
             DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
             DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
@@ -220,22 +273,26 @@ const ContenidosReportes = (props) => {
 
     const anterior = async() =>{
         console.log('anterior');
+        
         try {
-            let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(2);
+            let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta').limit(10);
             DocumentoVentaRef = (vendedor !== 'Todos')?(DocumentoVentaRef.where('vendedor', '==', vendedor)):DocumentoVentaRef;
-            DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('fecha', '==', ventasMensual)):DocumentoVentaRef;
+            DocumentoVentaRef = (ventasMensual !== 'Todos')?(DocumentoVentaRef.where('mes', '==', ventasMensual)):DocumentoVentaRef;
             DocumentoVentaRef = ( metodoPago !== 'Todos')?(DocumentoVentaRef.where('metodoPago', '==', metodoPago)):DocumentoVentaRef;
             DocumentoVentaRef = ( locales!== 'Todos')?(DocumentoVentaRef.where('local', '==',locales )):DocumentoVentaRef;
             DocumentoVentaRef = ( producto!== 'Todos')?(DocumentoVentaRef.where('producto', '==', producto )):DocumentoVentaRef;
             DocumentoVentaRef = ( whatsapp || celular || internet )?(DocumentoVentaRef.where('ventasMedio', 'in', ventasMedio)):DocumentoVentaRef;
-            DocumentoVentaRef = DocumentoVentaRef.where('fecha', '>=', dateInicio.setHours(0,0,0,0));
-            let preQuery = DocumentoVentaRef.where('fecha', '<=', dateFin.setHours(23,59,59,0)).orderBy('fecha');
+            DocumentoVentaRef = DocumentoVentaRef.where('fecha', '<=', dateInicio.setHours(0,0,0,0));
+            let preQuery = DocumentoVentaRef.where('fecha', '>=', dateFin.setHours(23,59,59,0));
+            // console.log('Valor inicial de primero:',primero);
+            // console.log('Valor inicial de ultimo:',ultimo);
             let query = preQuery.endBefore(primero);
             let data = await query.get();
+            console.log(data);
             let arrayData = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
             setRows([...arrayData]); 
-            setPrimero(data.docs[0]); console.log('El primero es:', data.docs[0]);
-            setUltimo(data.docs[data.docs.length - 1]); console.log('El último es:', data.docs[data.docs.length - 1]);
+            setPrimero(data.docs[0]); 
+            setUltimo(data.docs[data.docs.length - 1]); 
             let newData = await preQuery.endBefore(data.docs[data.docs.length - 1]).get()
 
             // if (newData.empty) {
@@ -249,6 +306,8 @@ const ContenidosReportes = (props) => {
         }
     }
 
+
+    
 
 
     const ExampleCustomInput = ({ value, onClick }) => (
@@ -307,7 +366,7 @@ const ContenidosReportes = (props) => {
                     </div>
                 </div>
                 <div className="d-flex">
-                    <input className="form-control form-control-sm mt-3 w-100" type="text" placeholder="Búsqueda general" style={estilo.buscador}/>
+                    <input className="form-control form-control-sm mt-3 w-100" type="text" placeholder="Búsqueda general" style={estilo.buscador} onChange={buscadorGeneral}/>
                 </div>
             </div>
             <div className="d-flex justify-content-between">
@@ -361,7 +420,7 @@ const ContenidosReportes = (props) => {
                     </div>
                 </div>
             </div>
-            <table className="table">
+            <table className="table" id="tblData">
                 <thead className="table-ligth">
                     <tr>
                         <th scope="col">Tipo</th>
@@ -407,7 +466,7 @@ const ContenidosReportes = (props) => {
                         <li className="page-item">
                             <button className="page-link" onClick={() => anterior()}>Anterior</button>
                         </li>
-                        <li className="page-item"><input type="text" className="page-link btnPagina"/></li>
+                        <li className="page-item"><input type="text" className="page-link btnPagina" value={contador}/></li>
                         <li className="page-item">
                             <button className="page-link" onClick={() => siguiente()} disabled={desactivar}>Siguiente</button>
                         </li>
