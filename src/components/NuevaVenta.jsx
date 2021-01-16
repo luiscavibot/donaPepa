@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import DatePicker, {registerLocale} from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -82,6 +82,10 @@ const NuevaVenta = () => {
         })
 
     }
+
+    useEffect(() => {
+        
+    })
 
     return (
         <div>
