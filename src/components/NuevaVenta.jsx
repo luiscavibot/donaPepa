@@ -5,6 +5,16 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 const NuevaVenta = () => {
 
+    const [lista, setLista] = useState([])
+    // const [numLista, setNumLista] = useState(0)
+    // const [cod, setCod] = useState(0)
+    const [descripcion, setDescripcion] = useState('')
+    // const [unidades, setUnidades] = useState('')
+    // const [cantidad, setCantidad] = useState(0)
+    // const [descuento, setDescuento] = useState(0)
+    // const [precioUnitario, setPrecioUnitario] = useState(0)
+    // const [precioUnitarioIgv, setPrecioUnitarioIgv] = useState(0)
+    // const [total, setTotal] = useState(0)
     const [usuario, setUsuario] = useState('')
     const [serie, setSerie] = useState('')
     const [numero, setNumero] = useState(0)
@@ -26,7 +36,7 @@ const NuevaVenta = () => {
     const [direccion, setDireccion] = useState('')
     const [referencias, setReferencias] = useState('')
     const [gravada, setGravada] = useState(0)
-    const [descuento, setDescuento] = useState(0)
+    const [descuentoTotal, setDescuentoTotal] = useState(0)
     const [totalIgv, setTotalIgv] = useState(0)
     const [totalDelivery, setTotalDelivery] = useState(0)
     const [totalPagar, setTotalPagar] = useState(0)
@@ -55,6 +65,7 @@ const NuevaVenta = () => {
         e.preventDefault()
 
         axios.post('http://46.183.113.134:3000/api/ventas', {
+            lista,
             usuario,
             serie,
             numero,
@@ -75,12 +86,35 @@ const NuevaVenta = () => {
             direccion,
             referencias,
             gravada,
-            descuento,
+            descuentoTotal,
             totalIgv,
             totalDelivery,
             totalPagar,
         })
 
+    }
+
+    const agregarProducto = () => {
+        console.log("AGREGAR PRODUCTO");
+        setLista([
+            ...lista,
+            {
+                // numLista,
+                // cod,
+                descripcion,
+                // unidades,
+                // cantidad,
+                // descuento,
+                // precioUnitario,
+                // precioUnitarioIgv,
+                // total
+            }
+        ])
+    }
+
+    const addDescription = (value, key) => {
+        console.log(key, value);
+        lista.filter()
     }
 
     useEffect(() => {
@@ -120,33 +154,59 @@ const NuevaVenta = () => {
                         <thead>
                             <tr>
                             <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                            <th scope="col">COD</th>
+                            <th scope="col">DESCRIPCIÓN</th>
+                            <th scope="col"></th>
+                            <th scope="col">CANTIDAD</th>
+                            <th scope="col">DESCUENTO</th>
+                            <th scope="col">PU</th>
+                            <th scope="col">PU + IGV</th>
+                            <th scope="col">TOT.</th>
+                            <th scope="col"></th>
+                            <th scope="col">DSCTO</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                            <th scope="row">1</th>
-                            <td>Mark</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
+                            {
+                                lista.map((item, key) => (
+                                    <tr key={key}>
+                                        <th scope="row">1</th>
+                                        <td>1000012</td>
+                                        <td>
+                                            <input onChange={e => addDescription(e.target.value, key)} type="text"/>
+                                        </td>
+                                        <td>12 unds</td>
+                                        <td>1000012</td>
+                                        <td>IB Turrón Iberica</td>
+                                        <td>12 unds</td>
+                                        <td>1000012</td>
+                                        <td>IB Turrón Iberica</td>
+                                        <td>12 unds</td>
+                                        <td>12 unds</td>
+                                    </tr>
+                                ))
+                            }
+                            {/* <tr>
+                                <th scope="row">1</th>
+                                <td>1000012</td>
+                                <td>IB Turrón Iberica</td>
+                                <td>12 unds</td>
+                            </tr> */}
+                            {/* <tr>
+                                <th scope="row">2</th>
+                                <td>Jacob</td>
+                                <td>Thornton</td>
+                                <td>@fat</td>
                             </tr>
                             <tr>
-                            <th scope="row">2</th>
-                            <td>Jacob</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                            </tr>
-                            <tr>
-                            <th scope="row">3</th>
-                            <td colspan="2">Larry the Bird</td>
-                            <td>@twitter</td>
-                            </tr>
+                                <th scope="row">3</th>
+                                <td colspan="2">Larry the Bird</td>
+                                <td>@twitter</td>
+                            </tr> */}
                         </tbody>
                     </table>
                     <div>
-                        <button type="button" className="btn btn-outline-danger">AGREGAR PRODUCTO</button>
+                        <button type="button" className="btn btn-outline-danger" onClick={agregarProducto}>AGREGAR PRODUCTO</button>
                     </div>
                 </div>
                 <div className="mb-3">
