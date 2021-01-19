@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import DatePicker, {registerLocale} from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { set } from 'date-fns/esm'
 
 const NuevaVenta = () => {
 
@@ -40,6 +41,31 @@ const NuevaVenta = () => {
     const [totalIgv, setTotalIgv] = useState(0)
     const [totalDelivery, setTotalDelivery] = useState(0)
     const [totalPagar, setTotalPagar] = useState(0)
+    const [filaProducto, setFilaProducto] = useState()
+    const [botonAgregar, setBotonAgregar] = useState(false)
+
+    const [valorDescripcion, setValorDescripcion] = useState("")
+    const [listaProductos, setListaProductos] = useState([])
+    const [contador, setContador] = useState(1);
+    const [listaPresentacion, setListaPresentacion] = useState([])
+    const [codigoLista, setCodigoLista] = useState('')
+    const [precioUnitario, setPrecioUnitario] = useState(0)
+
+    
+
+    useEffect(() => {
+        const getProducts = async () =>{
+            try {
+                console.log("activaremos el axios");
+                let res = await axios.get('http://46.183.113.134:3000/api/productos/listaProductosPorDescripcion');
+                console.log(res.data);
+                setListaProductos(res.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getProducts();
+    }, [])
 
     const ExampleCustomInput = ({ value, onClick }) => (
         <div className="d-flex border align-items-center justify-content-between mt-3" onClick={onClick}>
@@ -94,32 +120,81 @@ const NuevaVenta = () => {
 
     }
 
-    const agregarProducto = () => {
+    const agregarProducto = async () => {
         console.log("AGREGAR PRODUCTO");
         setLista([
-            ...lista,
-            {
-                // numLista,
-                // cod,
-                descripcion,
-                // unidades,
-                // cantidad,
-                // descuento,
-                // precioUnitario,
-                // precioUnitarioIgv,
-                // total
+            ...lista, {          
+                numeroLista: contador,
+                codigoLista: codigoLista,
+                descripcionLista: "",
+                presentacionLista: "",
+                cantidadLista: "",
+                descuentoLista: 0,
+                precioUnitarioLista: 0,
+                precioUnitarioIgvLista: 0,
+                totalLista: 0,
             }
-        ])
+        ]);
+        // getProducts();
+        setContador(contador+1) 
+    }
+
+    const presentaciones = (presentacion) =>{
+        const getPresentaciones = async () =>{
+            try {
+                console.log("activaremos el axios");
+                let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${presentacion}`);
+                console.log("Resultado de axios para presentaciones: ",res.data);
+                let arrayData= res.data.map(item => (item.presentacion))
+                setListaPresentacion([...arrayData]);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getPresentaciones();
+    };
+    const completarCampos = (numeroItem) =>{
+        let elemento = lista[numeroItem-1];
+        const getCodigoYprecioUnitario = async () =>{
+            try {
+                console.log(elemento);
+                let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${elemento.descripcionLista}&busquedaPorPresentacion=${elemento.presentacionLista}`);
+                setCodigoLista(res.data[0].codigo)
+                setPrecioUnitario(res.data[0].precioUnitario)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getCodigoYprecioUnitario();
+    }
+
+    const manejadorEntrada = (event) =>{
+        let numeroItem = event.target.id;
+        let name=event.target.name;
+        switch (name) {
+            case 'descripcion':
+                let listaProvDescripcion = [...lista]
+                listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;
+                setLista(listaProvDescripcion)
+                presentaciones(event.target.value)
+                break;
+            case 'presentacion':
+                let listaProvPresentacion = [...lista]
+                listaProvPresentacion[numeroItem-1].presentacionLista = event.target.value;
+                setLista(listaProvPresentacion)
+                completarCampos(numeroItem)
+                break;
+            default:
+                break;
+        }
+        // setValorDescripcion(event.target.value)        
     }
 
     const addDescription = (value, key) => {
         console.log(key, value);
-        lista.filter()
+        // lista= 
     }
 
-    useEffect(() => {
-        
-    })
 
     return (
         <div>
@@ -153,56 +228,55 @@ const NuevaVenta = () => {
                     <table className="table">
                         <thead>
                             <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">COD</th>
-                            <th scope="col">DESCRIPCIÓN</th>
-                            <th scope="col"></th>
-                            <th scope="col">CANTIDAD</th>
-                            <th scope="col">DESCUENTO</th>
-                            <th scope="col">PU</th>
-                            <th scope="col">PU + IGV</th>
-                            <th scope="col">TOT.</th>
-                            <th scope="col"></th>
-                            <th scope="col">DSCTO</th>
+                                <th scope="col">#</th>
+                                <th scope="col">DESCRIPCIÓN</th>
+                                <th scope="col">PRESENTACIÓN</th>
+                                <th scope="col">COD</th>
+                                <th scope="col">CANTIDAD</th>
+                                <th scope="col">DESCUENTO</th>
+                                <th scope="col">PU</th>
+                                <th scope="col">PU + IGV</th>
+                                <th scope="col">TOT.</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                lista.map((item, key) => (
-                                    <tr key={key}>
-                                        <th scope="row">1</th>
-                                        <td>1000012</td>
+                                lista.map(id => (
+                                    <tr>
+                                        <th>{id.numeroLista}</th>
                                         <td>
-                                            <input onChange={e => addDescription(e.target.value, key)} type="text"/>
+                                            <input id={id.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
+                                            placeholder="Ingrese un producto"  list="listaproductos" />
+                                            <datalist id="listaproductos">
+                                                    {
+                                                        listaProductos.map((item) =>
+                                                            (<option value={item} />)
+                                                        )
+                                                    }
+                                            </datalist>
                                         </td>
-                                        <td>12 unds</td>
-                                        <td>1000012</td>
-                                        <td>IB Turrón Iberica</td>
-                                        <td>12 unds</td>
-                                        <td>1000012</td>
-                                        <td>IB Turrón Iberica</td>
-                                        <td>12 unds</td>
-                                        <td>12 unds</td>
+                                        <td>
+                                            <input id={id.numeroLista} name = "presentacion" type="search" onChange={manejadorEntrada} 
+                                            placeholder="Ingrese una Presentación"  list="listapresentacion" />
+                                            <datalist id="listapresentacion">
+                                                    {
+                                                        listaPresentacion.map((item) =>
+                                                            (<option value={item} />)
+                                                        )
+                                                    }
+                                            </datalist>
+                                        </td>
+                                        <td>{codigoLista}</td>
+                                        <td><input type="number" /></td>
+                                        <td>{id.descuentoLista}</td>
+                                        <td>{precioUnitario}</td>
+                                        <td>{(precioUnitario*0.18).toFixed(2)}</td>
+                                        <td>{(precioUnitario*1.18).toFixed(2)}</td>
+                                        <td><button>Eliminar</button></td>
                                     </tr>
                                 ))
                             }
-                            {/* <tr>
-                                <th scope="row">1</th>
-                                <td>1000012</td>
-                                <td>IB Turrón Iberica</td>
-                                <td>12 unds</td>
-                            </tr> */}
-                            {/* <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td colspan="2">Larry the Bird</td>
-                                <td>@twitter</td>
-                            </tr> */}
                         </tbody>
                     </table>
                     <div>
