@@ -47,9 +47,11 @@ const NuevaVenta = () => {
     const [valorDescripcion, setValorDescripcion] = useState("")
     const [listaProductos, setListaProductos] = useState([])
     const [contador, setContador] = useState(1);
-    const [listaPresentacion, setListaPresentacion] = useState([])
-    const [codigoLista, setCodigoLista] = useState('')
-    const [precioUnitario, setPrecioUnitario] = useState(0)
+    const [listaPresentacion, setListaPresentacion] = useState([[]])
+    const [presentacion, setPresentacion] = useState([])
+    const [codigoLista, setCodigoLista] = useState([])
+    const [precioUnitarioLista, setPrecioUnitarioLista] = useState([0])
+    const [primerRender, setPrimerRender] = useState(true)
 
     
 
@@ -128,7 +130,7 @@ const NuevaVenta = () => {
                 codigoLista: codigoLista,
                 descripcionLista: "",
                 presentacionLista: "",
-                cantidadLista: "",
+                cantidadLista: 0,
                 descuentoLista: 0,
                 precioUnitarioLista: 0,
                 precioUnitarioIgvLista: 0,
@@ -139,14 +141,16 @@ const NuevaVenta = () => {
         setContador(contador+1) 
     }
 
-    const presentaciones = (presentacion) =>{
+    const presentaciones = (presentacion, numero) =>{
         const getPresentaciones = async () =>{
             try {
                 console.log("activaremos el axios");
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${presentacion}`);
                 console.log("Resultado de axios para presentaciones: ",res.data);
                 let arrayData= res.data.map(item => (item.presentacion))
-                setListaPresentacion([...arrayData]);
+                let arrayProv = [...listaPresentacion,[]]
+                arrayProv[numero-1]= arrayData
+                setListaPresentacion(arrayProv);
             } catch (error) {
                 console.error(error);
             }
@@ -159,8 +163,20 @@ const NuevaVenta = () => {
             try {
                 console.log(elemento);
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${elemento.descripcionLista}&busquedaPorPresentacion=${elemento.presentacionLista}`);
-                setCodigoLista(res.data[0].codigo)
-                setPrecioUnitario(res.data[0].precioUnitario)
+                
+                let arrayProv = [...codigoLista];
+                arrayProv[numeroItem-1] = res.data[0].codigo;
+                setCodigoLista(arrayProv)
+
+                let listaProv = [...lista]
+                listaProv[numeroItem-1].codigoLista = res.data[0].codigo;
+                listaProv[numeroItem-1].precioUnitarioLista = res.data[0].precioUnitario;
+                setLista(listaProv);
+
+                let arrayProvb = [...precioUnitarioLista];
+                arrayProvb[numeroItem-1] = res.data[0].precioUnitario;
+                setPrecioUnitarioLista(arrayProvb)
+
             } catch (error) {
                 console.error(error);
             }
@@ -173,15 +189,19 @@ const NuevaVenta = () => {
         let name=event.target.name;
         switch (name) {
             case 'descripcion':
+                console.log("Seactivó el manjeador en descripcion");
                 let listaProvDescripcion = [...lista]
                 listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;
                 setLista(listaProvDescripcion)
-                presentaciones(event.target.value)
+                presentaciones(event.target.value, numeroItem)
                 break;
             case 'presentacion':
+                console.log("Seactivó el manjeador en presentacion");
                 let listaProvPresentacion = [...lista]
                 listaProvPresentacion[numeroItem-1].presentacionLista = event.target.value;
+                console.log("Actualizacion de la lista general" , listaProvPresentacion);
                 setLista(listaProvPresentacion)
+                setPresentacion([...presentacion, event.target.value, ])
                 completarCampos(numeroItem)
                 break;
             default:
@@ -242,11 +262,11 @@ const NuevaVenta = () => {
                         </thead>
                         <tbody>
                             {
-                                lista.map(id => (
+                                lista.map(valor=> (
                                     <tr>
-                                        <th>{id.numeroLista}</th>
+                                        <th>{valor.numeroLista}</th>
                                         <td>
-                                            <input id={id.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
+                                            <input id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
                                             placeholder="Ingrese un producto"  list="listaproductos" />
                                             <datalist id="listaproductos">
                                                     {
@@ -257,22 +277,19 @@ const NuevaVenta = () => {
                                             </datalist>
                                         </td>
                                         <td>
-                                            <input id={id.numeroLista} name = "presentacion" type="search" onChange={manejadorEntrada} 
-                                            placeholder="Ingrese una Presentación"  list="listapresentacion" />
-                                            <datalist id="listapresentacion">
-                                                    {
-                                                        listaPresentacion.map((item) =>
-                                                            (<option value={item} />)
-                                                        )
+                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} >
+                                                    <option value="">-</option>
+                                                    {   
+                                                        listaPresentacion[valor.numeroLista-1].map((item) =>(<option value={item}>{item}</option>))
                                                     }
-                                            </datalist>
+                                            </select>
                                         </td>
-                                        <td>{codigoLista}</td>
+                                        <td>{codigoLista[valor.numeroLista-1]}</td>
                                         <td><input type="number" /></td>
-                                        <td>{id.descuentoLista}</td>
-                                        <td>{precioUnitario}</td>
-                                        <td>{(precioUnitario*0.18).toFixed(2)}</td>
-                                        <td>{(precioUnitario*1.18).toFixed(2)}</td>
+                                        <td>{valor.descuentoLista}</td>
+                                        <td>{precioUnitarioLista[valor.numeroLista-1]}</td>
+                                        <td>{(precioUnitarioLista[valor.numeroLista-1]*0.18).toFixed(2)}</td>
+                                        <td>{(precioUnitarioLista[valor.numeroLista-1]*1.18).toFixed(2)}</td>
                                         <td><button>Eliminar</button></td>
                                     </tr>
                                 ))
