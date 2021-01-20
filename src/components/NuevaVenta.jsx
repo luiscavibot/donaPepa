@@ -44,16 +44,19 @@ const NuevaVenta = () => {
     const [filaProducto, setFilaProducto] = useState()
     const [botonAgregar, setBotonAgregar] = useState(false)
 
-    const [valorDescripcion, setValorDescripcion] = useState("")
     const [listaProductos, setListaProductos] = useState([])
     const [contador, setContador] = useState(1);
     const [listaPresentacion, setListaPresentacion] = useState([[]])
     const [presentacion, setPresentacion] = useState([])
     const [codigoLista, setCodigoLista] = useState([])
+    const [listaCantidad, setListaCantidad] = useState([0])
+    const [descuentoLista, setDescuentoLista] = useState([0])
     const [precioUnitarioLista, setPrecioUnitarioLista] = useState([0])
-    const [primerRender, setPrimerRender] = useState(true)
-
-    
+    const [precioVentaLista, setPrecioVentaLista] = useState([0])
+    const [igvLista, setIgvLista] = useState([0])
+    const [totalLista, setTotalLista] = useState([0])
+    const [modoValidar, setModoValidar] = useState([true])
+    const [numeracion, setNumeracion] = useState(false)
 
     useEffect(() => {
         const getProducts = async () =>{
@@ -124,23 +127,33 @@ const NuevaVenta = () => {
 
     const agregarProducto = async () => {
         console.log("AGREGAR PRODUCTO");
+        let tamañoLista = lista.length;
         setLista([
             ...lista, {          
-                numeroLista: contador,
+                numeroLista: tamañoLista+1,
                 codigoLista: codigoLista,
-                descripcionLista: "",
+                descripcionLista: [],
                 presentacionLista: "",
                 cantidadLista: 0,
-                descuentoLista: 0,
                 precioUnitarioLista: 0,
-                precioUnitarioIgvLista: 0,
+                descuentoLista: 0,
+                precioVentaLista: 0,
+                igvLista: 0,
                 totalLista: 0,
+                modoValidar: true,
             }
         ]);
-        // getProducts();
-        setContador(contador+1) 
+        reiniciarNumeracion();        
     }
-
+    const reiniciarNumeracion = () =>{
+        let listaProv = [...lista];
+        let numerador = 1;
+        listaProv.map(item =>{
+            item.numeroLista = numerador;
+            numerador++;
+        })         
+    }
+    
     const presentaciones = (presentacion, numero) =>{
         const getPresentaciones = async () =>{
             try {
@@ -184,37 +197,84 @@ const NuevaVenta = () => {
         getCodigoYprecioUnitario();
     }
 
+    
+    const calculoFinal = (numeroItem) => {
+    
+        let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);  
+        let listaProv = [...lista];
+        listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
+        listaProv[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
+        listaProv[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
+            
+        let listaProvPrecioVentaLista = [...precioVentaLista]
+        listaProvPrecioVentaLista[numeroItem-1]= precioVenta.toFixed(2);
+        setPrecioVentaLista(listaProvPrecioVentaLista);
+    
+        let listaProvIgvLista = [...igvLista]
+        listaProvIgvLista[numeroItem-1]= (precioVenta*0.18).toFixed(2);
+        setIgvLista(listaProvIgvLista);
+    
+        let listaProvTotalLista = [...totalLista]
+        listaProvTotalLista[numeroItem-1]= (precioVenta*1.18).toFixed(2);
+        setTotalLista(listaProvTotalLista);
+
+        let modoValidarProv = [...lista]
+        modoValidarProv[numeroItem-1].modoValidar= false;
+        setLista(modoValidarProv);
+    }
+
+    const eliminarFila = (numeroItem) => {
+        console.log("Se activó el boton eleiminar");
+        let listaProv = [...lista];
+        let i = numeroItem-1;
+        console.log(i);
+        if ( i !== -1 ) {
+            listaProv.splice( i, 1 );
+            setLista(listaProv);
+        }
+    }
+    
+
     const manejadorEntrada = (event) =>{
         let numeroItem = event.target.id;
         let name=event.target.name;
         switch (name) {
             case 'descripcion':
-                console.log("Seactivó el manjeador en descripcion");
                 let listaProvDescripcion = [...lista]
                 listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;
                 setLista(listaProvDescripcion)
                 presentaciones(event.target.value, numeroItem)
                 break;
             case 'presentacion':
-                console.log("Seactivó el manjeador en presentacion");
                 let listaProvPresentacion = [...lista]
                 listaProvPresentacion[numeroItem-1].presentacionLista = event.target.value;
-                console.log("Actualizacion de la lista general" , listaProvPresentacion);
                 setLista(listaProvPresentacion)
                 setPresentacion([...presentacion, event.target.value, ])
                 completarCampos(numeroItem)
                 break;
+            case 'cantidad':
+                let listaProvCantidad = [...lista];
+                listaProvCantidad[numeroItem-1].cantidadLista = event.target.value;
+                setLista(listaProvCantidad);
+                let listaProv = [...listaCantidad]
+                listaProv[numeroItem-1]=event.target.value;
+                setListaCantidad(listaProv);
+                break;
+            case 'descuento':
+                let listaProvDescuento = [...lista];
+                listaProvDescuento[numeroItem-1].descuento = event.target.value;
+                setLista(listaProvDescuento);
+                let listaProvb = [...descuentoLista]
+                listaProvb[numeroItem-1]=event.target.value;
+                setDescuentoLista(listaProvb);
+                console.log(lista.length);  
+                break;
             default:
                 break;
         }
+        // calculoFinal(numeroItem)
         // setValorDescripcion(event.target.value)        
     }
-
-    const addDescription = (value, key) => {
-        console.log(key, value);
-        // lista= 
-    }
-
 
     return (
         <div>
@@ -252,11 +312,12 @@ const NuevaVenta = () => {
                                 <th scope="col">DESCRIPCIÓN</th>
                                 <th scope="col">PRESENTACIÓN</th>
                                 <th scope="col">COD</th>
-                                <th scope="col">CANTIDAD</th>
-                                <th scope="col">DESCUENTO</th>
+                                <th scope="col">CANT</th>
                                 <th scope="col">PU</th>
-                                <th scope="col">PU + IGV</th>
-                                <th scope="col">TOT.</th>
+                                <th scope="col">DSCTO</th>
+                                <th scope="col">PV</th>
+                                <th scope="col">IGV</th>
+                                <th scope="col">TOT</th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
@@ -277,7 +338,7 @@ const NuevaVenta = () => {
                                             </datalist>
                                         </td>
                                         <td>
-                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} >
+                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada}  >
                                                     <option value="">-</option>
                                                     {   
                                                         listaPresentacion[valor.numeroLista-1].map((item) =>(<option value={item}>{item}</option>))
@@ -285,12 +346,26 @@ const NuevaVenta = () => {
                                             </select>
                                         </td>
                                         <td>{codigoLista[valor.numeroLista-1]}</td>
-                                        <td><input type="number" /></td>
-                                        <td>{valor.descuentoLista}</td>
-                                        <td>{precioUnitarioLista[valor.numeroLista-1]}</td>
-                                        <td>{(precioUnitarioLista[valor.numeroLista-1]*0.18).toFixed(2)}</td>
-                                        <td>{(precioUnitarioLista[valor.numeroLista-1]*1.18).toFixed(2)}</td>
-                                        <td><button>Eliminar</button></td>
+                                        <td>
+                                            <input id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={listaCantidad[valor.numeroLista-1]}
+                                             onChange={manejadorEntrada}  list="off"/>
+                                        </td>
+                                        <td>
+                                            {precioUnitarioLista[valor.numeroLista-1]}
+                                        </td>
+                                        <td>
+                                            <input id={valor.numeroLista} type="number" name="descuento" min="0" value={descuentoLista[valor.numeroLista-1]} 
+                                            onChange={manejadorEntrada} />
+                                        </td>
+                                        <td>{precioVentaLista[valor.numeroLista-1]}</td>
+                                        <td>{igvLista[valor.numeroLista-1]}</td>
+                                        <td>{totalLista[valor.numeroLista-1]}</td>
+                                        <td>
+                                            {
+                                                valor.modoValidar?<button onClick= {()=>calculoFinal(valor.numeroLista)}>Validar</button>:
+                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} >Eliminar</button>
+                                            }
+                                        </td>
                                     </tr>
                                 ))
                             }
@@ -330,7 +405,7 @@ const NuevaVenta = () => {
                     </div>
                     <div>
                         <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
-                        <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente" required></input>
+                        <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente"></input>
                     </div>
                     <div>
                         <label for="nombreCliente" className="form-label">Nombre del cliente</label>
