@@ -145,15 +145,7 @@ const NuevaVenta = () => {
         ]);
         reiniciarNumeracion();        
     }
-    const reiniciarNumeracion = () =>{
-        let listaProv = [...lista];
-        let numerador = 1;
-        listaProv.map(item =>{
-            item.numeroLista = numerador;
-            numerador++;
-        })         
-    }
-    
+
     const presentaciones = (presentacion, numero) =>{
         const getPresentaciones = async () =>{
             try {
@@ -196,8 +188,18 @@ const NuevaVenta = () => {
         }
         getCodigoYprecioUnitario();
     }
+    useEffect(() => {
+        actualizarSuma();
+    }, [totalLista,setTotalPagar])
 
-    
+    const actualizarSuma = () =>{
+        let sumaTotal = 0.00;
+        totalLista.forEach(value =>{
+            sumaTotal = sumaTotal + (value*1.0);
+        })
+        setTotalPagar(sumaTotal.toFixed(2));
+    }
+
     const calculoFinal = (numeroItem) => {
     
         let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);  
@@ -228,12 +230,37 @@ const NuevaVenta = () => {
         let listaProv = [...lista];
         let i = numeroItem-1;
         console.log(i);
+        let numerador = 1;
+        let sumaTotal = 0.00;
+
         if ( i !== -1 ) {
             listaProv.splice( i, 1 );
+            listaProv.forEach((item)=>{
+                item.numeroLista = numerador;
+                console.log("Sumaré:" ,item.totalLista);
+                numerador++;  
+                sumaTotal = sumaTotal + (item.totalLista*1.0);
+                console.log("Suma Total:" , sumaTotal);
+            }) 
+            
+            // sumaTotal = 0.00;
+            // totalLista.forEach(value =>{
+            //     sumaTotal = sumaTotal + (value*1.0);
+            // })
+            setTotalPagar(sumaTotal.toFixed(2));
+
             setLista(listaProv);
         }
+
     }
-    
+    const reiniciarNumeracion = () =>{
+        let listaProv = [...lista];
+        let numerador = 1;
+        listaProv.forEach(item =>{
+            item.numeroLista = numerador;
+            numerador++;
+        })         
+    }
 
     const manejadorEntrada = (event) =>{
         let numeroItem = event.target.id;
@@ -328,7 +355,7 @@ const NuevaVenta = () => {
                                         <th>{valor.numeroLista}</th>
                                         <td>
                                             <input id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
-                                            placeholder="Ingrese un producto"  list="listaproductos" />
+                                            placeholder="Ingrese un producto" list="listaproductos" disabled={!valor.modoValidar}  />
                                             <datalist id="listaproductos">
                                                     {
                                                         listaProductos.map((item) =>
@@ -338,7 +365,7 @@ const NuevaVenta = () => {
                                             </datalist>
                                         </td>
                                         <td>
-                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada}  >
+                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} disabled={!valor.modoValidar}>
                                                     <option value="">-</option>
                                                     {   
                                                         listaPresentacion[valor.numeroLista-1].map((item) =>(<option value={item}>{item}</option>))
@@ -348,22 +375,23 @@ const NuevaVenta = () => {
                                         <td>{codigoLista[valor.numeroLista-1]}</td>
                                         <td>
                                             <input id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={listaCantidad[valor.numeroLista-1]}
-                                             onChange={manejadorEntrada}  list="off"/>
+                                             onChange={manejadorEntrada}  list="off" autoComplete="off" disabled={!valor.modoValidar}/>
                                         </td>
                                         <td>
                                             {precioUnitarioLista[valor.numeroLista-1]}
                                         </td>
                                         <td>
                                             <input id={valor.numeroLista} type="number" name="descuento" min="0" value={descuentoLista[valor.numeroLista-1]} 
-                                            onChange={manejadorEntrada} />
+                                            onChange={manejadorEntrada} disabled={!valor.modoValidar} />
                                         </td>
                                         <td>{precioVentaLista[valor.numeroLista-1]}</td>
                                         <td>{igvLista[valor.numeroLista-1]}</td>
                                         <td>{totalLista[valor.numeroLista-1]}</td>
                                         <td>
                                             {
-                                                valor.modoValidar?<button onClick= {()=>calculoFinal(valor.numeroLista)}>Validar</button>:
-                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} >Eliminar</button>
+                                                valor.modoValidar?
+                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm">Validar</button>:
+                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" >Eliminar</button>
                                             }
                                         </td>
                                     </tr>
@@ -371,8 +399,9 @@ const NuevaVenta = () => {
                             }
                         </tbody>
                     </table>
-                    <div>
+                    <div className="d-flex justify-content-between">
                         <button type="button" className="btn btn-outline-danger" onClick={agregarProducto}>AGREGAR PRODUCTO</button>
+                        <p class="fs-5 me-5" >{ `TOTAL: S/. ${totalPagar}`}</p>
                     </div>
                 </div>
                 <div className="mb-3">
