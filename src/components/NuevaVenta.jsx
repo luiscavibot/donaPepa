@@ -45,7 +45,6 @@ const NuevaVenta = () => {
     const [botonAgregar, setBotonAgregar] = useState(false)
 
     const [listaProductos, setListaProductos] = useState([])
-    const [contador, setContador] = useState(1);
     const [listaPresentacion, setListaPresentacion] = useState([[]])
     const [presentacion, setPresentacion] = useState([])
     const [codigoLista, setCodigoLista] = useState([])
@@ -127,23 +126,24 @@ const NuevaVenta = () => {
 
     const agregarProducto = async () => {
         console.log("AGREGAR PRODUCTO");
-        let tamañoLista = lista.length;
+        let tamanoLista = lista.length;
         setLista([
             ...lista, {          
-                numeroLista: tamañoLista+1,
-                codigoLista: codigoLista,
+                numeroLista: tamanoLista+1,
+                codigoLista: "",
                 descripcionLista: [],
                 presentacionLista: "",
-                cantidadLista: 0,
-                precioUnitarioLista: 0,
-                descuentoLista: 0,
+                cantidadLista: "1",
+                precioUnitarioLista: "0",
+                descuentoLista: "0",
                 precioVentaLista: 0,
                 igvLista: 0,
                 totalLista: 0,
                 modoValidar: true,
             }
         ]);
-        reiniciarNumeracion();        
+        console.log("Estoy asignando la siguiente numeracion:" , tamanoLista+1);
+        // reiniciarNumeracion();        
     }
 
     const presentaciones = (presentacion, numero) =>{
@@ -189,21 +189,30 @@ const NuevaVenta = () => {
         getCodigoYprecioUnitario();
     }
     useEffect(() => {
-        actualizarSuma();
-    }, [totalLista,setTotalPagar])
 
-    const actualizarSuma = () =>{
         let sumaTotal = 0.00;
         totalLista.forEach(value =>{
             sumaTotal = sumaTotal + (value*1.0);
         })
         setTotalPagar(sumaTotal.toFixed(2));
-    }
+
+    }, [totalLista,setTotalPagar])
+
+    
 
     const calculoFinal = (numeroItem) => {
     
-        let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);  
+        // let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);
+        console.log(numeroItem);
         let listaProv = [...lista];
+        console.log(listaProv);
+        console.log("precioUnitario: ", listaProv[numeroItem-1].precioUnitarioLista);
+        console.log("cantidadLista: ", listaProv[numeroItem-1].cantidadLista);
+        console.log("descuentoLista: ", listaProv[numeroItem-1].descuentoLista);
+
+        let precioVenta = (listaProv[numeroItem-1].precioUnitarioLista*listaProv[numeroItem-1].cantidadLista)-listaProv[numeroItem-1].descuentoLista;
+        
+        console.log("Esta lista se imprime en calculo final",listaProv);
         listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
         listaProv[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
         listaProv[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
@@ -222,44 +231,44 @@ const NuevaVenta = () => {
 
         let modoValidarProv = [...lista]
         modoValidarProv[numeroItem-1].modoValidar= false;
+        console.log("Esta lista se imprime al final de calculo final", lista);
         setLista(modoValidarProv);
     }
 
     const eliminarFila = (numeroItem) => {
+        let sumaTotal = 0.00;
+        console.log(numeroItem);
         console.log("Se activó el boton eleiminar");
-        let listaProv = [...lista];
+        console.log("Lista original:" ,lista);
+        let listaProv = [...lista]        
+        let numerador = 0;
         let i = numeroItem-1;
         console.log(i);
-        let numerador = 1;
-        let sumaTotal = 0.00;
+        let nuevaLista = listaProv.filter((value, index )=>{return index!==i});
+        console.log("Cadena reducida",nuevaLista);
 
-        if ( i !== -1 ) {
-            listaProv.splice( i, 1 );
-            listaProv.forEach((item)=>{
-                item.numeroLista = numerador;
-                console.log("Sumaré:" ,item.totalLista);
-                numerador++;  
-                sumaTotal = sumaTotal + (item.totalLista*1.0);
-                console.log("Suma Total:" , sumaTotal);
-            }) 
-            
-            // sumaTotal = 0.00;
-            // totalLista.forEach(value =>{
-            //     sumaTotal = sumaTotal + (value*1.0);
-            // })
-            setTotalPagar(sumaTotal.toFixed(2));
-
-            setLista(listaProv);
-        }
-
-    }
-    const reiniciarNumeracion = () =>{
-        let listaProv = [...lista];
-        let numerador = 1;
-        listaProv.forEach(item =>{
-            item.numeroLista = numerador;
+        let listaRenumerada = nuevaLista.map( function(obj){
             numerador++;
-        })         
+            sumaTotal = sumaTotal + (obj.totalLista*1.0);
+            let robj = {};
+            robj["numeroLista"]= numerador;
+            robj["codigoLista"]= obj.codigoLista;
+            robj["descripcionLista"]= obj.descripcionLista;
+            robj["presentacionLista"]= obj.presentacionLista;
+            robj["cantidadLista"]= obj.cantidadLista;
+            robj["precioUnitarioLista"]= obj.precioUnitarioLista;
+            robj["descuentoLista"]= obj.descuentoLista;
+            robj["precioVentaLista"]= obj.precioVentaLista;
+            robj["igvLista"]= obj.igvLista;
+            robj["totalLista"]= obj.totalLista;
+            robj["modoValidar"]= obj.modoValidar;
+            return robj
+            // sumaTotal = sumaTotal + (item.totalLista*1.0);
+        })
+        console.log("Lista Final", listaRenumerada);
+        setLista(listaRenumerada);
+        console.log("Suma Total", sumaTotal);
+        setTotalPagar(sumaTotal.toFixed(2));
     }
 
     const manejadorEntrada = (event) =>{
@@ -289,12 +298,11 @@ const NuevaVenta = () => {
                 break;
             case 'descuento':
                 let listaProvDescuento = [...lista];
-                listaProvDescuento[numeroItem-1].descuento = event.target.value;
+                listaProvDescuento[numeroItem-1].descuentoLista = event.target.value;
                 setLista(listaProvDescuento);
                 let listaProvb = [...descuentoLista]
                 listaProvb[numeroItem-1]=event.target.value;
                 setDescuentoLista(listaProvb);
-                console.log(lista.length);  
                 break;
             default:
                 break;
@@ -355,7 +363,7 @@ const NuevaVenta = () => {
                                         <th>{valor.numeroLista}</th>
                                         <td>
                                             <input id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
-                                            placeholder="Ingrese un producto" list="listaproductos" disabled={!valor.modoValidar}  />
+                                            placeholder="Ingrese un producto" list="listaproductos" disabled={!valor.modoValidar} value={valor.descripcionLista} />
                                             <datalist id="listaproductos">
                                                     {
                                                         listaProductos.map((item) =>
@@ -365,28 +373,28 @@ const NuevaVenta = () => {
                                             </datalist>
                                         </td>
                                         <td>
-                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} disabled={!valor.modoValidar}>
+                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} disabled={!valor.modoValidar} value={valor.presentacionLista}>
                                                     <option value="">-</option>
                                                     {   
                                                         listaPresentacion[valor.numeroLista-1].map((item) =>(<option value={item}>{item}</option>))
                                                     }
                                             </select>
                                         </td>
-                                        <td>{codigoLista[valor.numeroLista-1]}</td>
+                                        <td>{valor.codigoLista}</td>
                                         <td>
-                                            <input id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={listaCantidad[valor.numeroLista-1]}
+                                            <input id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={valor.cantidadLista}
                                              onChange={manejadorEntrada}  list="off" autoComplete="off" disabled={!valor.modoValidar}/>
                                         </td>
                                         <td>
-                                            {precioUnitarioLista[valor.numeroLista-1]}
+                                            {valor.precioUnitarioLista}
                                         </td>
                                         <td>
-                                            <input id={valor.numeroLista} type="number" name="descuento" min="0" value={descuentoLista[valor.numeroLista-1]} 
+                                            <input id={valor.numeroLista} type="number" name="descuento" min="0" value={valor.descuentoLista} 
                                             onChange={manejadorEntrada} disabled={!valor.modoValidar} />
                                         </td>
-                                        <td>{precioVentaLista[valor.numeroLista-1]}</td>
-                                        <td>{igvLista[valor.numeroLista-1]}</td>
-                                        <td>{totalLista[valor.numeroLista-1]}</td>
+                                        <td>{valor.precioVentaLista}</td>
+                                        <td>{valor.igvLista}</td>
+                                        <td>{valor.totalLista}</td>
                                         <td>
                                             {
                                                 valor.modoValidar?
