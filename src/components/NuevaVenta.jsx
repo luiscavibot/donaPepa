@@ -378,10 +378,12 @@ const NuevaVenta = () => {
                                             </datalist>
                                         </td>
                                         <td>
-                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} disabled={!valor.modoValidar} value={valor.presentacionLista}>
+                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} value={valor.presentacionLista} disabled={!valor.modoValidar}>
                                                     <option value="">-</option>
                                                     {   
-                                                        listaPresentacion[valor.numeroLista-1].map((item) =>(<option value={item}>{item}</option>))
+                                                        listaPresentacion[valor.numeroLista-1].map(
+                                                            (item) =>(<option value={item}>{item}</option>)
+                                                        )
                                                     }
                                             </select>
                                         </td>
