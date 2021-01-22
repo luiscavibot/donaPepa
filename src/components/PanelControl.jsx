@@ -13,6 +13,7 @@ import {
   } from "react-router-dom";
 import {auth} from '../firebase'
 import ReportesVentas from './ReportesVentas';
+import NuevaVenta from './NuevaVenta';
 
 const PanelControl = (props) => {
 
@@ -103,11 +104,13 @@ const PanelControl = (props) => {
                                     </h2>
                                     <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                         <div className="accordion-body">
-                                            <ul>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                            </ul>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/nueva-venta"
+                                                exact
+                                            >
+                                                NUEVA VENTA
+                                            </NavLink>
                                         </div>
                                     </div>
                                 </div>
@@ -159,6 +162,9 @@ const PanelControl = (props) => {
                                 <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                                     <h1 className="h5">Reportes de Liquidación Maestro</h1>
                                 </div>
+                            </Route>
+                            <Route path={`${path}/nueva-venta`}>
+                                <NuevaVenta />
                             </Route>
                         </Switch>
                     </main>
