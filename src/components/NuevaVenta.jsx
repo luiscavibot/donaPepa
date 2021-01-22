@@ -124,6 +124,109 @@ const NuevaVenta = () => {
             totalPagar,
         })
 
+        axios({
+            method: 'post',
+            url: 'https://api.nubefact.com/api/v1/0cce0d84-fc4b-46dd-a941-34cff1816c0b',
+            data: {
+                
+                    "operacion": "generar_comprobante",
+                    "tipo_de_comprobante": 1,
+                    "serie": "FFF1",
+                    "numero": 1,
+                    "sunat_transaction": 1,
+                    "cliente_tipo_de_documento": 6,
+                    "cliente_numero_de_documento": "20600695771",
+                    "cliente_denominacion": "NUBEFACT SA",
+                    "cliente_direccion": "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
+                    "cliente_email": "tucliente@gmail.com",
+                    "cliente_email_1": "",
+                    "cliente_email_2": "",
+                    "fecha_de_emision": "09-05-2017",
+                    "fecha_de_vencimiento": "",
+                    "moneda": 1,
+                    "tipo_de_cambio": "",
+                    "porcentaje_de_igv": 18.00,
+                    "descuento_global": "",
+                    "total_descuento": "",
+                    "total_anticipo": "",
+                    "total_gravada": 600,
+                    "total_inafecta": "",
+                    "total_exonerada": "",
+                    "total_igv": 108,
+                    "total_gratuita": "",
+                    "total_otros_cargos": "",
+                    "total": 708,
+                    "percepcion_tipo": "",
+                    "percepcion_base_imponible": "",
+                    "total_percepcion": "",
+                    "total_incluido_percepcion": "",
+                    "total_impuestos_bolsas": "",
+                    "detraccion": false,
+                    "observaciones": "",
+                    "documento_que_se_modifica_tipo": "",
+                    "documento_que_se_modifica_serie": "",
+                    "documento_que_se_modifica_numero": "",
+                    "tipo_de_nota_de_credito": "",
+                    "tipo_de_nota_de_debito": "",
+                    "enviar_automaticamente_a_la_sunat": true,
+                    "enviar_automaticamente_al_cliente": false,
+                    "condiciones_de_pago": "",
+                    "medio_de_pago": "",
+                    "placa_vehiculo": "",
+                    "orden_compra_servicio": "",  
+                    "formato_de_pdf": "",
+                    "generado_por_contingencia": "",
+                    "bienes_region_selva": "",
+                    "servicios_region_selva": "",
+                    "items": [
+                          {
+                             "unidad_de_medida": "NIU",
+                             "codigo": "001",
+                             "codigo_producto_sunat": "10000000",
+                             "descripcion": "DETALLE DEL PRODUCTO",
+                             "cantidad": 1,
+                             "valor_unitario": 500,
+                             "precio_unitario": 590,
+                             "descuento": "",
+                             "subtotal": 500,
+                             "tipo_de_igv": 1,
+                    "igv": 90,
+                    "total": 590,
+                    "anticipo_regularizacion": false,
+                    "anticipo_documento_serie": "",
+                    "anticipo_documento_numero": ""
+                    }, {
+                    "unidad_de_medida": "ZZ",
+                    "codigo": "001",
+                    "codigo_producto_sunat": "20000000",
+                    "descripcion": "DETALLE DEL SERVICIO",
+                    "cantidad": 5,
+                    "valor_unitario": 20,
+                    "precio_unitario": 23.60,
+                    "descuento": "",
+                    "subtotal": 100,
+                    "tipo_de_igv": 1,
+                    "igv": 18,
+                    "total": 118,
+                    "anticipo_regularizacion": false,
+                    "anticipo_documento_serie": "",
+                    "anticipo_documento_numero": ""
+                    }
+                    ],
+                    "guias": [
+                            {
+                                "guia_tipo": 1,
+                                "guia_serie_numero": "0001-23"
+                            }
+                    ]
+            },
+            headers: {
+                'Authorization': '390c1fd7c71f46379a59d4c6d1a0c23ef7c7c3ab16cf414a8298da7a58d1698c',
+                'Content-Type' : 'application/json'
+            },
+
+        });
+
     }
 
     const agregarProducto = async () => {
@@ -149,16 +252,14 @@ const NuevaVenta = () => {
         setDeshabilitarValidacion(true);       
     }
 
-    const presentaciones = (presentacion, numero) =>{
+    const presentaciones = (presentacion) =>{
         const getPresentaciones = async () =>{
             try {
                 console.log("activaremos el axios");
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${presentacion}`);
                 console.log("Resultado de axios para presentaciones: ",res.data);
                 let arrayData= res.data.map(item => (item.presentacion))
-                let arrayProv = [...listaPresentacion,[]]
-                arrayProv[numero-1]= arrayData
-                setListaPresentacion(arrayProv);
+                setListaPresentacion([...arrayData]);
             } catch (error) {
                 console.error(error);
             }
@@ -171,20 +272,8 @@ const NuevaVenta = () => {
             try {
                 console.log(elemento);
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${elemento.descripcionLista}&busquedaPorPresentacion=${elemento.presentacionLista}`);
-                
-                let arrayProv = [...codigoLista];
-                arrayProv[numeroItem-1] = res.data[0].codigo;
-                setCodigoLista(arrayProv)
-
-                let listaProv = [...lista]
-                listaProv[numeroItem-1].codigoLista = res.data[0].codigo;
-                listaProv[numeroItem-1].precioUnitarioLista = res.data[0].precioUnitario;
-                setLista(listaProv);
-
-                let arrayProvb = [...precioUnitarioLista];
-                arrayProvb[numeroItem-1] = res.data[0].precioUnitario;
-                setPrecioUnitarioLista(arrayProvb)
-
+                setCodigoLista(res.data[0].codigo)
+                setPrecioUnitario(res.data[0].precioUnitario)
             } catch (error) {
                 console.error(error);
             }
@@ -276,6 +365,51 @@ const NuevaVenta = () => {
         setTotalPagar(sumaTotal.toFixed(2));
     }
 
+    const completarDatosCliente = (e) =>{
+        console.log("HH")
+        let inputNroDoc = e.target
+        console.log(inputNroDoc)
+        let inputNombreCliente = document.querySelector("input[name='nombreCliente']")
+        let inputEmailCliente = document.querySelector("input[name='emailCliente']")
+        let inputCelular = document.querySelector("input[name='celular']")
+        let list = inputNroDoc.getAttribute('list')
+        let options = document.querySelectorAll('#' + list + ' option')
+        let inputValue = inputNroDoc.value
+        console.log(inputNroDoc.value)
+        console.log(inputCelular.value)
+        // console.log(options[0])
+
+        // inputNombreCliente.value = "Hanhu"
+        // inputEmailCliente.value = "hans.e.huiza.n@gmail.com"
+        // inputCelular = "991570362"
+
+        // setNombreCliente(inputNombreCliente.value)
+        // setEmailCliente(inputEmailCliente.value)
+        // setCelular(inputCelular)
+
+        // console.log(inputNombreCliente);
+
+
+        for(let i = 0; i < options.length; i++) {
+            let option = options[i];
+    
+            if(option.innerText === inputValue) {
+                inputNroDoc.value = option.getAttribute('data-doc-cliente')
+                inputNombreCliente.value = option.getAttribute('data-nombre-cliente')
+                inputEmailCliente.value = option.getAttribute('data-email-cliente')
+                inputCelular.value = option.getAttribute('data-celular')
+
+                break;
+            }
+        }
+
+        setNumeroDocumentoCliente(inputNroDoc.value)
+        setNombreCliente(inputNombreCliente.value)
+        setEmailCliente(inputEmailCliente.value)
+        setCelular(parseInt(inputCelular.value))
+        console.log("celular");
+    }
+
     const manejadorEntrada = (event) =>{
         let numeroItem = event.target.id;
         let name=event.target.name;
@@ -284,7 +418,7 @@ const NuevaVenta = () => {
                 let listaProvDescripcion = [...lista]
                 listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;
                 setLista(listaProvDescripcion)
-                presentaciones(event.target.value, numeroItem)
+                presentaciones(event.target.value)
                 break;
             case 'presentacion':
                 let listaProvPresentacion = [...lista]
@@ -308,6 +442,13 @@ const NuevaVenta = () => {
                 let listaProvb = [...descuentoLista]
                 listaProvb[numeroItem-1]=event.target.value;
                 setDescuentoLista(listaProvb);
+                completarCampos(numeroItem)
+                break;
+            case 'numeroDocumentoCliente':
+                // let listaProvPresentacion = [...lista]
+                // listaProvPresentacion[numeroItem-1].presentacionLista = event.target.value;
+                // setLista(listaProvPresentacion)
+                completarDatosCliente(event)
                 break;
             default:
                 break;
@@ -363,9 +504,9 @@ const NuevaVenta = () => {
                         </thead>
                         <tbody>
                             {
-                                lista.map(valor=> (
+                                lista.map(id => (
                                     <tr>
-                                        <th>{valor.numeroLista}</th>
+                                        <th>{id.numeroLista}</th>
                                         <td>
                                             <input id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
                                             placeholder="Ingrese un producto" list="listaproductos" disabled={!valor.modoValidar} value={valor.descripcionLista} />
@@ -449,7 +590,15 @@ const NuevaVenta = () => {
                     </div>
                     <div>
                         <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
-                        <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente"></input>
+                        {/* <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente" required></input> */}
+                        <input className="form-control is-valid" name="numeroDocumentoCliente" type="search" onChange={manejadorEntrada}  list="listaclientes" />
+                        <datalist id="listaclientes">
+                                {
+                                    listaProductos.map((item) =>
+                                        (<option data-nombre-cliente="Hans" data-email-cliente="hans.e.huiza.n@gmail.com" data-celular="991570362" data-doc-cliente={item}>{item} 123</option>)
+                                    )
+                                }
+                        </datalist>
                     </div>
                     <div>
                         <label for="nombreCliente" className="form-label">Nombre del cliente</label>
@@ -461,7 +610,7 @@ const NuevaVenta = () => {
                     </div>
                     <div>
                         <label className="form-label" for="celular">Celular</label>
-                        <input onChange={ e => setCelular(e.target.value) } className="form-control" type="tel" name="celular" id="celular" pattern="[0-9]{9}"></input>
+                        <input onChange={ e => setCelular(parseInt(e.target.value)) } className="form-control" type="tel" name="celular" id="celular" pattern="[0-9]{9}"></input>
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Provincia</label>
