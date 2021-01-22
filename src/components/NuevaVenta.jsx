@@ -56,6 +56,8 @@ const NuevaVenta = () => {
     const [totalLista, setTotalLista] = useState([0])
     const [modoValidar, setModoValidar] = useState([true])
     const [numeracion, setNumeracion] = useState(false)
+    const [detenerCreacion, setDetenerCreacion] = useState(false)
+    const [deshabilitarValidacion, setDeshabilitarValidacion] = useState(true)
 
     useEffect(() => {
         const getProducts = async () =>{
@@ -143,7 +145,8 @@ const NuevaVenta = () => {
             }
         ]);
         console.log("Estoy asignando la siguiente numeracion:" , tamanoLista+1);
-        // reiniciarNumeracion();        
+        setDetenerCreacion(true);
+        setDeshabilitarValidacion(true);       
     }
 
     const presentaciones = (presentacion, numero) =>{
@@ -187,6 +190,7 @@ const NuevaVenta = () => {
             }
         }
         getCodigoYprecioUnitario();
+        setDeshabilitarValidacion(false);
     }
     useEffect(() => {
 
@@ -233,6 +237,7 @@ const NuevaVenta = () => {
         modoValidarProv[numeroItem-1].modoValidar= false;
         console.log("Esta lista se imprime al final de calculo final", lista);
         setLista(modoValidarProv);
+        setDetenerCreacion(false)
     }
 
     const eliminarFila = (numeroItem) => {
@@ -285,7 +290,7 @@ const NuevaVenta = () => {
                 let listaProvPresentacion = [...lista]
                 listaProvPresentacion[numeroItem-1].presentacionLista = event.target.value;
                 setLista(listaProvPresentacion)
-                setPresentacion([...presentacion, event.target.value, ])
+                setPresentacion([...presentacion, event.target.value])
                 completarCampos(numeroItem)
                 break;
             case 'cantidad':
@@ -398,7 +403,7 @@ const NuevaVenta = () => {
                                         <td>
                                             {
                                                 valor.modoValidar?
-                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm">Validar</button>:
+                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm" disabled={deshabilitarValidacion} >Validar</button>:
                                                 <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" >Eliminar</button>
                                             }
                                         </td>
@@ -408,7 +413,7 @@ const NuevaVenta = () => {
                         </tbody>
                     </table>
                     <div className="d-flex justify-content-between">
-                        <button type="button" className="btn btn-outline-danger" onClick={agregarProducto}>AGREGAR PRODUCTO</button>
+                        <button type="button" className="btn btn-outline-danger" onClick={agregarProducto} disabled={detenerCreacion} >AGREGAR PRODUCTO</button>
                         <p class="fs-5 me-5" >{ `TOTAL: S/. ${totalPagar}`}</p>
                     </div>
                 </div>
