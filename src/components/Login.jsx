@@ -3,37 +3,124 @@ import React from 'react';
 import { auth} from '../firebase'
 import { withRouter } from "react-router-dom";
 // import {db} from '../firebase';
+import axios from "axios"
+
 
 const Login = (props) => {
-    
     // React.useEffect(() => {
-    //   let cantidadInicial= 19;
-    //   let intervalo = 10; 
-    //   let DocumentoVentaRef = db.collection('Usuario').doc('bb23WWdq9Idmujt3p6K7').collection('DocumentoVenta')
-    //   const cargar = async() =>{
-    //     for (let i = cantidadInicial; i < (cantidadInicial+intervalo); i++) {
-    //       await DocumentoVentaRef.add({
-    //               cantidad:i,
-    //               tipoDocumento:"Boleta",
-    //               serie:"B012",
-    //               numero: i,
-    //               cliente:"Ronald(C)",
-    //               categoria:"Galletas",
-    //               producto:"vainilla",
-    //               descuento: 0,
-    //               precioUnitario: 10.5,
-    //               vendedor: "Luis",
-    //               monto:10.8,
-    //               fecha: 1613032899000,                  
-    //               local: "Pepa grande",
-    //               estado:"Creado",
-    //               ventasMedio: "Celular",
-    //               metodoPago: "Tarjeta",
-    //               mes: "Febrero"
-    //       });
-    //     }
-    //   } 
-    //   cargar();
+    //   console.log("inicio el axios para enviar a nubefact");
+    //   const emitir = async () =>{
+    //     const documento = {
+    //       operacion: "generar_comprobante",
+    //       tipo_de_comprobante: 1,
+    //       serie: "FFF1",
+    //       numero:54,
+    //       sunat_transaction: 1,
+    //       cliente_tipo_de_documento: 6,
+    //       cliente_numero_de_documento: "20600695771",
+    //       cliente_denominacion: "NUBEFACT SA",
+    //       cliente_direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
+    //       cliente_email: "lcastillov123@gmail.com",
+    //       cliente_email_1: "",
+    //       cliente_email_2: "",
+    //       fecha_de_emision: "22-01-2021",
+    //       fecha_de_vencimiento: "",
+    //       moneda: 1,
+    //       tipo_de_cambio: "",
+    //       porcentaje_de_igv: 18.00,
+    //       descuento_global: "",
+    //       total_descuento: "",
+    //       total_anticipo: "",
+    //       total_gravada: 600,
+    //       total_inafecta: "",
+    //       total_exonerada: "",
+    //       total_igv: 108,
+    //       total_gratuita: "",
+    //       total_otros_cargos: "",
+    //       total: 708,
+    //       percepcion_tipo: "",
+    //       percepcion_base_imponible: "",
+    //       total_percepcion: "",
+    //       total_incluido_percepcion: "",
+    //       total_impuestos_bolsas: "",
+    //       detraccion: false,
+    //       observaciones: "",
+    //       documento_que_se_modifica_tipo: "",
+    //       documento_que_se_modifica_serie: "",
+    //       documento_que_se_modifica_numero: "",
+    //       tipo_de_nota_de_credito: "",
+    //       tipo_de_nota_de_debito: "",
+    //       enviar_automaticamente_a_la_sunat: true,
+    //       enviar_automaticamente_al_cliente: true,
+    //       condiciones_de_pago: "",
+    //       medio_de_pago: "",
+    //       placa_vehiculo: "",
+    //       orden_compra_servicio: "",  
+    //       formato_de_pdf: "",
+    //       generado_por_contingencia: "",
+    //       bienes_region_selva: "",
+    //       servicios_region_selva: "",
+    //       items: [
+    //             {
+    //               unidad_de_medida: "NIU",
+    //               codigo: "001",
+    //               codigo_producto_sunat: "10000000",
+    //               descripcion: "DETALLE DEL PRODUCTO",
+    //               cantidad: 1,
+    //               valor_unitario: 500,
+    //               precio_unitario: 590,
+    //               descuento: "",
+    //               subtotal: 500,
+    //               tipo_de_igv: 1,
+    //               igv: 90,
+    //               total: 590,
+    //               anticipo_regularizacion: false,
+    //               anticipo_documento_serie: "",
+    //               anticipo_documento_numero: ""
+    //             },
+    //             {
+    //               unidad_de_medida: "NIU",
+    //               codigo: "001",
+    //               codigo_producto_sunat: "20000000",
+    //               descripcion: "DETALLE DEL PRODUCTO",
+    //               cantidad: 1,
+    //               valor_unitario: 20,
+    //               precio_unitario: 23.60,
+    //               descuento: "",
+    //               subtotal: 100,
+    //               tipo_de_igv: 1,
+    //               igv: 18,
+    //               total: 118,
+    //               anticipo_regularizacion: false,
+    //               anticipo_documento_serie: "",
+    //               anticipo_documento_numero: ""
+    //             }
+    //       ],
+    //       guias: [
+    //               {
+    //                   guia_tipo: 1,
+    //                   guia_serie_numero: "0001-23"
+    //               }
+    //       ]    
+    //     };
+
+    //     const config = {
+    //       headers: { 
+    //         "Content-Type" : "application/json"
+    //       }
+    //     };
+
+        
+    //     await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
+    //     .then(function (params) {
+    //       console.log(params.data);
+    //     })
+    //     .catch(function (params) {
+    //       console.log(params.data);
+    //     })       
+        
+    //   };
+    //   emitir();
     // }, []);
 
 

@@ -595,9 +595,9 @@ const NuevaVenta = () => {
                         <label for="tipoRegalo" className="form-label">Tipo de regalo</label>
                         <select onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
                             <option selected>Elige el tipo de regalo</option>
-                            <option value="muestra">Regalo muestra</option>
-                            <option value="tipo regalo 2">Regalo tipo 2</option>
-                            <option value="tipo regalo 3">Regalo tipo 3</option>
+                            <option value="muestra">Regalo probadores</option>
+                            <option value="tipo regalo 2">Regalo muestra x50</option>
+                            <option value="tipo regalo 3">Regalo muestra x100</option>
                         </select>
                     </div>
                     <div className="mb-3">
@@ -680,6 +680,7 @@ const NuevaVenta = () => {
                             selected={dateInicio} 
                             onChange={date => setDateInicio(date)} 
                             locale="es"
+                            disabled="true"
                             customInput={<ExampleCustomInput />} 
                             dateFormat="dd/MM/yyyy"
                         />
