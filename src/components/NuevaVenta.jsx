@@ -519,9 +519,9 @@ const NuevaVenta = () => {
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">COD</th>
                                 <th scope="col">DESCRIPCIÓN</th>
-                                <th scope="col"></th>
+                                <th scope="col">PRESENTACIÓN</th>
+                                <th scope="col">COD</th>
                                 <th scope="col">CANT</th>
                                 <th scope="col">PU</th>
                                 <th scope="col">DSCTO</th>
@@ -536,14 +536,13 @@ const NuevaVenta = () => {
                                 lista.map(valor => (
                                     <tr>
                                         <th>{valor.numeroLista}</th>
-                                        <td>{valor.codigoLista}</td>
                                         <td>
                                             <input id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
                                             placeholder="Ingrese un producto" list="listaproductos" disabled={!valor.modoValidar} value={valor.descripcionLista} />
                                             <datalist id="listaproductos">
                                                     {
                                                         listaProductos.map((item) =>
-                                                            (<option value={item} />)
+                                                        (<option value={item} />)
                                                         )
                                                     }
                                             </datalist>
@@ -554,10 +553,11 @@ const NuevaVenta = () => {
                                                     {   
                                                         listaPresentacion[valor.numeroLista-1].map(
                                                             (item) =>(<option value={item}>{item}</option>)
-                                                        )
-                                                    }
+                                                            )
+                                                        }
                                             </select>
                                         </td>
+                                        <td>{valor.codigoLista}</td>
                                         <td>
                                             <input id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={valor.cantidadLista}
                                              onChange={manejadorEntrada}  list="off" autoComplete="off" disabled={!valor.modoValidar}/>
