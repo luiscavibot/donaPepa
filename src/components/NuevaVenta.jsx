@@ -96,140 +96,118 @@ const NuevaVenta = () => {
 
     const enviarDatos = (e) => {
         e.preventDefault()
+        console.log("inicio el axios para enviar la data final a nubefact");
+        const emitir = async () =>{
+          const documento = {
+          operacion: "generar_comprobante",
+          tipo_de_comprobante: 1,
+          serie: "FFF1",
+          numero:56,
+          sunat_transaction: 1,
+          cliente_tipo_de_documento: 6,
+          cliente_numero_de_documento: "20600695771",
+          cliente_denominacion: "Clientaso",
+          cliente_direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
+          cliente_email: "lcastillov123@gmail.com",
+          cliente_email_1: "",
+          cliente_email_2: "",
+          fecha_de_emision: "23-01-2021",
+          fecha_de_vencimiento: "",
+          moneda: 1,
+          tipo_de_cambio: "",
+          porcentaje_de_igv: 18.00,
+          descuento_global: "",
+          total_descuento: "",
+          total_anticipo: "",
+          total_gravada: 600,
+          total_inafecta: "",
+          total_exonerada: "",
+          total_igv: 108,
+          total_gratuita: "",
+          total_otros_cargos: "",
+          total: 708,
+          percepcion_tipo: "",
+          percepcion_base_imponible: "",
+          total_percepcion: "",
+          total_incluido_percepcion: "",
+          total_impuestos_bolsas: "",
+          detraccion: false,
+          observaciones: "",
+          documento_que_se_modifica_tipo: "",
+          documento_que_se_modifica_serie: "",
+          documento_que_se_modifica_numero: "",
+          tipo_de_nota_de_credito: "",
+          tipo_de_nota_de_debito: "",
+          enviar_automaticamente_a_la_sunat: true,
+          enviar_automaticamente_al_cliente: true,
+          condiciones_de_pago: "",
+          medio_de_pago: "",
+          placa_vehiculo: "",
+          orden_compra_servicio: "",  
+          formato_de_pdf: "",
+          generado_por_contingencia: "",
+          bienes_region_selva: "",
+          servicios_region_selva: "",
+          items: [
+                {
+                  unidad_de_medida: "NIU",
+                  codigo: "001",
+                  codigo_producto_sunat: "10000000",
+                  descripcion: "DETALLE DEL PRODUCTO",
+                  cantidad: 1,
+                  valor_unitario: 500,
+                  precio_unitario: 590,
+                  descuento: "",
+                  subtotal: 500,
+                  tipo_de_igv: 1,
+                  igv: 90,
+                  total: 590,
+                  anticipo_regularizacion: false,
+                  anticipo_documento_serie: "",
+                  anticipo_documento_numero: ""
+                },
+                {
+                  unidad_de_medida: "NIU",
+                  codigo: "001",
+                  codigo_producto_sunat: "20000000",
+                  descripcion: "DETALLE DEL PRODUCTO",
+                  cantidad: 1,
+                  valor_unitario: 20,
+                  precio_unitario: 23.60,
+                  descuento: "",
+                  subtotal: 100,
+                  tipo_de_igv: 1,
+                  igv: 18,
+                  total: 118,
+                  anticipo_regularizacion: false,
+                  anticipo_documento_serie: "",
+                  anticipo_documento_numero: ""
+                }
+          ],
+          guias: [
+                  {
+                      guia_tipo: 1,
+                      guia_serie_numero: "0001-23"
+                  }
+          ]    
+        };
 
-        axios.post('http://46.183.113.134:3000/api/ventas', {
-            lista,
-            usuario,
-            serie,
-            numero,
-            tipoRegalo,
-            cantidadRegalo,
-            tipoDocumentoCliente,
-            numeroDocumentoCliente,
-            nombreCliente,
-            tipoMoneda,
-            igv,
-            celular,
-            emailCliente,
-            condicionPago,
-            numeroOperacion,
-            provincia,
-            canalVenta,
-            delivery,
-            direccion,
-            referencias,
-            gravada,
-            descuentoTotal,
-            totalIgv,
-            totalDelivery,
-            totalPagar,
+        const config = {
+          headers: { 
+            "Content-Type" : "application/json"
+          }
+        };
+
+        await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
+        .then(function (params) {
+          console.log(params.data);
         })
-
-        // axios({
-        //     method: 'post',
-        //     url: 'https://api.nubefact.com/api/v1/f1b05a3b-bffe-43ff-acc2-3fd4bfe2f5ff',
-        //     data: {
-                
-        //             "operacion": "generar_comprobante",
-        //             "tipo_de_comprobante": 1,
-        //             "serie": "FFF1",
-        //             "numero":22,
-        //             "sunat_transaction": 1,
-        //             "cliente_tipo_de_documento": 6,
-        //             "cliente_numero_de_documento": "20600695771",
-        //             "cliente_denominacion": "NUBEFACT SA",
-        //             "cliente_direccion": "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
-        //             "cliente_email": "tucliente@gmail.com",
-        //             "cliente_email_1": "",
-        //             "cliente_email_2": "",
-        //             "fecha_de_emision": "21-01-2021",
-        //             "fecha_de_vencimiento": "",
-        //             "moneda": 1,
-        //             "tipo_de_cambio": "",
-        //             "porcentaje_de_igv": 18.00,
-        //             "descuento_global": "",
-        //             "total_descuento": "",
-        //             "total_anticipo": "",
-        //             "total_gravada": 600,
-        //             "total_inafecta": "",
-        //             "total_exonerada": "",
-        //             "total_igv": 108,
-        //             "total_gratuita": "",
-        //             "total_otros_cargos": "",
-        //             "total": 708,
-        //             "percepcion_tipo": "",
-        //             "percepcion_base_imponible": "",
-        //             "total_percepcion": "",
-        //             "total_incluido_percepcion": "",
-        //             "total_impuestos_bolsas": "",
-        //             "detraccion": false,
-        //             "observaciones": "",
-        //             "documento_que_se_modifica_tipo": "",
-        //             "documento_que_se_modifica_serie": "",
-        //             "documento_que_se_modifica_numero": "",
-        //             "tipo_de_nota_de_credito": "",
-        //             "tipo_de_nota_de_debito": "",
-        //             "enviar_automaticamente_a_la_sunat": true,
-        //             "enviar_automaticamente_al_cliente": false,
-        //             "condiciones_de_pago": "",
-        //             "medio_de_pago": "",
-        //             "placa_vehiculo": "",
-        //             "orden_compra_servicio": "",  
-        //             "formato_de_pdf": "",
-        //             "generado_por_contingencia": "",
-        //             "bienes_region_selva": "",
-        //             "servicios_region_selva": "",
-        //             "items": [
-        //                   {
-        //                      "unidad_de_medida": "NIU",
-        //                      "codigo": "001",
-        //                      "codigo_producto_sunat": "10000000",
-        //                      "descripcion": "DETALLE DEL PRODUCTO",
-        //                      "cantidad": 1,
-        //                      "valor_unitario": 500,
-        //                      "precio_unitario": 590,
-        //                      "descuento": "",
-        //                      "subtotal": 500,
-        //                      "tipo_de_igv": 1,
-        //             "igv": 90,
-        //             "total": 590,
-        //             "anticipo_regularizacion": false,
-        //             "anticipo_documento_serie": "",
-        //             "anticipo_documento_numero": ""
-        //             }, {
-        //             "unidad_de_medida": "ZZ",
-        //             "codigo": "001",
-        //             "codigo_producto_sunat": "20000000",
-        //             "descripcion": "DETALLE DEL SERVICIO",
-        //             "cantidad": 5,
-        //             "valor_unitario": 20,
-        //             "precio_unitario": 23.60,
-        //             "descuento": "",
-        //             "subtotal": 100,
-        //             "tipo_de_igv": 1,
-        //             "igv": 18,
-        //             "total": 118,
-        //             "anticipo_regularizacion": false,
-        //             "anticipo_documento_serie": "",
-        //             "anticipo_documento_numero": ""
-        //             }
-        //             ],
-        //             "guias": [
-        //                     {
-        //                         "guia_tipo": 1,
-        //                         "guia_serie_numero": "0001-23"
-        //                     }
-        //             ]
-        //     },
-        //     headers: {
-        //         'Authorization': '39dd23c2f61344b0b4df5b114654a75f8815261af98a4abb904a1c2cf10899a4',
-        //         'Content-Type' : 'application/json'
-        //     },
-
-        // }).then(function (response) {
-        //     console.log(response);
-        // })
+        .catch(function (params) {
+          console.log(params.data);
+        })       
         
+      };
+      emitir();    
 
     }
 
@@ -251,7 +229,6 @@ const NuevaVenta = () => {
                 modoValidar: true,
             }
         ]);
-        console.log("Estoy asignando la siguiente numeracion:" , tamanoLista+1);
         setDetenerCreacion(true);
         setDeshabilitarValidacion(true);       
     }
@@ -259,9 +236,9 @@ const NuevaVenta = () => {
     const presentaciones = (descripcion, numero) =>{
         const getPresentaciones = async () =>{
             try {
-                console.log("activaremos el axios");
+                console.log("activaremos el axios con la siguiente descricpion: ", descripcion);
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${descripcion}`);
-                console.log("Resultado de axios para presentaciones: ",res.data);
+                console.log("Resultado de axios para la descripcion recibida: ",res.data);
                 let arrayData= res.data.map(item => (item.presentacion))
                 let arrayProv = [...listaPresentacion,[]]
                 arrayProv[numero-1]= arrayData
@@ -280,7 +257,6 @@ const NuevaVenta = () => {
         let elemento = lista[numeroItem-1];
         const getCodigoYprecioUnitario = async () =>{
             try {
-                console.log(elemento);
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${elemento.descripcionLista}&busquedaPorPresentacion=${elemento.presentacionLista}`);
                 
                 let listaProvb = [...lista]
@@ -322,16 +298,11 @@ const NuevaVenta = () => {
     const calculoFinal = (numeroItem) => {
     
         // let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);
-        console.log(numeroItem);
         let listaProv = [...lista];
         console.log(listaProv);
-        console.log("precioUnitario: ", listaProv[numeroItem-1].precioUnitarioLista);
-        console.log("cantidadLista: ", listaProv[numeroItem-1].cantidadLista);
-        console.log("descuentoLista: ", listaProv[numeroItem-1].descuentoLista);
 
         let precioVenta = (listaProv[numeroItem-1].precioUnitarioLista*listaProv[numeroItem-1].cantidadLista)-listaProv[numeroItem-1].descuentoLista;
         
-        console.log("Esta lista se imprime en calculo final",listaProv);
         listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
         listaProv[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
         listaProv[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
@@ -350,7 +321,6 @@ const NuevaVenta = () => {
 
         let modoValidarProv = [...lista]
         modoValidarProv[numeroItem-1].modoValidar= false;
-        console.log("Esta lista se imprime al final de calculo final", lista);
         setLista(modoValidarProv);
         setDetenerCreacion(false)
     }
@@ -575,8 +545,8 @@ const NuevaVenta = () => {
                                         <td>
                                             {
                                                 valor.modoValidar?
-                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm" >Validar</button>:
-                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" >Eliminar</button>
+                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm" type="button" >Validar</button>:
+                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" type="button" >Eliminar</button>
                                             }
                                         </td>
                                     </tr>
@@ -750,7 +720,7 @@ const NuevaVenta = () => {
                     </div>
                 </div>
                 <div className="mb-3">
-                    <div className="border-bottom">Datos del cliente</div>
+                    {/* <div className="border-bottom">Datos del cliente</div>
                     <div>
                         <p className="m-0 me-1">Fecha</p>
                         <DatePicker 
@@ -761,7 +731,7 @@ const NuevaVenta = () => {
                             customInput={<ExampleCustomInput />} 
                             dateFormat="dd/MM/yyyy"
                         />
-                    </div>
+                    </div> */}
                     <div className="info-total mb-4">
                         <div className="row">
                             <div className="col-11">Gravada:</div>
