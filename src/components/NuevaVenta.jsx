@@ -3,6 +3,10 @@ import axios from 'axios'
 import DatePicker, {registerLocale} from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'date-fns/esm'
+import 'semantic-ui-css/semantic.min.css'
+import { Button } from 'semantic-ui-react'
+
+
 
 const NuevaVenta = () => {
 
@@ -13,7 +17,7 @@ const NuevaVenta = () => {
     // const [unidades, setUnidades] = useState('')
     // const [cantidad, setCantidad] = useState(0)
     // const [descuento, setDescuento] = useState(0)
-    // const [precioUnitario, setPrecioUnitario] = useState(0)
+    const [precioUnitario, setPrecioUnitario] = useState(0)
     // const [precioUnitarioIgv, setPrecioUnitarioIgv] = useState(0)
     // const [total, setTotal] = useState(0)
     const [usuario, setUsuario] = useState('')
@@ -22,12 +26,12 @@ const NuevaVenta = () => {
     const [tipoRegalo, setTipoRegalo] = useState('')
     const [cantidadRegalo, setCantidadRegalo] = useState(0)
     const [tipoDocumentoCliente, setTipoDocumentoCliente] = useState('')
-    const [numeroDocumentoCliente, setNumeroDocumentoCliente] = useState(0)
+    const [numeroDocumentoCliente, setNumeroDocumentoCliente] = useState('')
     const [dateInicio, setDateInicio] = useState(new Date())
     const [nombreCliente, setNombreCliente] = useState('')
     const [tipoMoneda, setTipoMoneda] = useState('')
     const [igv, setIgv] = useState(0.18)
-    const [celular, setCelular] = useState(0)
+    const [celular, setCelular] = useState('')
     const [emailCliente, setEmailCliente] = useState('')
     const [condicionPago, setCondicionPago] = useState('')
     const [numeroOperacion, setNumeroOperacion] = useState('')
@@ -58,6 +62,11 @@ const NuevaVenta = () => {
     const [numeracion, setNumeracion] = useState(false)
     const [detenerCreacion, setDetenerCreacion] = useState(false)
     const [deshabilitarValidacion, setDeshabilitarValidacion] = useState(true)
+    const [fijarPresentacion, setFijarPresentacion] = useState(false)
+    const [resultadoEmisionComprobante, setResultadoEmisionComprobante] = useState("")
+    const [tituloResultado, setTituloResultado] = useState("")
+    const [botonImprimir, setBotonImprimir] = useState(false)
+    const [linkDescarga, setLinkDescarga] = useState("")
 
     useEffect(() => {
         const getProducts = async () =>{
@@ -74,7 +83,7 @@ const NuevaVenta = () => {
     }, [])
 
     const ExampleCustomInput = ({ value, onClick }) => (
-        <div className="d-flex border align-items-center justify-content-between mt-3" onClick={onClick}>
+        <div className="d-flex border align-items-center justify-content-between form-control" onClick={onClick}>
           <div>{value}</div>
           <div>
               <i className="far fa-calendar p-1 rounded-3 text-center"></i>
@@ -95,34 +104,135 @@ const NuevaVenta = () => {
 
     const enviarDatos = (e) => {
         e.preventDefault()
+        console.log("inicio el axios para enviar la data final a nubefact");
+        const emitir = async () =>{
+          const documento = {
+          operacion: "generar_comprobante",
+          tipo_de_comprobante: 1,
+          serie: "FFF1",
+          numero:7,
+          sunat_transaction: 1,
+          cliente_tipo_de_documento: 6,
+          cliente_numero_de_documento: "20600695771",
+          cliente_denominacion: "Clientaso",
+          cliente_direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
+          cliente_email: "lcastillov123@gmail.com",
+          cliente_email_1: "",
+          cliente_email_2: "",
+          fecha_de_emision: "24-01-2021",
+          fecha_de_vencimiento: "",
+          moneda: 1,
+          tipo_de_cambio: "",
+          porcentaje_de_igv: 18.00,
+          descuento_global: "",
+          total_descuento: "",
+          total_anticipo: "",
+          total_gravada: 600,
+          total_inafecta: "",
+          total_exonerada: "",
+          total_igv: 108,
+          total_gratuita: "",
+          total_otros_cargos: "",
+          total: 708,
+          percepcion_tipo: "",
+          percepcion_base_imponible: "",
+          total_percepcion: "",
+          total_incluido_percepcion: "",
+          total_impuestos_bolsas: "",
+          detraccion: false,
+          observaciones: "",
+          documento_que_se_modifica_tipo: "",
+          documento_que_se_modifica_serie: "",
+          documento_que_se_modifica_numero: "",
+          tipo_de_nota_de_credito: "",
+          tipo_de_nota_de_debito: "",
+          enviar_automaticamente_a_la_sunat: true,
+          enviar_automaticamente_al_cliente: true,
+          condiciones_de_pago: "",
+          medio_de_pago: "",
+          placa_vehiculo: "",
+          orden_compra_servicio: "",  
+          formato_de_pdf: "",
+          generado_por_contingencia: "",
+          bienes_region_selva: "",
+          servicios_region_selva: "",
+          items: [
+                {
+                  unidad_de_medida: "NIU",
+                  codigo: "001",
+                  codigo_producto_sunat: "10000000",
+                  descripcion: "DETALLE DEL PRODUCTO",
+                  cantidad: 1,
+                  valor_unitario: 500,
+                  precio_unitario: 590,
+                  descuento: "",
+                  subtotal: 500,
+                  tipo_de_igv: 1,
+                  igv: 90,
+                  total: 590,
+                  anticipo_regularizacion: false,
+                  anticipo_documento_serie: "",
+                  anticipo_documento_numero: ""
+                },
+                {
+                  unidad_de_medida: "NIU",
+                  codigo: "001",
+                  codigo_producto_sunat: "20000000",
+                  descripcion: "DETALLE DEL PRODUCTO",
+                  cantidad: 1,
+                  valor_unitario: 20,
+                  precio_unitario: 23.60,
+                  descuento: "",
+                  subtotal: 100,
+                  tipo_de_igv: 1,
+                  igv: 18,
+                  total: 118,
+                  anticipo_regularizacion: false,
+                  anticipo_documento_serie: "",
+                  anticipo_documento_numero: ""
+                }
+          ],
+          guias: [
+                  {
+                      guia_tipo: 1,
+                      guia_serie_numero: "0001-23"
+                  }
+          ]    
+        };
 
-        axios.post('http://46.183.113.134:3000/api/ventas', {
-            lista,
-            usuario,
-            serie,
-            numero,
-            tipoRegalo,
-            cantidadRegalo,
-            tipoDocumentoCliente,
-            numeroDocumentoCliente,
-            nombreCliente,
-            tipoMoneda,
-            igv,
-            celular,
-            emailCliente,
-            condicionPago,
-            numeroOperacion,
-            provincia,
-            canalVenta,
-            delivery,
-            direccion,
-            referencias,
-            gravada,
-            descuentoTotal,
-            totalIgv,
-            totalDelivery,
-            totalPagar,
+        const config = {
+          headers: { 
+            "Content-Type" : "application/json"
+          }
+        };
+
+        await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
+        .then(function (params) {
+          console.log("se activó el then");
+          if (params.data.errors) {
+            setResultadoEmisionComprobante(params.data.errors);
+            setTituloResultado("error")
+          }else{
+            console.log(params.data);
+            setTituloResultado("exito")
+            if (params.data.aceptada_por_sunat) {
+                setResultadoEmisionComprobante(params.data.sunat_description);
+                setBotonImprimir(true);
+                setLinkDescarga(params.data.enlace_del_pdf);
+            }else{
+                setResultadoEmisionComprobante("Se emitió correctamente a NubeFact, pero no llegó aún a la SUNAT. Revise la plataforma de facturación o comuníquese con su proveedor");
+            }
+            
+          }
         })
+        .catch(function (params) {
+          console.log("se activó el catch");
+          console.log(params.data);
+          setResultadoEmisionComprobante(params.data.errors);
+        })       
+        
+      };
+      emitir();    
 
     }
 
@@ -144,21 +254,24 @@ const NuevaVenta = () => {
                 modoValidar: true,
             }
         ]);
-        console.log("Estoy asignando la siguiente numeracion:" , tamanoLista+1);
         setDetenerCreacion(true);
         setDeshabilitarValidacion(true);       
     }
 
-    const presentaciones = (presentacion, numero) =>{
+    const presentaciones = (descripcion, numero) =>{
         const getPresentaciones = async () =>{
             try {
-                console.log("activaremos el axios");
-                let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${presentacion}`);
-                console.log("Resultado de axios para presentaciones: ",res.data);
+                console.log("activaremos el axios con la siguiente descricpion: ", descripcion);
+                let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${descripcion}`);
+                console.log("Resultado de axios para la descripcion recibida: ",res.data);
                 let arrayData= res.data.map(item => (item.presentacion))
                 let arrayProv = [...listaPresentacion,[]]
                 arrayProv[numero-1]= arrayData
                 setListaPresentacion(arrayProv);
+                let listaProv = [...lista]
+                listaProv[numero-1].presentacionLista = res.data[0].presentacion;
+                console.log("la extracción es: ",res.data[0].presentacion);
+                setLista(listaProv)
             } catch (error) {
                 console.error(error);
             }
@@ -169,8 +282,11 @@ const NuevaVenta = () => {
         let elemento = lista[numeroItem-1];
         const getCodigoYprecioUnitario = async () =>{
             try {
-                console.log(elemento);
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${elemento.descripcionLista}&busquedaPorPresentacion=${elemento.presentacionLista}`);
+                
+                let listaProvb = [...lista]
+                listaProvb.presentacionLista = res.data[0].presentacion;
+                setLista(listaProvb)
                 
                 let arrayProv = [...codigoLista];
                 arrayProv[numeroItem-1] = res.data[0].codigo;
@@ -207,16 +323,11 @@ const NuevaVenta = () => {
     const calculoFinal = (numeroItem) => {
     
         // let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);
-        console.log(numeroItem);
         let listaProv = [...lista];
         console.log(listaProv);
-        console.log("precioUnitario: ", listaProv[numeroItem-1].precioUnitarioLista);
-        console.log("cantidadLista: ", listaProv[numeroItem-1].cantidadLista);
-        console.log("descuentoLista: ", listaProv[numeroItem-1].descuentoLista);
 
         let precioVenta = (listaProv[numeroItem-1].precioUnitarioLista*listaProv[numeroItem-1].cantidadLista)-listaProv[numeroItem-1].descuentoLista;
         
-        console.log("Esta lista se imprime en calculo final",listaProv);
         listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
         listaProv[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
         listaProv[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
@@ -235,23 +346,17 @@ const NuevaVenta = () => {
 
         let modoValidarProv = [...lista]
         modoValidarProv[numeroItem-1].modoValidar= false;
-        console.log("Esta lista se imprime al final de calculo final", lista);
         setLista(modoValidarProv);
         setDetenerCreacion(false)
     }
 
     const eliminarFila = (numeroItem) => {
         let sumaTotal = 0.00;
-        console.log(numeroItem);
-        console.log("Se activó el boton eleiminar");
-        console.log("Lista original:" ,lista);
+        //algoritmo para sacar un elemento en especifico de la matriz lista y reenumerarla
         let listaProv = [...lista]        
         let numerador = 0;
         let i = numeroItem-1;
-        console.log(i);
         let nuevaLista = listaProv.filter((value, index )=>{return index!==i});
-        console.log("Cadena reducida",nuevaLista);
-
         let listaRenumerada = nuevaLista.map( function(obj){
             numerador++;
             sumaTotal = sumaTotal + (obj.totalLista*1.0);
@@ -268,12 +373,63 @@ const NuevaVenta = () => {
             robj["totalLista"]= obj.totalLista;
             robj["modoValidar"]= obj.modoValidar;
             return robj
-            // sumaTotal = sumaTotal + (item.totalLista*1.0);
         })
-        console.log("Lista Final", listaRenumerada);
         setLista(listaRenumerada);
-        console.log("Suma Total", sumaTotal);
         setTotalPagar(sumaTotal.toFixed(2));
+
+        let provListaPresentacion = [...listaPresentacion]       
+        // let numeradorb = 0;
+        let nuevaListab = provListaPresentacion.filter((value, index )=>{return index!==i});    
+        setListaPresentacion(nuevaListab);
+ 
+
+
+
+    }
+
+    const completarDatosCliente = (e) =>{
+        console.log("HH")
+        let inputNroDoc = e.target
+        console.log(inputNroDoc)
+        let inputNombreCliente = document.querySelector("input[name='nombreCliente']")
+        let inputEmailCliente = document.querySelector("input[name='emailCliente']")
+        let inputCelular = document.querySelector("input[name='celular']")
+        let list = inputNroDoc.getAttribute('list')
+        let options = document.querySelectorAll('#' + list + ' option')
+        let inputValue = inputNroDoc.value
+        console.log(inputNroDoc.value)
+        console.log(inputCelular.value)
+        // console.log(options[0])
+
+        // inputNombreCliente.value = "Hanhu"
+        // inputEmailCliente.value = "hans.e.huiza.n@gmail.com"
+        // inputCelular = "991570362"
+
+        // setNombreCliente(inputNombreCliente.value)
+        // setEmailCliente(inputEmailCliente.value)
+        // setCelular(inputCelular)
+
+        // console.log(inputNombreCliente);
+
+
+        for(let i = 0; i < options.length; i++) {
+            let option = options[i];
+    
+            if(option.innerText === inputValue) {
+                inputNroDoc.value = option.getAttribute('data-doc-cliente')
+                inputNombreCliente.value = option.getAttribute('data-nombre-cliente')
+                inputEmailCliente.value = option.getAttribute('data-email-cliente')
+                inputCelular.value = option.getAttribute('data-celular')
+
+                break;
+            }
+        }
+
+        setNumeroDocumentoCliente(inputNroDoc.value)
+        setNombreCliente(inputNombreCliente.value)
+        setEmailCliente(inputEmailCliente.value)
+        setCelular(inputCelular.value)
+        // console.log("celular");
     }
 
     const manejadorEntrada = (event) =>{
@@ -285,6 +441,7 @@ const NuevaVenta = () => {
                 listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;
                 setLista(listaProvDescripcion)
                 presentaciones(event.target.value, numeroItem)
+                completarCampos(numeroItem)
                 break;
             case 'presentacion':
                 let listaProvPresentacion = [...lista]
@@ -308,6 +465,13 @@ const NuevaVenta = () => {
                 let listaProvb = [...descuentoLista]
                 listaProvb[numeroItem-1]=event.target.value;
                 setDescuentoLista(listaProvb);
+                // completarCampos(numeroItem)
+                break;
+            case 'numeroDocumentoCliente':
+                // let listaProvPresentacion = [...lista]
+                // listaProvPresentacion[numeroItem-1].presentacionLista = event.target.value;
+                // setLista(listaProvPresentacion)
+                completarDatosCliente(event)
                 break;
             default:
                 break;
@@ -330,17 +494,18 @@ const NuevaVenta = () => {
             {/* http://46.183.113.134:3000/api/ventas */}
 
             <form onSubmit={ enviarDatos }>
-            {/* <div> */}
-                <div className="wrapper-client-info">
-                    <div className="owner-info">
+                <div className="wrapper-client-info row">
+                    <div className="owner-info col-5">
                         <div className="text-uppercase">Jaramillo Torero de Paez Manuela Maria</div>
                         <div>Av. Tacna Nro. 488</div>
                     </div>
-                    <div className="ruc-info">
-                        <div>RUC 10095588986</div>
-                        <div className="text-uppercase">Nota de venta electrónica</div>
+                    <div className="ruc-info col-7 d-flex justify-content-center">
                         <div>
-                            <span>NV10</span>-<span>9281</span>
+                            <div>RUC 10095588986</div>
+                            <div className="text-uppercase">Nota de venta electrónica</div>
+                            <div>
+                                <span>NV10</span>-<span>9281</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -363,7 +528,7 @@ const NuevaVenta = () => {
                         </thead>
                         <tbody>
                             {
-                                lista.map(valor=> (
+                                lista.map(valor => (
                                     <tr>
                                         <th>{valor.numeroLista}</th>
                                         <td>
@@ -372,19 +537,19 @@ const NuevaVenta = () => {
                                             <datalist id="listaproductos">
                                                     {
                                                         listaProductos.map((item) =>
-                                                            (<option value={item} />)
+                                                        (<option value={item} />)
                                                         )
                                                     }
                                             </datalist>
                                         </td>
                                         <td>
                                             <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} value={valor.presentacionLista} disabled={!valor.modoValidar}>
-                                                    <option value="">-</option>
+                                                    
                                                     {   
                                                         listaPresentacion[valor.numeroLista-1].map(
                                                             (item) =>(<option value={item}>{item}</option>)
-                                                        )
-                                                    }
+                                                            )
+                                                        }
                                             </select>
                                         </td>
                                         <td>{valor.codigoLista}</td>
@@ -405,8 +570,8 @@ const NuevaVenta = () => {
                                         <td>
                                             {
                                                 valor.modoValidar?
-                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm" disabled={deshabilitarValidacion} >Validar</button>:
-                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" >Eliminar</button>
+                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm" type="button" >Validar</button>:
+                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" type="button" >Eliminar</button>
                                             }
                                         </td>
                                     </tr>
@@ -414,132 +579,357 @@ const NuevaVenta = () => {
                             }
                         </tbody>
                     </table>
-                    <div className="d-flex justify-content-between">
-                        <button type="button" className="btn btn-outline-danger" onClick={agregarProducto} disabled={detenerCreacion} >AGREGAR PRODUCTO</button>
+                    {/* <div className="border-bottom my-4"></div> */}
+                    <div className="d-flex justify-content-between mt-4">
+                        <button type="button" className="btn btn-outline-danger" onClick={agregarProducto} disabled={detenerCreacion} >+ AGREGAR PRODUCTO</button>
                         <p class="fs-5 me-5" >{ `TOTAL: S/. ${totalPagar}`}</p>
                     </div>
                 </div>
+                <div className="border-bottom my-4"></div>
                 <div className="mb-3">
-                    <div className="border-bottom">Datos de regalos</div>
-                    <div className="mb-3">
-                        {/* <label for="exampleInputEmail1" className="form-label">Email address</label> */}
-                        <label for="tipoRegalo" className="form-label">Tipo de regalo</label>
-                        <select onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
-                            <option selected>Elige el tipo de regalo</option>
-                            <option value="muestra">Regalo muestra</option>
-                            <option value="tipo regalo 2">Regalo tipo 2</option>
-                            <option value="tipo regalo 3">Regalo tipo 3</option>
-                        </select>
-                    </div>
-                    <div className="mb-3">
-                        <label for="cantidadRegalo">Cantidad (del 1 al 5):</label>
-                        <input onChange={ e => setCantidadRegalo(e.target.value) } type="number" id="cantidadRegalo" name="cantidadRegalo" min="0" max="5"></input>
+                    <div className="mb-3 sub-title">Datos de regalos</div>
+                    <div className="row">
+                        <div className="col-3 mb-3">
+                            {/* <label for="exampleInputEmail1" className="form-label">Email address</label> */}
+                            <label for="tipoRegalo" className="form-label">Tipo de regalo</label>
+                            <select onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
+                                <option selected>Elige el tipo de regalo</option>
+                                <option value="muestra">Regalo muestra</option>
+                                <option value="tipo regalo 2">Regalo tipo 2</option>
+                                <option value="tipo regalo 3">Regalo tipo 3</option>
+                            </select>
+                        </div>
+                        <div className="col-1 mb-3">
+                            <label for="cantidadRegalo" className="form-label">Cantidad</label>
+                            <input className="form-control" onChange={ e => setCantidadRegalo(parseInt(e.target.value)) } value={cantidadRegalo} type="number" id="cantidadRegalo" name="cantidadRegalo" min="0" max="5"></input>
+                        </div>
                     </div>
                 </div>
-                <div className="mb-3">
-                    <div className="border-bottom">Datos del cliente</div>
-                    <div>
-                        <label className="form-label">Tipo de documento</label>
-                        <select onChange={ e => setTipoDocumentoCliente(e.target.value) } name="tipoDocumentoCliente" className="form-select">
-                            <option selected>Elige el tipo de documento</option>
-                            <option value="DNI">DNI</option>
-                            <option value="documento 2">documento tipo 2</option>
-                            <option value="documento 3">documento tipo 3</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
-                        <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente"></input>
-                    </div>
-                    <div>
-                        <label for="nombreCliente" className="form-label">Nombre del cliente</label>
-                        <input onChange={ e => setNombreCliente(e.target.value) } type="text" className="form-control" name="nombreCliente" id="nombreCliente"></input>
-                    </div>
-                    <div>
-                        <label for="emailCliente" className="form-label">Email</label>
-                        <input onChange={ e => setEmailCliente(e.target.value) } type="email" className="form-control" name="emailCliente" id="emailCliente" aria-describedby="emailHelp"></input>
-                    </div>
-                    <div>
-                        <label className="form-label" for="celular">Celular</label>
-                        <input onChange={ e => setCelular(e.target.value) } className="form-control" type="tel" name="celular" id="celular" pattern="[0-9]{9}"></input>
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Provincia</label>
-                        <select onChange={ e => setProvincia(e.target.value) } name="provincia" className="form-select">
-                            <option selected>Elige la provincia</option>
-                            <option value="Lima">Lima</option>
-                            <option value="provincia tipo 2">provincia tipo 2</option>
-                            <option value="provincia tipo 3">provincia tipo 3</option>
-                        </select>
-                    </div>
-                    <div>
-                        <div className="form-check">
-                            <input onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="true" name="delivery" id="delivery1"></input>
-                            <label className="form-check-label" for="delivery1">
-                                Sí
-                            </label>
+                <div className="border-bottom my-4"></div>
+                <div className="row">
+                    <div className="col-6 mb-3">
+                        <div className="mb-3 sub-title">Datos del cliente</div>
+                        <div>
+                            <div className="row">
+                                <div className="col-6 mb-3">
+                                    <label className="form-label">Tipo de documento</label>
+                                    <select onChange={ e => setTipoDocumentoCliente(e.target.value) } name="tipoDocumentoCliente" className="form-select">
+                                        <option selected>Elige el tipo de documento</option>
+                                        <option value="DNI">DNI</option>
+                                        <option value="documento 2">documento tipo 2</option>
+                                        <option value="documento 3">documento tipo 3</option>
+                                    </select>
+                                </div>
+                                <div className="col-6 mb-3">
+                                    <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
+                                    {/* <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente" required></input> */}
+                                    <input className="form-control is-valid" name="numeroDocumentoCliente" type="search" onChange={manejadorEntrada}  list="listaclientes" />
+                                    <datalist id="listaclientes">
+                                            {
+                                                listaProductos.map((item) =>
+                                                    (<option data-nombre-cliente="Hans" data-email-cliente="hans.e.huiza.n@gmail.com" data-celular="991570362" data-doc-cliente={item}>{item} 123</option>)
+                                                )
+                                            }
+                                    </datalist>
+                                </div>
+                            </div>
+                            <div className="mb-3">
+                                <label for="nombreCliente" className="form-label">Nombre del cliente</label>
+                                <input onChange={ e => setNombreCliente(e.target.value) } type="text" className="form-control" name="nombreCliente" id="nombreCliente"></input>
+                            </div>
+                            <div className="row">
+                                <div className="col-6 mb-3">
+                                    <label for="emailCliente" className="form-label">Email</label>
+                                    <input onChange={ e => setEmailCliente(e.target.value) } type="email" className="form-control" name="emailCliente" id="emailCliente" aria-describedby="emailHelp"></input>
+                                </div>
+                                <div className="col-6 mb-3">
+                                    <label className="form-label" for="celular">Celular</label>
+                                    <input onChange={ e => setCelular(e.target.value) } className="form-control" type="tel" name="celular" id="celular"></input>
+                                </div>
+                            </div>
+                            <div className="mb-3">
+                                <label className="form-label">Provincia</label>
+                                <select onChange={ e => setProvincia(e.target.value) } name="provincia" className="form-select">
+                                    <option selected>Elige la provincia</option>
+                                    <option value="Lima">Lima</option>
+                                    <option value="provincia tipo 2">provincia tipo 2</option>
+                                    <option value="provincia tipo 3">provincia tipo 3</option>
+                                </select>
+                            </div>
                         </div>
-                        <div className="form-check">
-                            <input onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="false" name="delivery" id="delivery2"></input>
-                            <label className="form-check-label" for="delivery2">
-                                No
-                            </label>
+                    </div>
+                    <div className="col-6 mb-3">
+                        <div className="mb-3 sub-title">Datos de la venta</div>
+                        <div>
+                            <div className="row">
+                                <div className="col-7 mb-3">
+                                    <label className="form-label">Fecha</label>
+                                    <div>
+                                        <DatePicker 
+                                            selected={dateInicio} 
+                                            onChange={date => setDateInicio(date)} 
+                                            locale="es"
+                                            customInput={<ExampleCustomInput />} 
+                                            dateFormat="dd/MM/yyyy"
+                                            wrapperClassName="form-control"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-7 mb-3">
+                                    <label className="form-label">Moneda</label>
+                                    <select onChange={ e => setTipoMoneda(e.target.value) } name="tipoMoneda" className="form-select">
+                                        <option selected>Elige el tipo de moneda</option>
+                                        <option value="soles">Soles</option>
+                                        <option value="dolares">Dolares</option>
+                                    </select>
+                                </div>
+                                <div className="col-5 mb-3">
+                                    <label for="igv" className="form-label">IGV</label>
+                                    <input onChange={ e => setIgv(e.target.value) } type="text" className="form-control" name="igv" id="igv" value="0.18" disabled readonly></input>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-7 mb-3">
+                                    <label className="form-label">Condicion de pago</label>
+                                    <select onChange={ e => setCondicionPago(e.target.value) } name="condicionPago" className="form-select">
+                                        <option selected>Elige la condicion de pago</option>
+                                        <option value="tarjeta">Tarjeta</option>
+                                        <option value="efectivo">Efectivo</option>
+                                    </select>
+                                </div>
+                                <div className="col-5 mb-3">
+                                    <label for="noperacion" className="form-label">Nro. Operación</label>
+                                    <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion"></input>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-7">
+                                    <label className="form-label">Canal de venta</label>
+                                    <select onChange={ e => setCanalVenta(e.target.value) } name="canalVenta" className="form-select">
+                                        <option selected>Elige la canal de venta</option>
+                                        <option value="whatsapp">whatsapp</option>
+                                        <option value="llamada">llamada</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div>
+                </div>
+                <div className="row mb-4">
+                    <div className="col-3 mb-3">
+                        <label className="form-label">¿Envío por delivery?</label>
+                        <div>
+                            <div className="form-check form-check-inline">
+                                <input onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="true" name="delivery" id="delivery1"></input>
+                                <label className="form-check-label" for="delivery1">
+                                    Sí
+                                </label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="false" name="delivery" id="delivery2"></input>
+                                <label className="form-check-label" for="delivery2">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-3 mb-3">
                         <label for="direccion" className="form-label">Dirección</label>
                         <input onChange={ e => setDireccion(e.target.value) } type="text" className="form-control" name="direccion" id="direccion"></input>
                     </div>
-                    <div>
+                    <div className="col-3 mb-3">
                         <label for="referencias" className="form-label">Referencias</label>
                         <input onChange={ e => setReferencias(e.target.value) } type="text" className="form-control" name="referencias" id="referencias"></input>
                     </div>
                 </div>
                 <div className="mb-3">
-                    <div className="border-bottom">Datos del cliente</div>
+                    {/* <div className="border-bottom">Datos del cliente</div>
                     <div>
                         <p className="m-0 me-1">Fecha</p>
                         <DatePicker 
                             selected={dateInicio} 
                             onChange={date => setDateInicio(date)} 
                             locale="es"
+                            disabled="true"
                             customInput={<ExampleCustomInput />} 
                             dateFormat="dd/MM/yyyy"
                         />
+                    </div> */}
+                    <div className="info-total mb-4">
+                        <div className="row">
+                            <div className="col-11">Gravada:</div>
+                            <div className="col-1">2457.63</div>
+                        </div>
+                        <div className="row">
+                            <div className="col-11">Descuento:</div>
+                            <div className="col-1">0.00</div>
+                        </div>
+                        <div className="row">
+                            <div className="col-11">IGV(18%):</div>
+                            <div className="col-1">442.37</div>
+                        </div>
+                        <div className="row">
+                            <div className="col-11">Delivery:</div>
+                            <div className="col-1">25.90</div>
+                        </div>
                     </div>
-                    <div>
-                        <label className="form-label">Moneda</label>
-                        <select onChange={ e => setTipoMoneda(e.target.value) } name="tipoMoneda" className="form-select">
-                            <option selected>Elige el tipo de moneda</option>
-                            <option value="soles">Soles</option>
-                            <option value="dolares">Dolares</option>
-                        </select>
+                </div>    
+                <div className="row mb-4">
+                    <div className="col-4">
+                        <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#previewModal">PREVISUALIZAR</button>
+                        <div className="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+                            <div className="modal-dialog modal-lg">
+                                <div className="modal-content">
+                                {/* <div class="modal-header">
+                                    <h5 class="modal-title" id="previewModalLabel">Modal title</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div> */}
+                                <div className="">
+                                    <div className="bg-gray p-4">
+                                        <div className="d-flex justify-content-between mb-3">
+                                            <div className="text-uppercase sub-title">Jaramillo Torero de Paez Manuela Maria</div>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div className="row mb-3">
+                                            <div className="col">
+                                                <div>Av. Tacna Nro. 488</div>
+                                                <div>Lima - Lima - Lima</div>
+                                                <div>RUC 10095588986</div>
+                                                <div className="text-uppercase">NOTA DE VENTA ELECTRONICA</div>
+                                            </div>
+                                            <div className="col"></div>
+                                        </div>
+                                        <div className="h5">NV10-9281</div>
+                                    </div>
+                                    <div className="p-4">
+                                        <div className="mb-3">ADQUIRIENTE</div>
+                                        <div>
+                                            <div>Nro. Documento: {numeroDocumentoCliente}</div>
+                                            <div className="text-uppercase">{nombreCliente}</div>
+                                            {/* <div>Fecha de emisión: {dateInicio}</div> */}
+                                            <div>Moneda: {tipoMoneda}</div>
+                                            <div>IGV: 18%</div>
+                                        </div>
+                                    </div>
+                                    <div className="p-4">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">CANTIDAD</th>
+                                                    <th scope="col">DESCRIPCIÓN</th>
+                                                    <th scope="col">PU</th>
+                                                    <th scope="col">TOTAL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    lista.map((item) =>
+                                                        (
+                                                            <tr>
+                                                                <td>{item.cantidadLista}</td>
+                                                                <td>{item.descripcionLista}</td>
+                                                                <td>PU</td>
+                                                                <td>{item.totalLista}</td>
+                                                            </tr>
+                                                        )
+                                                    )
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="border-bottom"></div>
+                                    <div className="p-4 text-end">
+                                        <div className="row">
+                                            <div className="col-8">Gravada:</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">2457.63</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-8">Descuento:</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">{descuentoTotal}</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-8">IGV(18%):</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">{totalIgv}</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-8">Delivery:</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">25.90</div>
+                                        </div>
+                                    </div>
+                                    <div className="border-bottom"></div>
+                                    <div className="p-4 text-end">
+                                        <div className="row">
+                                            <div className="col-8">Total:</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">{totalLista}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <div className="w-100 text-center">
+                                        <div>
+                                            Representación impresa de la
+                                        </div>
+                                        <div>
+                                            NOTA DE VENTA ELECTRONICA
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label for="igv" className="form-label">IGV</label>
-                        <input onChange={ e => setIgv(e.target.value) } type="text" className="form-control" name="igv" id="igv" value="0.18" disabled readonly></input>
-                    </div>
-                    <div>
-                        <label className="form-label">Condicion de pago</label>
-                        <select onChange={ e => setCondicionPago(e.target.value) } name="condicionPago" className="form-select">
-                            <option selected>Elige la condicion de pago</option>
-                            <option value="tarjeta">Tarjeta</option>
-                            <option value="efectivo">Efectivo</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="form-label">Canal de venta</label>
-                        <select onChange={ e => setCanalVenta(e.target.value) } name="canalVenta" className="form-select">
-                            <option selected>Elige la canal de venta</option>
-                            <option value="whatsapp">whatsapp</option>
-                            <option value="llamada">llamada</option>
-                        </select>
+                    <div className="col-8">
+                        <div className="d-flex justify-content-end">
+                            <button type="button" className="btn btn-outline-danger me-2">GUARDAR EN BORRADOR</button>
+                            <button type="submit" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">EMITIR</button>
+                            {/* <input className="btn btn-danger" type="submit" value="EMITIR"></input> */}
+                            <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div className="modal-dialog modal-dialog-centered">
+                                    <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title" id="staticBackdropLabel">Emisión de comprobante</h5>
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body d-flex justify-content-center align-content-center">
+                                            {
+                                                tituloResultado==="error"?<p className="text-danger text-center fw-bold">¡Ocurrió un error en la emisión!</p>:
+                                                tituloResultado==="exito"?<p className="text-success text-center fw-bold">¡Éxito!</p>:null
+                                            }
+                                            {
+                                                resultadoEmisionComprobante?<h4>{resultadoEmisionComprobante}</h4>:
+                                                <div>
+                                                    <div className="spinner-border" role="status">
+                                                        <span className="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p>Enviando...</p>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div className="modal-footer">
+                                            {
+                                                botonImprimir?<button type="button" class="btn btn-success" >
+                                                    <a href={linkDescarga} download className="text-white" target="_blank">Imprimir</a>
+                                                    </button>:null
+                                            }
+                                            <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Cerrar</button>
+                                            {/* <button type="button" class="btn btn-primary">Understood</button> */}
+                                        </div>
+                                    </div>
+                            </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <input type="submit" value="Enviar"></input>
-            {/* </div> */}
             </form>
         </div>
+        
     )
 }
 
