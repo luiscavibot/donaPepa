@@ -3,6 +3,10 @@ import axios from 'axios'
 import DatePicker, {registerLocale} from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'date-fns/esm'
+import 'semantic-ui-css/semantic.min.css'
+import { Button } from 'semantic-ui-react'
+
+
 
 const NuevaVenta = () => {
 
@@ -59,6 +63,10 @@ const NuevaVenta = () => {
     const [detenerCreacion, setDetenerCreacion] = useState(false)
     const [deshabilitarValidacion, setDeshabilitarValidacion] = useState(true)
     const [fijarPresentacion, setFijarPresentacion] = useState(false)
+    const [resultadoEmisionComprobante, setResultadoEmisionComprobante] = useState("")
+    const [tituloResultado, setTituloResultado] = useState("")
+    const [botonImprimir, setBotonImprimir] = useState(false)
+    const [linkDescarga, setLinkDescarga] = useState("")
 
     useEffect(() => {
         const getProducts = async () =>{
@@ -102,7 +110,7 @@ const NuevaVenta = () => {
           operacion: "generar_comprobante",
           tipo_de_comprobante: 1,
           serie: "FFF1",
-          numero:56,
+          numero:7,
           sunat_transaction: 1,
           cliente_tipo_de_documento: 6,
           cliente_numero_de_documento: "20600695771",
@@ -111,7 +119,7 @@ const NuevaVenta = () => {
           cliente_email: "lcastillov123@gmail.com",
           cliente_email_1: "",
           cliente_email_2: "",
-          fecha_de_emision: "23-01-2021",
+          fecha_de_emision: "24-01-2021",
           fecha_de_vencimiento: "",
           moneda: 1,
           tipo_de_cambio: "",
@@ -200,10 +208,27 @@ const NuevaVenta = () => {
 
         await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
         .then(function (params) {
-          console.log(params.data);
+          console.log("se activó el then");
+          if (params.data.errors) {
+            setResultadoEmisionComprobante(params.data.errors);
+            setTituloResultado("error")
+          }else{
+            console.log(params.data);
+            setTituloResultado("exito")
+            if (params.data.aceptada_por_sunat) {
+                setResultadoEmisionComprobante(params.data.sunat_description);
+                setBotonImprimir(true);
+                setLinkDescarga(params.data.enlace_del_pdf);
+            }else{
+                setResultadoEmisionComprobante("Se emitió correctamente a NubeFact, pero no llegó aún a la SUNAT. Revise la plataforma de facturación o comuníquese con su proveedor");
+            }
+            
+          }
         })
         .catch(function (params) {
+          console.log("se activó el catch");
           console.log(params.data);
+          setResultadoEmisionComprobante(params.data.errors);
         })       
         
       };
@@ -862,8 +887,43 @@ const NuevaVenta = () => {
                     </div>
                     <div className="col-8">
                         <div className="d-flex justify-content-end">
-                            <button type="button" class="btn btn-outline-danger me-2">GUARDAR EN BORRADOR</button>
-                            <input className="btn btn-danger" type="submit" value="EMITIR"></input>
+                            <button type="button" className="btn btn-outline-danger me-2">GUARDAR EN BORRADOR</button>
+                            <button type="submit" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">EMITIR</button>
+                            {/* <input className="btn btn-danger" type="submit" value="EMITIR"></input> */}
+                            <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div className="modal-dialog modal-dialog-centered">
+                                    <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h5 className="modal-title" id="staticBackdropLabel">Emisión de comprobante</h5>
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body d-flex justify-content-center align-content-center">
+                                            {
+                                                tituloResultado==="error"?<p className="text-danger text-center fw-bold">¡Ocurrió un error en la emisión!</p>:
+                                                tituloResultado==="exito"?<p className="text-success text-center fw-bold">¡Éxito!</p>:null
+                                            }
+                                            {
+                                                resultadoEmisionComprobante?<h4>{resultadoEmisionComprobante}</h4>:
+                                                <div>
+                                                    <div className="spinner-border" role="status">
+                                                        <span className="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p>Enviando...</p>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div className="modal-footer">
+                                            {
+                                                botonImprimir?<button type="button" class="btn btn-success" >
+                                                    <a href={linkDescarga} download className="text-white" target="_blank">Imprimir</a>
+                                                    </button>:null
+                                            }
+                                            <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Cerrar</button>
+                                            {/* <button type="button" class="btn btn-primary">Understood</button> */}
+                                        </div>
+                                    </div>
+                            </div>
+                            </div>
                         </div>
                     </div>
                 </div>
