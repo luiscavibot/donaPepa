@@ -63,11 +63,11 @@ const NuevaVenta = () => {
     const [precioVentaLista, setPrecioVentaLista] = useState([0])
     const [igvLista, setIgvLista] = useState([0])
     const [totalLista, setTotalLista] = useState([0])
-    const [modoValidar, setModoValidar] = useState([true])
-    const [numeracion, setNumeracion] = useState(false)
+    // const [modoValidar, setModoValidar] = useState([true])
+    // const [numeracion, setNumeracion] = useState(false)
     const [detenerCreacion, setDetenerCreacion] = useState(false)
     const [deshabilitarValidacion, setDeshabilitarValidacion] = useState(true)
-    const [fijarPresentacion, setFijarPresentacion] = useState(false)
+    // const [fijarPresentacion, setFijarPresentacion] = useState(false)
     const [resultadoEmisionComprobante, setResultadoEmisionComprobante] = useState("")
     const [tituloResultado, setTituloResultado] = useState("")
     const [botonImprimir, setBotonImprimir] = useState(false)
@@ -138,133 +138,225 @@ const NuevaVenta = () => {
         e.preventDefault()
         console.log("inicio el axios para enviar la data final a nubefact");
         const emitir = async () =>{
-          const documento = {
-          operacion: "generar_comprobante",
-          tipo_de_comprobante: 1,
-          serie: "FFF1",
-          numero:7,
-          sunat_transaction: 1,
-          cliente_tipo_de_documento: tipoDocumentoClienteSunat,
-          cliente_numero_de_documento: numeroDocumentoCliente,
-          cliente_denominacion: nombreCliente,
-          cliente_direccionCliente: direccionCliente,
-          cliente_email: emailCliente,
-          cliente_email_1: "",
-          cliente_email_2: "",
-          fecha_de_emision: fechaSunat,
-          fecha_de_vencimiento: "",
-          moneda: tipoMonedaSunat,
-          tipo_de_cambio: "",
-          porcentaje_de_igv: 18.00,
-          descuento_global: "",
-          total_descuento: "",
-          total_anticipo: "",
-          total_gravada: gravada,
-          total_inafecta: "",
-          total_exonerada: "",
-          total_igv: 108,
-          total_gratuita: "",
-          total_otros_cargos: "",
-          total: 708,
-          percepcion_tipo: "",
-          percepcion_base_imponible: "",
-          total_percepcion: "",
-          total_incluido_percepcion: "",
-          total_impuestos_bolsas: "",
-          detraccion: false,
-          observaciones: "",
-          documento_que_se_modifica_tipo: "",
-          documento_que_se_modifica_serie: "",
-          documento_que_se_modifica_numero: "",
-          tipo_de_nota_de_credito: "",
-          tipo_de_nota_de_debito: "",
-          enviar_automaticamente_a_la_sunat: true,
-          enviar_automaticamente_al_cliente: true,
-          condiciones_de_pago: "",
-          medio_de_pago: "",
-          placa_vehiculo: "",
-          orden_compra_servicio: "",  
-          formato_de_pdf: "",
-          generado_por_contingencia: "",
-          bienes_region_selva: "",
-          servicios_region_selva: "",
-          items: [
-                {
-                  unidad_de_medida: "NIU",
-                  codigo: "001",
-                  codigo_producto_sunat: "10000000",
-                  descripcion: "DETALLE DEL PRODUCTO",
-                  cantidad: 1,
-                  valor_unitario: 500,
-                  precio_unitario: 590,
-                  descuento: "",
-                  subtotal: 500,
-                  tipo_de_igv: 1,
-                  igv: 90,
-                  total: 590,
-                  anticipo_regularizacion: false,
-                  anticipo_documento_serie: "",
-                  anticipo_documento_numero: ""
-                },
-                {
-                  unidad_de_medida: "NIU",
-                  codigo: "001",
-                  codigo_producto_sunat: "20000000",
-                  descripcion: "DETALLE DEL PRODUCTO",
-                  cantidad: 1,
-                  valor_unitario: 20,
-                  precio_unitario: 23.60,
-                  descuento: "",
-                  subtotal: 100,
-                  tipo_de_igv: 1,
-                  igv: 18,
-                  total: 118,
-                  anticipo_regularizacion: false,
-                  anticipo_documento_serie: "",
-                  anticipo_documento_numero: ""
-                }
-          ],
-          guias: [
-                  {
-                      guia_tipo: 1,
-                      guia_serie_numero: "0001-23"
-                  }
-          ]    
-        };
+            const documento = {
 
-        const config = {
-          headers: { 
-            "Content-Type" : "application/json"
-          }
-        };
-
-        await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
-        .then(function (params) {
-          console.log("se activó el then");
-          if (params.data.errors) {
-            setResultadoEmisionComprobante(params.data.errors);
-            setTituloResultado("error")
-          }else{
-            console.log(params.data);
-            setTituloResultado("exito")
-            if (params.data.aceptada_por_sunat) {
-                setResultadoEmisionComprobante(params.data.sunat_description);
-                setBotonImprimir(true);
-                setLinkDescarga(params.data.enlace_del_pdf);
-            }else{
-                setResultadoEmisionComprobante("Se emitió correctamente a NubeFact, pero no llegó aún a la SUNAT. Revise la plataforma de facturación o comuníquese con su proveedor");
+                operacion: "generar_comprobante",
+                tipo_de_comprobante: 1,
+                serie: "FFF1",
+                numero:8,
+                sunat_transaction: 1,
+                cliente_tipo_de_documento: 6,
+                cliente_numero_de_documento: "20600695771",
+                cliente_denominacion: "Clientaso",
+                cliente_direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
+                cliente_email: "lcastillov123@gmail.com",
+                cliente_email_1: "",
+                cliente_email_2: "",
+                fecha_de_emision: "25-01-2021",
+                fecha_de_vencimiento: "",
+                moneda: 1,
+                tipo_de_cambio: "",
+                porcentaje_de_igv: 18.00,
+                descuento_global: "",
+                total_descuento: "",
+                total_anticipo: "",
+                total_gravada: 600,
+                total_inafecta: "",
+                total_exonerada: "",
+                total_igv: 108,
+                total_gratuita: "",
+                total_otros_cargos: "",
+                total: 708,
+                percepcion_tipo: "",
+                percepcion_base_imponible: "",
+                total_percepcion: "",
+                total_incluido_percepcion: "",
+                total_impuestos_bolsas: "",
+                detraccion: false,
+                observaciones: "",
+                documento_que_se_modifica_tipo: "",
+                documento_que_se_modifica_serie: "",
+                documento_que_se_modifica_numero: "",
+                tipo_de_nota_de_credito: "",
+                tipo_de_nota_de_debito: "",
+                enviar_automaticamente_a_la_sunat: true,
+                enviar_automaticamente_al_cliente: true,
+                condiciones_de_pago: "",
+                medio_de_pago: "Whatsapp",
+                placa_vehiculo: "",
+                orden_compra_servicio: "",  
+                formato_de_pdf: "",
+                generado_por_contingencia: "",
+                bienes_region_selva: "",
+                servicios_region_selva: "",
+                items: [
+                    {
+                        unidad_de_medida: "NIU",
+                        codigo: "001",
+                        codigo_producto_sunat: "10000000",
+                        descripcion: "DETALLE DEL PRODUCTO",
+                        cantidad: 1,
+                        valor_unitario: 500,
+                        precio_unitario: 590,
+                        descuento: "",
+                        subtotal: 500,
+                        tipo_de_igv: 1,
+                        igv: 90,
+                        total: 590,
+                        anticipo_regularizacion: false,
+                        anticipo_documento_serie: "",
+                        anticipo_documento_numero: ""
+                    },
+                    {
+                        unidad_de_medida: "NIU",
+                        codigo: "001",
+                        codigo_producto_sunat: "20000000",
+                        descripcion: "DETALLE DEL PRODUCTO",
+                        cantidad: 1,
+                        valor_unitario: 20,
+                        precio_unitario: 23.60,
+                        descuento: "",
+                        subtotal: 100,
+                        tipo_de_igv: 1,
+                        igv: 18,
+                        total: 118,
+                        anticipo_regularizacion: false,
+                        anticipo_documento_serie: "",
+                        anticipo_documento_numero: ""
+                    }        
+                ],
+                guias: [
+                    {
+                        guia_tipo: 1,
+                        guia_serie_numero: "0001-23"
+                    }
+                ]
             }
+
+            const config = {
+                headers: { 
+                    "Content-Type" : "application/json"
+                }
+            };
+
+            await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
+            .then(function (params) {
+                console.log("se activó el then");
+                if (params.data.errors) {
+                    setResultadoEmisionComprobante(params.data.errors);
+                    setTituloResultado("error")
+                }else{
+                    console.log(params.data);
+                    setTituloResultado("exito")
+                    if (params.data.aceptada_por_sunat) {
+                        setResultadoEmisionComprobante(params.data.sunat_description);
+                        setBotonImprimir(true);
+                        setLinkDescarga(params.data.enlace_del_pdf);
+                        // registrarVenta();
+                    }else{
+                        setResultadoEmisionComprobante("Se emitió correctamente a NubeFact, pero no llegó aún a la SUNAT. Revise la plataforma de facturación o comuníquese con su proveedor");
+                    }  
+                }
+            })
+            .catch(function (params) {
+                console.log("se activó el catch");
+                console.log(params.data);
+                setResultadoEmisionComprobante(params.data.errors);
+            })       
+        };
+
+        // const registrarVenta = async ()=>{
+        //     const config = {
+        //         headers: { 
+        //             "Content-Type" : "application/json"
+        //         }
+        //     };
             
-          }
-        })
-        .catch(function (params) {
-          console.log("se activó el catch");
-          console.log(params.data);
-          setResultadoEmisionComprobante(params.data.errors);
-        })       
-        
-      };
-      emitir();    
+            
+            
+        //     await axios.post('http://46.183.113.134:3000/api/ventas/registrarVenta', {
+                
+                
+            
+            
+        //         usuario: "Vendedor-general",
+        //         serie: "FFF1",
+        //         numero: 8,
+        //         items: [
+        //             {
+        //                 unidad_de_medida: "NIU",
+        //                 codigo: "001",
+        //                 codigo_producto_sunat: "10000000",
+        //                 descripcion: "DETALLE DEL PRODUCTO",
+        //                 cantidad: 1,
+        //                 valor_unitario: 500,
+        //                 precio_unitario: 590,
+        //                 descuento: "",
+        //                 subtotal: 500,
+        //                 tipo_de_igv: 1,
+        //                 igv: 90,
+        //                 total: 590,
+        //                 anticipo_regularizacion: false,
+        //                 anticipo_documento_serie: "",
+        //                 anticipo_documento_numero: ""
+        //             },
+        //             {
+        //                 unidad_de_medida: "NIU",
+        //                 codigo: "001",
+        //                 codigo_producto_sunat: "20000000",
+        //                 descripcion: "DETALLE DEL PRODUCTO",
+        //                 cantidad: 1,
+        //                 valor_unitario: 20,
+        //                 precio_unitario: 23.60,
+        //                 descuento: "",
+        //                 subtotal: 100,
+        //                 tipo_de_igv: 1,
+        //                 igv: 18,
+        //                 total: 118,
+        //                 anticipo_regularizacion: false,
+        //                 anticipo_documento_serie: "",
+        //                 anticipo_documento_numero: ""
+        //             }        
+        //         ],
+        //         regalo:{
+        //             tipoRegalo:"muestra",
+        //             cantidad: 2             
+        //         },
+        //         tipoDocumentoCliente: 6,
+        //         numeroDocumentoCliente: "20600695771",
+        //         fechaEmision: "25-01-2021",
+        //         nombreCliente: "Clientaso",
+        //         tipoMoneda:1,
+        //         igv:108,
+        //         email:"lcastillov123@gmail.com",
+        //         celular:"986934174",
+        //         condicionPago: "Tarjeta",
+        //         numeroOperacion:"qqqqqqa",  
+        //         provincia: "Lima",
+        //         canalVenta: "Whatsapp",
+        //         delivery: true,
+        //         direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
+        //         referencias: "Al costado de Metro",
+        //         gravada:600,
+        //         descuento:"",
+        //         totalIgv:108,
+        //         totalPagar:708,
+        //         regalo:{
+        //             tipoRegalo:"muestra",
+        //             cantidad: 2             
+        //         },
+        //         celularCliente: "986934174",
+        //         provincia:"Lima",
+        //         referencias: "Al costado del vecino",
+        //         delivery: true,
+        //         canalVenta: "Whatsapp",
+        //         numeroOperacion: "000009y",
+        //     },config)
+        //     .then(console.log)
+        //     .catch(console.log)
+        // }
+
+        emitir();    
 
     }
 
@@ -279,7 +371,7 @@ const NuevaVenta = () => {
                 presentacionLista: "",
                 cantidadLista: "1",
                 precioUnitarioLista: "0",
-                descuentoLista: "0",
+                descuentoLista: 0,
                 precioVentaLista: 0,
                 igvLista: 0,
                 totalLista: 0,
@@ -293,17 +385,30 @@ const NuevaVenta = () => {
     const presentaciones = (descripcion, numero) =>{
         const getPresentaciones = async () =>{
             try {
-                console.log("activaremos el axios con la siguiente descricpion: ", descripcion);
+                //Aquí se creará la nueva lista acorde a la elección de un producto y seguidamente se setearan valores según 1er valor de la misma lista
                 let res = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${descripcion}`);
                 console.log("Resultado de axios para la descripcion recibida: ",res.data);
                 let arrayData= res.data.map(item => (item.presentacion))
                 let arrayProv = [...listaPresentacion,[]]
                 arrayProv[numero-1]= arrayData
-                setListaPresentacion(arrayProv);
+                setListaPresentacion(arrayProv);//renderiza una lista acorde a la descripción elegida
                 let listaProv = [...lista]
-                listaProv[numero-1].presentacionLista = res.data[0].presentacion;
-                console.log("la extracción es: ",res.data[0].presentacion);
+                listaProv[numero-1].presentacionLista = res.data[0].presentacion; //Setea la propiedad "presentacionLista" con un valor igual al 1° resultado de la consulta a la BD
+                //este es un codigo extra para forzar la actualziacion de cantidades de pago
+                let resb = await axios.get(`http://46.183.113.134:3000/api/productos?busquedaPorNombre=${descripcion}&busquedaPorPresentacion=${res.data[0].presentacion}`);
+                console.log("Resultado de axios para la descripcion recibida y primer elemento de lista de presentacion: ",resb.data);
+                listaProv[numero-1].codigoLista = resb.data[0].codigo;
+                listaProv[numero-1].precioUnitarioLista = resb.data[0].precioUnitario;
+                let precioVenta = (listaProv[numero-1].precioUnitarioLista*listaProv[numero-1].cantidadLista)-listaProv[numero-1].descuentoLista;
+                listaProv[numero-1].precioVentaLista = precioVenta.toFixed(2);
+                listaProv[numero-1].igvLista = (precioVenta*0.18).toFixed(2);
+                listaProv[numero-1].totalLista = (precioVenta*1.18).toFixed(2);
+                let arrayTotalLista = [...totalLista];
+                arrayTotalLista[numero-1] = listaProv[numero-1].totalLista
+                setTotalLista(arrayTotalLista)
                 setLista(listaProv)
+
+
             } catch (error) {
                 console.error(error);
             }
@@ -356,9 +461,9 @@ const NuevaVenta = () => {
     
         // let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);
         let listaProv = [...lista];
-        console.log(listaProv);
+        console.log("LLAMADO A CALCULO FINAL (Precio Unitario)",listaProv.precioUnitarioLista);
 
-        let precioVenta = (listaProv[numeroItem-1].precioUnitarioLista*listaProv[numeroItem-1].cantidadLista)-listaProv[numeroItem-1].descuentoLista;
+        let precioVenta = ((listaProv[numeroItem-1].precioUnitarioLista)*(listaProv[numeroItem-1].cantidadLista))-listaProv[numeroItem-1].descuentoLista;
         
         listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
         listaProv[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
@@ -469,10 +574,11 @@ const NuevaVenta = () => {
         switch (name) {
             case 'descripcion':
                 let listaProvDescripcion = [...lista]
-                listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;
-                setLista(listaProvDescripcion)
-                presentaciones(event.target.value, numeroItem)
-                completarCampos(numeroItem)
+                listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;//seteo el valor elegido en el datalist de descripcion
+                setLista(listaProvDescripcion) 
+                presentaciones(event.target.value, numeroItem);//con esto se logra setear la lista a elegir en presentacion
+                setDetenerCreacion(false);
+                // completarCampos(numeroItem)
                 break;
             case 'presentacion':
                 let listaProvPresentacion = [...lista]
@@ -483,19 +589,36 @@ const NuevaVenta = () => {
                 break;
             case 'cantidad':
                 let listaProvCantidad = [...lista];
-                listaProvCantidad[numeroItem-1].cantidadLista = event.target.value;
+                listaProvCantidad[numeroItem-1].cantidadLista = event.target.value*1.0;
+                
+                let precioVenta = (listaProvCantidad[numeroItem-1].precioUnitarioLista*event.target.value)-listaProvCantidad[numeroItem-1].descuentoLista;
+                listaProvCantidad[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
+                listaProvCantidad[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
+                listaProvCantidad[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
+                let arrayTotalLista = [...totalLista];
+                arrayTotalLista[numeroItem-1] = listaProvCantidad[numeroItem-1].totalLista
+                setTotalLista(arrayTotalLista)
                 setLista(listaProvCantidad);
-                let listaProv = [...listaCantidad]
-                listaProv[numeroItem-1]=event.target.value;
-                setListaCantidad(listaProv);
+                // let listaProv = [...listaCantidad]
+                // listaProv[numeroItem-1]=event.target.value;  
+                // setListaCantidad(listaProv);
                 break;
             case 'descuento':
                 let listaProvDescuento = [...lista];
-                listaProvDescuento[numeroItem-1].descuentoLista = event.target.value;
+                listaProvDescuento[numeroItem-1].descuentoLista = event.target.value*1.0;
+
+                let precioVentab = (listaProvDescuento[numeroItem-1].precioUnitarioLista*listaProvDescuento[numeroItem-1].cantidadLista)-(event.target.value);
+                console.log(precioVentab);
+                listaProvDescuento[numeroItem-1].precioVentaLista = precioVentab.toFixed(2);
+                listaProvDescuento[numeroItem-1].igvLista = (precioVentab*0.18).toFixed(2);
+                listaProvDescuento[numeroItem-1].totalLista = (precioVentab*1.18).toFixed(2);
+                let arrayTotalListab = [...totalLista];
+                arrayTotalListab[numeroItem-1] = listaProvDescuento[numeroItem-1].totalLista
+                setTotalLista(arrayTotalListab)
                 setLista(listaProvDescuento);
-                let listaProvb = [...descuentoLista]
-                listaProvb[numeroItem-1]=event.target.value;
-                setDescuentoLista(listaProvb);
+                // let listaProvb = [...descuentoLista]
+                // listaProvb[numeroItem-1]=event.target.value;
+                // setDescuentoLista(listaProvb);
                 // completarCampos(numeroItem)
                 break;
             case 'numeroDocumentoCliente':
@@ -615,13 +738,14 @@ const NuevaVenta = () => {
                                         <td>{valor.precioVentaLista}</td>
                                         <td>{valor.igvLista}</td>
                                         <td>{valor.totalLista}</td>
-                                        <td>
+                                        <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm text-danger" type="button" >Eliminar</button>
+                                        {/* <td>
                                             {
                                                 valor.modoValidar?
                                                 <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm" type="button" >Validar</button>:
                                                 <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" type="button" >Eliminar</button>
                                             }
-                                        </td>
+                                        </td> */}
                                     </tr>
                                 ))
                             }
