@@ -26,10 +26,13 @@ const NuevaVenta = () => {
     const [tipoRegalo, setTipoRegalo] = useState('')
     const [cantidadRegalo, setCantidadRegalo] = useState(0)
     const [tipoDocumentoCliente, setTipoDocumentoCliente] = useState('')
+    const [tipoDocumentoClienteSunat, setTipoDocumentoClienteSunat] = useState('')
     const [numeroDocumentoCliente, setNumeroDocumentoCliente] = useState('')
     const [dateInicio, setDateInicio] = useState(new Date())
+    const [fechaSunat, setFechaSunat] = useState('')
     const [nombreCliente, setNombreCliente] = useState('')
     const [tipoMoneda, setTipoMoneda] = useState('')
+    const [tipoMonedaSunat, setTipoMonedaSunat] = useState()
     const [igv, setIgv] = useState(0.18)
     const [celular, setCelular] = useState('')
     const [emailCliente, setEmailCliente] = useState('')
@@ -38,7 +41,9 @@ const NuevaVenta = () => {
     const [provincia, setProvincia] = useState('')
     const [canalVenta, setCanalVenta] = useState('')
     const [delivery, setDelivery] = useState(false)
-    const [direccion, setDireccion] = useState('')
+    const [conBolsa, setConBolsa] = useState(false)
+    const [cantidadBolsa, setCantidadBolsa] = useState(0)
+    const [direccionCliente, setDireccionCliente] = useState('')
     const [referencias, setReferencias] = useState('')
     const [gravada, setGravada] = useState(0)
     const [descuentoTotal, setDescuentoTotal] = useState(0)
@@ -80,6 +85,7 @@ const NuevaVenta = () => {
             }
         }
         getProducts();
+        getDateFormatSunat(dateInicio);
     }, [])
 
     const ExampleCustomInput = ({ value, onClick }) => (
@@ -92,7 +98,7 @@ const NuevaVenta = () => {
     );
 
     const deliveryChecked = (e) => {
-        console.log("entro")
+        console.log("entro a delivery checked")
         console.log(e.target.value)
         if (e.target.value === "true") {
             setDelivery(true)
@@ -100,6 +106,32 @@ const NuevaVenta = () => {
         }
         setDelivery(false)
         return
+    }
+
+    const bolsaChecked = (e) => {
+        console.log("entro a bolsa checked")
+        console.log(e.target.value)
+        if (e.target.value === "true") {
+            setConBolsa(true)
+            return
+        }
+        setConBolsa(false)
+        return
+    }
+    
+    const getDateFormatSunat = date => {
+        let day = date.getDate()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear()
+        let dateNewFormatSunat = ""
+
+        if(month < 10){
+        dateNewFormatSunat = `${day}-0${month}-${year}`
+        }else{
+        dateNewFormatSunat = `${day}-${month}-${year}`
+        }
+        setDateInicio(date)
+        setFechaSunat(dateNewFormatSunat)
     }
 
     const enviarDatos = (e) => {
@@ -112,22 +144,22 @@ const NuevaVenta = () => {
           serie: "FFF1",
           numero:7,
           sunat_transaction: 1,
-          cliente_tipo_de_documento: 6,
-          cliente_numero_de_documento: "20600695771",
-          cliente_denominacion: "Clientaso",
-          cliente_direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
-          cliente_email: "lcastillov123@gmail.com",
+          cliente_tipo_de_documento: tipoDocumentoClienteSunat,
+          cliente_numero_de_documento: numeroDocumentoCliente,
+          cliente_denominacion: nombreCliente,
+          cliente_direccionCliente: direccionCliente,
+          cliente_email: emailCliente,
           cliente_email_1: "",
           cliente_email_2: "",
-          fecha_de_emision: "24-01-2021",
+          fecha_de_emision: fechaSunat,
           fecha_de_vencimiento: "",
-          moneda: 1,
+          moneda: tipoMonedaSunat,
           tipo_de_cambio: "",
           porcentaje_de_igv: 18.00,
           descuento_global: "",
           total_descuento: "",
           total_anticipo: "",
-          total_gravada: 600,
+          total_gravada: gravada,
           total_inafecta: "",
           total_exonerada: "",
           total_igv: 108,
@@ -388,7 +420,6 @@ const NuevaVenta = () => {
     }
 
     const completarDatosCliente = (e) =>{
-        console.log("HH")
         let inputNroDoc = e.target
         console.log(inputNroDoc)
         let inputNombreCliente = document.querySelector("input[name='nombreCliente']")
@@ -468,11 +499,28 @@ const NuevaVenta = () => {
                 // completarCampos(numeroItem)
                 break;
             case 'numeroDocumentoCliente':
-                // let listaProvPresentacion = [...lista]
-                // listaProvPresentacion[numeroItem-1].presentacionLista = event.target.value;
-                // setLista(listaProvPresentacion)
                 completarDatosCliente(event)
                 break;
+            case 'tipoDocumentoCliente':
+                console.log("ENTRO TIPO DOCUMENTO CLIENTE");
+                let td = event.target.value
+                setTipoDocumentoCliente(td)
+                if(td == "DNI") {
+                    setTipoDocumentoClienteSunat("1")
+                    break;
+                }
+                if(td == "RUC") {
+                    setTipoDocumentoClienteSunat("6")
+                    break;
+                }
+            case 'tipoMoneda':
+                console.log("ENTRO TIPO MONEDA");
+                let tm = event.target.value
+                setTipoMoneda(tm)
+                if(tm == "soles") {
+                    setTipoMonedaSunat(1)
+                    break;
+                }
             default:
                 break;
         }
@@ -499,7 +547,7 @@ const NuevaVenta = () => {
                         <div className="text-uppercase">Jaramillo Torero de Paez Manuela Maria</div>
                         <div>Av. Tacna Nro. 488</div>
                     </div>
-                    <div className="ruc-info col-7 d-flex justify-content-center">
+                    <div className="ruc-info col-7 d-flex justify-content-center text-center">
                         <div>
                             <div>RUC 10095588986</div>
                             <div className="text-uppercase">Nota de venta electrónica</div>
@@ -594,9 +642,9 @@ const NuevaVenta = () => {
                             <label for="tipoRegalo" className="form-label">Tipo de regalo</label>
                             <select onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
                                 <option selected>Elige el tipo de regalo</option>
-                                <option value="muestra">Regalo muestra</option>
-                                <option value="tipo regalo 2">Regalo tipo 2</option>
-                                <option value="tipo regalo 3">Regalo tipo 3</option>
+                                <option value="Regalo Probadores">Regalo Probadores</option>
+                                <option value="Regalo Muestra x 50">Regalo Muestra x 50</option>
+                                <option value="Regalo Muestra x 100">Regalo Muestra x 100</option>
                             </select>
                         </div>
                         <div className="col-1 mb-3">
@@ -613,24 +661,24 @@ const NuevaVenta = () => {
                             <div className="row">
                                 <div className="col-6 mb-3">
                                     <label className="form-label">Tipo de documento</label>
-                                    <select onChange={ e => setTipoDocumentoCliente(e.target.value) } name="tipoDocumentoCliente" className="form-select">
+                                    {/* <select onChange={ e => setTipoDocumentoCliente(e.target.value) } name="tipoDocumentoCliente" className="form-select"> */}
+                                    <select onChange={ manejadorEntrada } name="tipoDocumentoCliente" className="form-select">
                                         <option selected>Elige el tipo de documento</option>
                                         <option value="DNI">DNI</option>
-                                        <option value="documento 2">documento tipo 2</option>
-                                        <option value="documento 3">documento tipo 3</option>
+                                        <option value="RUC">RUC</option>
                                     </select>
                                 </div>
                                 <div className="col-6 mb-3">
                                     <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
                                     {/* <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente" required></input> */}
                                     <input className="form-control is-valid" name="numeroDocumentoCliente" type="search" onChange={manejadorEntrada}  list="listaclientes" />
-                                    <datalist id="listaclientes">
+                                    {/* <datalist id="listaclientes">
                                             {
                                                 listaProductos.map((item) =>
                                                     (<option data-nombre-cliente="Hans" data-email-cliente="hans.e.huiza.n@gmail.com" data-celular="991570362" data-doc-cliente={item}>{item} 123</option>)
                                                 )
                                             }
-                                    </datalist>
+                                    </datalist> */}
                                 </div>
                             </div>
                             <div className="mb-3">
@@ -651,10 +699,21 @@ const NuevaVenta = () => {
                                 <label className="form-label">Provincia</label>
                                 <select onChange={ e => setProvincia(e.target.value) } name="provincia" className="form-select">
                                     <option selected>Elige la provincia</option>
+                                    <option value="Barranca">Barranca</option>
+                                    <option value="Cajatambo">Cajatambo</option>
+                                    <option value="Canta">Canta</option>
+                                    <option value="Cañete">Cañete</option>
+                                    <option value="Huaral">Huaral</option>
+                                    <option value="Huarochirí">Huarochirí</option>
+                                    <option value="Huaura">Huaura</option>
                                     <option value="Lima">Lima</option>
-                                    <option value="provincia tipo 2">provincia tipo 2</option>
-                                    <option value="provincia tipo 3">provincia tipo 3</option>
+                                    <option value="Oyón">Oyón</option>
+                                    <option value="Yauyos">Yauyos</option>
                                 </select>
+                            </div>
+                            <div className="mb-3">
+                                <label for="direccionCliente" className="form-label">Dirección</label>
+                                <input onChange={ e => setDireccionCliente(e.target.value) } type="text" className="form-control" name="direccionCliente" id="direccionCliente"></input>
                             </div>
                         </div>
                     </div>
@@ -667,11 +726,12 @@ const NuevaVenta = () => {
                                     <div>
                                         <DatePicker 
                                             selected={dateInicio} 
-                                            onChange={date => setDateInicio(date)} 
+                                            onChange={(date) => getDateFormatSunat(date)} 
                                             locale="es"
                                             customInput={<ExampleCustomInput />} 
                                             dateFormat="dd/MM/yyyy"
                                             wrapperClassName="form-control"
+                                            disabled
                                         />
                                     </div>
                                 </div>
@@ -679,10 +739,10 @@ const NuevaVenta = () => {
                             <div className="row">
                                 <div className="col-7 mb-3">
                                     <label className="form-label">Moneda</label>
-                                    <select onChange={ e => setTipoMoneda(e.target.value) } name="tipoMoneda" className="form-select">
+                                    <select onChange={ manejadorEntrada } name="tipoMoneda" className="form-select">
                                         <option selected>Elige el tipo de moneda</option>
                                         <option value="soles">Soles</option>
-                                        <option value="dolares">Dolares</option>
+                                        {/* <option value="dolares">Dolares</option> */}
                                     </select>
                                 </div>
                                 <div className="col-5 mb-3">
@@ -696,22 +756,45 @@ const NuevaVenta = () => {
                                     <select onChange={ e => setCondicionPago(e.target.value) } name="condicionPago" className="form-select">
                                         <option selected>Elige la condicion de pago</option>
                                         <option value="tarjeta">Tarjeta</option>
-                                        <option value="efectivo">Efectivo</option>
+                                        <option value="contado">Contado</option>
                                     </select>
                                 </div>
                                 <div className="col-5 mb-3">
                                     <label for="noperacion" className="form-label">Nro. Operación</label>
-                                    <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion"></input>
+                                    <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion" disabled={(condicionPago == "tarjeta") ? "" : "disabled"}></input>
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-7">
+                                <div className="col-7 mb-3">
                                     <label className="form-label">Canal de venta</label>
                                     <select onChange={ e => setCanalVenta(e.target.value) } name="canalVenta" className="form-select">
                                         <option selected>Elige la canal de venta</option>
                                         <option value="whatsapp">whatsapp</option>
                                         <option value="llamada">llamada</option>
                                     </select>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-7 mb-3">
+                                    <label className="form-label">¿Incluye bolsa?</label>
+                                    <div>
+                                        <div className="form-check form-check-inline">
+                                            <input onChange={ e => bolsaChecked(e) } className="form-check-input" type="radio" value="true" name="bolsa" id="bolsa1"></input>
+                                            <label className="form-check-label" for="bolsa1">
+                                                Sí
+                                            </label>
+                                        </div>
+                                        <div className="form-check form-check-inline">
+                                            <input onChange={ e => bolsaChecked(e) } className="form-check-input" type="radio" value="false" name="bolsa" id="bolsa2"></input>
+                                            <label className="form-check-label" for="bolsa2">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-5 mb-3">
+                                    <label for="cantidadBolsa" className="form-label">Cantidad</label>
+                                    <input className="form-control" onChange={ e => setCantidadBolsa(parseInt(e.target.value)) } value={cantidadBolsa} type="number" id="cantidadBolsa" name="cantidadBolsa" min="0" disabled={(conBolsa) ? "" : "disabled"}></input>
                                 </div>
                             </div>
                         </div>
@@ -735,32 +818,20 @@ const NuevaVenta = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-3 mb-3">
-                        <label for="direccion" className="form-label">Dirección</label>
-                        <input onChange={ e => setDireccion(e.target.value) } type="text" className="form-control" name="direccion" id="direccion"></input>
-                    </div>
-                    <div className="col-3 mb-3">
+                    {/* <div className="col-3 mb-3">
+                        <label for="direccionCliente" className="form-label">Dirección</label>
+                        <input onChange={ e => setDireccionCliente(e.target.value) } type="text" className="form-control" name="direccionCliente" id="direccionCliente"></input>
+                    </div> */}
+                    {/* <div className="col-3 mb-3">
                         <label for="referencias" className="form-label">Referencias</label>
                         <input onChange={ e => setReferencias(e.target.value) } type="text" className="form-control" name="referencias" id="referencias"></input>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="mb-3">
-                    {/* <div className="border-bottom">Datos del cliente</div>
-                    <div>
-                        <p className="m-0 me-1">Fecha</p>
-                        <DatePicker 
-                            selected={dateInicio} 
-                            onChange={date => setDateInicio(date)} 
-                            locale="es"
-                            disabled="true"
-                            customInput={<ExampleCustomInput />} 
-                            dateFormat="dd/MM/yyyy"
-                        />
-                    </div> */}
                     <div className="info-total mb-4">
                         <div className="row">
                             <div className="col-11">Gravada:</div>
-                            <div className="col-1">2457.63</div>
+                            <div className="col-1">{gravada}</div>
                         </div>
                         <div className="row">
                             <div className="col-11">Descuento:</div>
@@ -808,7 +879,7 @@ const NuevaVenta = () => {
                                         <div>
                                             <div>Nro. Documento: {numeroDocumentoCliente}</div>
                                             <div className="text-uppercase">{nombreCliente}</div>
-                                            {/* <div>Fecha de emisión: {dateInicio}</div> */}
+                                            <div>Fecha de emisión: {fechaSunat}</div>
                                             <div>Moneda: {tipoMoneda}</div>
                                             <div>IGV: 18%</div>
                                         </div>
@@ -844,7 +915,7 @@ const NuevaVenta = () => {
                                         <div className="row">
                                             <div className="col-8">Gravada:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">2457.63</div>
+                                            <div className="col-3">{gravada}</div>
                                         </div>
                                         <div className="row">
                                             <div className="col-8">Descuento:</div>
