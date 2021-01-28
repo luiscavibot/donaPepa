@@ -9,30 +9,13 @@ import 'moment/locale/es'
 
 function VendedoraReporteActivos() {
 
-    const [vendedor, setVendedor] = useState('Todos');
-    const handleChangeVendedor = (event) => {
-        setVendedor(event.target.value);
-    };
+    const [metodoPago, setMetodoPago] = useState('todos');
 
-    const [ventasMensual, setVentasMensual] = useState('Todos');
-    const handleChangeVentasMensual = (event) => {
-        setVentasMensual(event.target.value);
-    };
+    const [delivery, setDelivery] = useState('todos')
 
-    const [metodoPago, setMetodoPago] = useState('Todos');
-    const handleChangeMetodoPago = (event) => {
-        setMetodoPago(event.target.value);
-    };
+    const [tipoCliente, setTipoCliente] = useState('todos')
 
-    const [delivery, setDelivery] = useState()
-    const handleChangeDelivery = (event) => {
-        setDelivery(event.target.value);
-    }
-
-    const [tipoCliente, setTipoCliente] = useState()
-    const handleChangeTipoCliente = (event) => {
-        setTipoCliente(event.target.value);
-    }
+    const [tipoProducto, setTipoProducto] = useState('todos')
 
     const [buscador, setBuscador] = useState(false)
 
@@ -51,6 +34,17 @@ function VendedoraReporteActivos() {
           </div>
         </div>
     );
+
+    // const deliveryChecked = (e) => {
+    //     console.log("entro a delivery checked")
+    //     console.log(e.target.value)
+    //     if (e.target.value === "true") {
+    //         setDelivery(true)
+    //         return
+    //     }
+    //     setDelivery(false)
+    //     return
+    // }
 
     const buscadorGeneral = (event) => {
         // console.log(event.target.value);
@@ -109,10 +103,10 @@ function VendedoraReporteActivos() {
                                     <label className="col-form-label">Delivery</label>
                                 </div>
                                 <div className="col-auto">
-                                    <select onChange={handleChangeDelivery} name="delivery" className="form-select">
-                                        <option selected>--</option>
-                                        <option value="sin delivery">Sin delivery</option>
-                                        <option value="con delivery">Con delivery</option>
+                                    <select onChange={e => setDelivery(e.target.value)} name="delivery" className="form-select">
+                                        <option value="todos">--</option>
+                                        <option value="sin_delivery">Sin delivery</option>
+                                        <option value="con_delivery">Con delivery</option>
                                     </select>
                                 </div>
                             </div>
@@ -126,8 +120,8 @@ function VendedoraReporteActivos() {
                                     <label className="col-form-label">Métodos de pago:</label>
                                 </div>
                                 <div className="col-auto">
-                                    <select className="form-select" value={metodoPago} onChange={handleChangeMetodoPago}>
-                                        <option selected>--</option>
+                                    <select className="form-select" onChange={e => setMetodoPago(e.target.value)}>
+                                        <option value="todos">--</option>
                                         <option value="tarjeta">tarjeta</option>
                                         <option value="contado">contado</option>
                                     </select>
@@ -140,8 +134,8 @@ function VendedoraReporteActivos() {
                                     <label className="col-form-label">Tipo de Cliente:</label>
                                 </div>
                                 <div className="col-auto">
-                                    <select name="tipoCliente" className="form-select" onChange={handleChangeTipoCliente}>
-                                        <option selected>--</option>
+                                    <select name="tipoCliente" className="form-select" onChange={e => setTipoCliente(e.target.value)}>
+                                        <option value="todos">--</option>
                                         <option value="tipo-1">tipo 1</option>
                                         <option value="tipo-2">tipo 2</option>
                                     </select>
@@ -154,8 +148,8 @@ function VendedoraReporteActivos() {
                                     <label className="col-form-label">Producto:</label>
                                 </div>
                                 <div className="col-auto">
-                                    <select name="tipoCliente" className="form-select" onChange={handleChangeTipoCliente}>
-                                        <option selected>--</option>
+                                    <select name="tipoProducto" className="form-select" onChange={e => setTipoProducto(e.target.value)}>
+                                        <option value="todos">--</option>
                                         <option value="tipo-1">tipo 1</option>
                                         <option value="tipo-2">tipo 2</option>
                                     </select>

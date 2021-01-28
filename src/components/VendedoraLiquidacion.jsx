@@ -9,30 +9,9 @@ import 'moment/locale/es'
 
 const VendedoraLiquidacion = () => {
 
-    const [vendedor, setVendedor] = useState('Todos');
-    const handleChangeVendedor = (event) => {
-        setVendedor(event.target.value);
-    };
+    const [metodoPago, setMetodoPago] = useState('todos');
 
-    const [ventasMensual, setVentasMensual] = useState('Todos');
-    const handleChangeVentasMensual = (event) => {
-        setVentasMensual(event.target.value);
-    };
-
-    const [metodoPago, setMetodoPago] = useState('Todos');
-    const handleChangeMetodoPago = (event) => {
-        setMetodoPago(event.target.value);
-    };
-
-    const [delivery, setDelivery] = useState()
-    const handleChangeDelivery = (event) => {
-        setDelivery(event.target.value);
-    }
-
-    const [tipoCliente, setTipoCliente] = useState()
-    const handleChangeTipoCliente = (event) => {
-        setTipoCliente(event.target.value);
-    }
+    const [tipoCliente, setTipoCliente] = useState('todos')
 
     const [buscador, setBuscador] = useState(false)
 
@@ -95,8 +74,8 @@ const VendedoraLiquidacion = () => {
                                         <label className="col-form-label">Métodos de pago:</label>
                                     </div>
                                     <div className="col-auto">
-                                        <select className="form-select" value={metodoPago} onChange={handleChangeMetodoPago}>
-                                            <option selected>--</option>
+                                        <select className="form-select" value={metodoPago} onChange={e => setMetodoPago(e.target.value)}>
+                                            <option value="todos" selected>--</option>
                                             <option value="tarjeta">tarjeta</option>
                                             <option value="contado">contado</option>
                                         </select>
@@ -110,8 +89,8 @@ const VendedoraLiquidacion = () => {
                                         <label className="col-form-label">Tipo de Cliente:</label>
                                     </div>
                                     <div className="col-auto">
-                                        <select name="tipoCliente" className="form-select" onChange={handleChangeTipoCliente}>
-                                            <option selected>--</option>
+                                        <select name="tipoCliente" className="form-select" onChange={e => setTipoCliente(e.target.value)}>
+                                            <option value="todos" selected>--</option>
                                             <option value="tipo-1">tipo 1</option>
                                             <option value="tipo-2">tipo 2</option>
                                         </select>
