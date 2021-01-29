@@ -1,0 +1,33 @@
+.sidebar {
+    background: $background-sidebar-red;
+    letter-spacing: 1.6px;
+    .accordion-button {
+        border: none;
+        padding: 1rem 1.25rem 1rem 2rem;
+        letter-spacing: 1.6px;
+        &:not(.collapsed) {
+            background-color: inherit;
+            border-left: 2px solid #fff;
+        }
+        &:focus {
+            box-shadow: none;
+        }
+        &::after {
+            display: none;
+        }
+    }
+    .accordion-body {
+        padding: 0;
+        .list-group-item {
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 1rem 1rem 1rem 3.8rem;
+            &.active {
+                background-color: transparent;
+                border: none;
+                font-weight: bold;
+            }
+        }
+    }
+}
