@@ -4,29 +4,52 @@ import DatePicker, {registerLocale} from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { set } from 'date-fns/esm'
 import 'semantic-ui-css/semantic.min.css'
-import { Button } from 'semantic-ui-react'
+import { Modal,Button } from 'react-bootstrap';
+import { useBootstrapPrefix } from 'react-bootstrap/esm/ThemeProvider'
 
 
 
 const NuevaVenta = () => {
 
-    const [lista, setLista] = useState([])
-    // const [numLista, setNumLista] = useState(0)
-    // const [cod, setCod] = useState(0)
+    const IGV = 0.18
     const [descripcion, setDescripcion] = useState('')
-    // const [unidades, setUnidades] = useState('')
-    // const [cantidad, setCantidad] = useState(0)
-    // const [descuento, setDescuento] = useState(0)
     const [precioUnitario, setPrecioUnitario] = useState(0)
-    // const [precioUnitarioIgv, setPrecioUnitarioIgv] = useState(0)
-    // const [total, setTotal] = useState(0)
+    //******************************** */
+    //Hooks de estado para Nubefact-inicio
     const [usuario, setUsuario] = useState('')
     const [serie, setSerie] = useState('')
-    const [numero, setNumero] = useState(0)
+    const [numero, setNumero] = useState(7)
+    const [tipoComprobante, setTipoComprobante] = useState(null)
+    const [clienteTipoDocumento, setClienteTipoDocumento] = useState("1")
+    const [clienteNumeroDocumento, setClienteNumeroDocumento] = useState(null)
+    const [clienteDenominacion, setClienteDenominacion] = useState(null)
+    const [clienteEmail, setClienteEmail] = useState(null)
+    const [clienteDireccion, setClienteDireccion] = useState(null)
+    const [lista, setLista] = useState([])
+    const [item, setItem] = useState([])
+    const [sumaTotalFinal, setSumaTotalFinal] = useState(0.0)
+    //***************************************** */
+    //Hooks de estado Adicionales para la BD-inicio
+    const [provincia, setProvincia] = useState("Lima")
+    const [clienteCelular, setClienteCelular] = useState(null)
+    const [moneda, setMoneda] = useState("1")
+    const [departamento, setDepartamento] = useState("Lima")
+    const [distritoDestino, setDistritoDestino] = useState(10)
+    const [totalDescuento, setTotalDescuento] = useState(0)
+    //******************************************/
+    //Hooks de estado para funcionaldiades extra
+    const [ofrecerRegalo, setOfrecerRegalo] = useState(false)
+    const [minimaCantidadRegalos, setMinimaCantidadRegalos] = useState(0)
+    const [show, setShow] = useState(false);
+    const [autorizador, setAutorizador] = useState("")
+    const [habilitarDelivery, setHabilitarDelivery] = useState(false)
+    const [alteroDescuento, setAlteroDescuento] = useState(false)
+    const [habilitarBotonAutorizacion, setHabilitarBotonAutorizacion] = useState(false)
+    const [totalGravada, setTotalGravada] = useState(0)
+    const [toalIgv, setToalIgv] = useState(0)
+    //*************************************************** */
     const [tipoRegalo, setTipoRegalo] = useState('')
     const [cantidadRegalo, setCantidadRegalo] = useState(0)
-    const [tipoDocumentoCliente, setTipoDocumentoCliente] = useState('')
-    const [tipoDocumentoClienteSunat, setTipoDocumentoClienteSunat] = useState('')
     const [numeroDocumentoCliente, setNumeroDocumentoCliente] = useState('')
     const [dateInicio, setDateInicio] = useState(new Date())
     const [fechaSunat, setFechaSunat] = useState('')
@@ -38,9 +61,8 @@ const NuevaVenta = () => {
     const [emailCliente, setEmailCliente] = useState('')
     const [condicionPago, setCondicionPago] = useState('')
     const [numeroOperacion, setNumeroOperacion] = useState('')
-    const [provincia, setProvincia] = useState('')
     const [canalVenta, setCanalVenta] = useState('')
-    const [delivery, setDelivery] = useState(false)
+    const [delivery, setDelivery] = useState(true)
     const [conBolsa, setConBolsa] = useState(false)
     const [cantidadBolsa, setCantidadBolsa] = useState(0)
     const [direccionCliente, setDireccionCliente] = useState('')
@@ -50,8 +72,6 @@ const NuevaVenta = () => {
     const [totalIgv, setTotalIgv] = useState(0)
     const [totalDelivery, setTotalDelivery] = useState(0)
     const [totalPagar, setTotalPagar] = useState(0)
-    const [filaProducto, setFilaProducto] = useState()
-    const [botonAgregar, setBotonAgregar] = useState(false)
 
     const [listaProductos, setListaProductos] = useState([])
     const [listaPresentacion, setListaPresentacion] = useState([[]])
@@ -66,12 +86,14 @@ const NuevaVenta = () => {
     // const [modoValidar, setModoValidar] = useState([true])
     // const [numeracion, setNumeracion] = useState(false)
     const [detenerCreacion, setDetenerCreacion] = useState(false)
-    const [deshabilitarValidacion, setDeshabilitarValidacion] = useState(true)
     // const [fijarPresentacion, setFijarPresentacion] = useState(false)
     const [resultadoEmisionComprobante, setResultadoEmisionComprobante] = useState("")
     const [tituloResultado, setTituloResultado] = useState("")
     const [botonImprimir, setBotonImprimir] = useState(false)
     const [linkDescarga, setLinkDescarga] = useState("")
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     useEffect(() => {
         const getProducts = async () =>{
@@ -102,9 +124,13 @@ const NuevaVenta = () => {
         console.log(e.target.value)
         if (e.target.value === "true") {
             setDelivery(true)
+            setHabilitarDelivery(true)
+            setTotalDelivery(distritoDestino)
             return
         }
-        setDelivery(false)
+        setTotalDelivery(0);
+        setDelivery(false);
+        setHabilitarDelivery(false);
         return
     }
 
@@ -130,31 +156,51 @@ const NuevaVenta = () => {
         }else{
         dateNewFormatSunat = `${day}-${month}-${year}`
         }
-        setDateInicio(date)
+        // setDateInicio(date)
         setFechaSunat(dateNewFormatSunat)
     }
 
     const enviarDatos = (e) => {
         e.preventDefault()
         console.log("inicio el axios para enviar la data final a nubefact");
+        let itemsProv = lista.map(function(valor) {
+            let obj={
+                unidad_de_medida: "NIU",
+                codigo: valor.codigoLista,
+                codigo_producto_sunat: "",
+                descripcion: valor.descripcionLista,
+                cantidad: valor.cantidadLista*1.0,
+                valor_unitario: valor.precioUnitarioLista*(1/(1+IGV)),
+                precio_unitario: valor.precioUnitarioLista,
+                descuento: valor.descuentoLista*1.0,
+                subtotal: valor.precioVentaLista,
+                tipo_de_igv: "1",
+                igv: valor.igvLista*1.0,
+                total: valor.totalLista*1.0,
+                anticipo_regularizacion: false,
+                anticipo_documento_serie: "",
+                anticipo_documento_numero: ""            
+            }
+            return obj
+        })
+        setItem(itemsProv);
         const emitir = async () =>{
             const documento = {
-
                 operacion: "generar_comprobante",
-                tipo_de_comprobante: 1,
+                tipo_de_comprobante: tipoComprobante,
                 serie: "FFF1",
-                numero:8,
+                numero: numero,
                 sunat_transaction: 1,
-                cliente_tipo_de_documento: 6,
-                cliente_numero_de_documento: "20600695771",
-                cliente_denominacion: "Clientaso",
-                cliente_direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
-                cliente_email: "lcastillov123@gmail.com",
+                cliente_tipo_de_documento: clienteTipoDocumento,
+                cliente_numero_de_documento: clienteNumeroDocumento,
+                cliente_denominacion: clienteDenominacion,
+                cliente_direccion: clienteDireccion,
+                cliente_email: clienteEmail,
                 cliente_email_1: "",
                 cliente_email_2: "",
-                fecha_de_emision: "25-01-2021",
+                fecha_de_emision: fechaSunat,
                 fecha_de_vencimiento: "",
-                moneda: 1,
+                moneda: moneda,
                 tipo_de_cambio: "",
                 porcentaje_de_igv: 18.00,
                 descuento_global: "",
@@ -189,48 +235,13 @@ const NuevaVenta = () => {
                 generado_por_contingencia: "",
                 bienes_region_selva: "",
                 servicios_region_selva: "",
-                items: [
-                    {
-                        unidad_de_medida: "NIU",
-                        codigo: "001",
-                        codigo_producto_sunat: "10000000",
-                        descripcion: "DETALLE DEL PRODUCTO",
-                        cantidad: 1,
-                        valor_unitario: 500,
-                        precio_unitario: 590,
-                        descuento: "",
-                        subtotal: 500,
-                        tipo_de_igv: 1,
-                        igv: 90,
-                        total: 590,
-                        anticipo_regularizacion: false,
-                        anticipo_documento_serie: "",
-                        anticipo_documento_numero: ""
-                    },
-                    {
-                        unidad_de_medida: "NIU",
-                        codigo: "001",
-                        codigo_producto_sunat: "20000000",
-                        descripcion: "DETALLE DEL PRODUCTO",
-                        cantidad: 1,
-                        valor_unitario: 20,
-                        precio_unitario: 23.60,
-                        descuento: "",
-                        subtotal: 100,
-                        tipo_de_igv: 1,
-                        igv: 18,
-                        total: 118,
-                        anticipo_regularizacion: false,
-                        anticipo_documento_serie: "",
-                        anticipo_documento_numero: ""
-                    }        
-                ],
-                guias: [
-                    {
-                        guia_tipo: 1,
-                        guia_serie_numero: "0001-23"
-                    }
-                ]
+                items: item,
+                // guias: [
+                //     {
+                //         guia_tipo: 1,
+                //         guia_serie_numero: "0001-23"
+                //     }
+                // ]
             }
 
             const config = {
@@ -379,7 +390,6 @@ const NuevaVenta = () => {
             }
         ]);
         setDetenerCreacion(true);
-        setDeshabilitarValidacion(true);       
     }
 
     const presentaciones = (descripcion, numero) =>{
@@ -399,10 +409,15 @@ const NuevaVenta = () => {
                 console.log("Resultado de axios para la descripcion recibida y primer elemento de lista de presentacion: ",resb.data);
                 listaProv[numero-1].codigoLista = resb.data[0].codigo;
                 listaProv[numero-1].precioUnitarioLista = resb.data[0].precioUnitario;
-                let precioVenta = (listaProv[numero-1].precioUnitarioLista*listaProv[numero-1].cantidadLista)-listaProv[numero-1].descuentoLista;
-                listaProv[numero-1].precioVentaLista = precioVenta.toFixed(2);
-                listaProv[numero-1].igvLista = (precioVenta*0.18).toFixed(2);
-                listaProv[numero-1].totalLista = (precioVenta*1.18).toFixed(2);
+                //Nuevo Cálculo
+                let total = listaProv[numero-1].precioUnitarioLista*listaProv[numero-1].cantidadLista-listaProv[numero-1].descuentoLista;
+                listaProv[numero-1].totalLista = total.toFixed(2);
+                listaProv[numero-1].igvLista = ((total*IGV)/(1+IGV)).toFixed(2);
+                listaProv[numero-1].precioVentaLista = (total/(1+IGV)).toFixed(2);
+                // let precioVenta = (listaProv[numero-1].precioUnitarioLista*listaProv[numero-1].cantidadLista*(1/(1+IGV)))-listaProv[numero-1].descuentoLista;
+                // listaProv[numero-1].precioVentaLista = precioVenta.toFixed(2);
+                // listaProv[numero-1].igvLista = (precioVenta*IGV).toFixed(2);
+                // listaProv[numero-1].totalLista = (precioVenta*1.18).toFixed(2);
                 let arrayTotalLista = [...totalLista];
                 arrayTotalLista[numero-1] = listaProv[numero-1].totalLista
                 setTotalLista(arrayTotalLista)
@@ -443,7 +458,6 @@ const NuevaVenta = () => {
             }
         }
         getCodigoYprecioUnitario();
-        setDeshabilitarValidacion(false);
     }
     useEffect(() => {
 
@@ -454,38 +468,47 @@ const NuevaVenta = () => {
         setTotalPagar(sumaTotal.toFixed(2));
 
     }, [totalLista,setTotalPagar])
+    useEffect(() => {
+
+        let sumaTotalGravadaProv = ((totalDelivery*1.0)+(totalPagar*1.0))*(1/(1+IGV))
+        setTotalGravada(sumaTotalGravadaProv.toFixed(2));
+        let sumaTotalIgvProv = ((totalPagar*1.0)+(totalDelivery*1.0))*(IGV/(1+IGV))
+        setTotalIgv(sumaTotalIgvProv.toFixed(2))
+        let sumaTotalFinalProv = (totalDelivery*1.0) + (totalPagar*1.0) + (cantidadBolsa*0.1)
+        setSumaTotalFinal(sumaTotalFinalProv)
+    }, [totalDelivery,totalPagar,cantidadBolsa])
 
     
 
-    const calculoFinal = (numeroItem) => {
+    // const calculoFinal = (numeroItem) => {
     
-        // let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);
-        let listaProv = [...lista];
-        console.log("LLAMADO A CALCULO FINAL (Precio Unitario)",listaProv.precioUnitarioLista);
+    //     // let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);
+    //     let listaProv = [...lista];
+    //     console.log("LLAMADO A CALCULO FINAL (Precio Unitario)",listaProv.precioUnitarioLista);
 
-        let precioVenta = ((listaProv[numeroItem-1].precioUnitarioLista)*(listaProv[numeroItem-1].cantidadLista))-listaProv[numeroItem-1].descuentoLista;
+    //     let precioVenta = ((listaProv[numeroItem-1].precioUnitarioLista)*(listaProv[numeroItem-1].cantidadLista)*(1/1+IGV))-listaProv[numeroItem-1].descuentoLista;
         
-        listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
-        listaProv[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
-        listaProv[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
+    //     listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
+    //     listaProv[numeroItem-1].igvLista = (precioVenta*IGV).toFixed(2);
+    //     listaProv[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
             
-        let listaProvPrecioVentaLista = [...precioVentaLista]
-        listaProvPrecioVentaLista[numeroItem-1]= precioVenta.toFixed(2);
-        setPrecioVentaLista(listaProvPrecioVentaLista);
+    //     let listaProvPrecioVentaLista = [...precioVentaLista]
+    //     listaProvPrecioVentaLista[numeroItem-1]= precioVenta.toFixed(2);
+    //     setPrecioVentaLista(listaProvPrecioVentaLista);
     
-        let listaProvIgvLista = [...igvLista]
-        listaProvIgvLista[numeroItem-1]= (precioVenta*0.18).toFixed(2);
-        setIgvLista(listaProvIgvLista);
+    //     let listaProvIgvLista = [...igvLista]
+    //     listaProvIgvLista[numeroItem-1]= (precioVenta*IGV).toFixed(2);
+    //     setIgvLista(listaProvIgvLista);
     
-        let listaProvTotalLista = [...totalLista]
-        listaProvTotalLista[numeroItem-1]= (precioVenta*1.18).toFixed(2);
-        setTotalLista(listaProvTotalLista);
+    //     let listaProvTotalLista = [...totalLista]
+    //     listaProvTotalLista[numeroItem-1]= (precioVenta*1.18).toFixed(2);
+    //     setTotalLista(listaProvTotalLista);
 
-        let modoValidarProv = [...lista]
-        modoValidarProv[numeroItem-1].modoValidar= false;
-        setLista(modoValidarProv);
-        setDetenerCreacion(false)
-    }
+    //     let modoValidarProv = [...lista]
+    //     modoValidarProv[numeroItem-1].modoValidar= false;
+    //     setLista(modoValidarProv);
+    //     setDetenerCreacion(false)
+    // }
 
     const eliminarFila = (numeroItem) => {
         let sumaTotal = 0.00;
@@ -511,6 +534,14 @@ const NuevaVenta = () => {
             robj["modoValidar"]= obj.modoValidar;
             return robj
         })
+        
+        let provTotalLista = [...listaRenumerada]
+        let nuevaListaTotalLista = provTotalLista.map(function(obj){
+            let robjb = 0; 
+            robjb = obj.totalLista;
+            return robjb
+        })
+        setTotalLista(nuevaListaTotalLista)
         setLista(listaRenumerada);
         setTotalPagar(sumaTotal.toFixed(2));
 
@@ -518,55 +549,51 @@ const NuevaVenta = () => {
         // let numeradorb = 0;
         let nuevaListab = provListaPresentacion.filter((value, index )=>{return index!==i});    
         setListaPresentacion(nuevaListab);
- 
-
-
-
     }
 
-    const completarDatosCliente = (e) =>{
-        let inputNroDoc = e.target
-        console.log(inputNroDoc)
-        let inputNombreCliente = document.querySelector("input[name='nombreCliente']")
-        let inputEmailCliente = document.querySelector("input[name='emailCliente']")
-        let inputCelular = document.querySelector("input[name='celular']")
-        let list = inputNroDoc.getAttribute('list')
-        let options = document.querySelectorAll('#' + list + ' option')
-        let inputValue = inputNroDoc.value
-        console.log(inputNroDoc.value)
-        console.log(inputCelular.value)
-        // console.log(options[0])
+    // const completarDatosCliente = (e) =>{
+    //     let inputNroDoc = e.target
+    //     console.log(inputNroDoc)
+    //     let inputNombreCliente = document.querySelector("input[name='nombreCliente']")
+    //     let inputEmailCliente = document.querySelector("input[name='emailCliente']")
+    //     let inputCelular = document.querySelector("input[name='celular']")
+    //     let list = inputNroDoc.getAttribute('list')
+    //     let options = document.querySelectorAll('#' + list + ' option')
+    //     let inputValue = inputNroDoc.value
+    //     console.log(inputNroDoc.value)
+    //     console.log(inputCelular.value)
+    //     // console.log(options[0])
 
-        // inputNombreCliente.value = "Hanhu"
-        // inputEmailCliente.value = "hans.e.huiza.n@gmail.com"
-        // inputCelular = "991570362"
+    //     // inputNombreCliente.value = "Hanhu"
+    //     // inputEmailCliente.value = "hans.e.huiza.n@gmail.com"
+    //     // inputCelular = "991570362"
 
-        // setNombreCliente(inputNombreCliente.value)
-        // setEmailCliente(inputEmailCliente.value)
-        // setCelular(inputCelular)
+    //     // setNombreCliente(inputNombreCliente.value)
+    //     // setEmailCliente(inputEmailCliente.value)
+    //     // setCelular(inputCelular)
 
-        // console.log(inputNombreCliente);
+    //     // console.log(inputNombreCliente);
 
 
-        for(let i = 0; i < options.length; i++) {
-            let option = options[i];
+    //     for(let i = 0; i < options.length; i++) {
+    //         let option = options[i];
     
-            if(option.innerText === inputValue) {
-                inputNroDoc.value = option.getAttribute('data-doc-cliente')
-                inputNombreCliente.value = option.getAttribute('data-nombre-cliente')
-                inputEmailCliente.value = option.getAttribute('data-email-cliente')
-                inputCelular.value = option.getAttribute('data-celular')
+    //         if(option.innerText === inputValue) {
+    //             inputNroDoc.value = option.getAttribute('data-doc-cliente')
+    //             inputNombreCliente.value = option.getAttribute('data-nombre-cliente')
+    //             inputEmailCliente.value = option.getAttribute('data-email-cliente')
+    //             inputCelular.value = option.getAttribute('data-celular')
 
-                break;
-            }
-        }
+    //             break;
+    //         }
+    //     }
 
-        setNumeroDocumentoCliente(inputNroDoc.value)
-        setNombreCliente(inputNombreCliente.value)
-        setEmailCliente(inputEmailCliente.value)
-        setCelular(inputCelular.value)
-        // console.log("celular");
-    }
+    //     setNumeroDocumentoCliente(inputNroDoc.value)
+    //     setNombreCliente(inputNombreCliente.value)
+    //     setEmailCliente(inputEmailCliente.value)
+    //     setCelular(inputCelular.value)
+    //     // console.log("celular");
+    // }
 
     const manejadorEntrada = (event) =>{
         let numeroItem = event.target.id;
@@ -591,51 +618,64 @@ const NuevaVenta = () => {
                 let listaProvCantidad = [...lista];
                 listaProvCantidad[numeroItem-1].cantidadLista = event.target.value*1.0;
                 
-                let precioVenta = (listaProvCantidad[numeroItem-1].precioUnitarioLista*event.target.value)-listaProvCantidad[numeroItem-1].descuentoLista;
-                listaProvCantidad[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
-                listaProvCantidad[numeroItem-1].igvLista = (precioVenta*0.18).toFixed(2);
-                listaProvCantidad[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
+                if (listaProvCantidad[numeroItem-1].descripcionLista ==="Panetón buon natale" && listaProvCantidad[numeroItem-1].cantidadLista>9) {
+                    listaProvCantidad[numeroItem-1].descuentoLista = 10.0;
+                    setTotalDescuento(10)
+                    setOfrecerRegalo(true)
+                    setMinimaCantidadRegalos(3)
+                    setCantidadRegalo(3)
+                }else{
+                    listaProvCantidad[numeroItem-1].descuentoLista = 0.00
+                    setOfrecerRegalo(false)
+                    setMinimaCantidadRegalos(0)
+                    setCantidadRegalo(0)
+                }
+
+                let total = listaProvCantidad[numeroItem-1].precioUnitarioLista*(event.target.value)-listaProvCantidad[numeroItem-1].descuentoLista;
+                listaProvCantidad[numeroItem-1].totalLista = total.toFixed(2);
+                listaProvCantidad[numeroItem-1].igvLista = ((total*IGV)/(1+IGV)).toFixed(2);
+                listaProvCantidad[numeroItem-1].precioVentaLista = (total/(1+IGV)).toFixed(2);
                 let arrayTotalLista = [...totalLista];
                 arrayTotalLista[numeroItem-1] = listaProvCantidad[numeroItem-1].totalLista
                 setTotalLista(arrayTotalLista)
                 setLista(listaProvCantidad);
-                // let listaProv = [...listaCantidad]
-                // listaProv[numeroItem-1]=event.target.value;  
-                // setListaCantidad(listaProv);
                 break;
-            case 'descuento':
-                let listaProvDescuento = [...lista];
-                listaProvDescuento[numeroItem-1].descuentoLista = event.target.value*1.0;
 
-                let precioVentab = (listaProvDescuento[numeroItem-1].precioUnitarioLista*listaProvDescuento[numeroItem-1].cantidadLista)-(event.target.value);
-                console.log(precioVentab);
-                listaProvDescuento[numeroItem-1].precioVentaLista = precioVentab.toFixed(2);
-                listaProvDescuento[numeroItem-1].igvLista = (precioVentab*0.18).toFixed(2);
-                listaProvDescuento[numeroItem-1].totalLista = (precioVentab*1.18).toFixed(2);
-                let arrayTotalListab = [...totalLista];
-                arrayTotalListab[numeroItem-1] = listaProvDescuento[numeroItem-1].totalLista
-                setTotalLista(arrayTotalListab)
-                setLista(listaProvDescuento);
-                // let listaProvb = [...descuentoLista]
-                // listaProvb[numeroItem-1]=event.target.value;
-                // setDescuentoLista(listaProvb);
-                // completarCampos(numeroItem)
-                break;
+            // case 'descuento':
+            //     let listaProvDescuento = [...lista];
+            //     listaProvDescuento[numeroItem-1].descuentoLista = event.target.value*1.0;
+            //     let totalb = listaProvDescuento[numeroItem-1].precioUnitarioLista*listaProvDescuento[numeroItem-1].cantidadLista-event.target.value;
+            //     listaProvDescuento[numeroItem-1].totalLista = totalb.toFixed(2);
+            //     listaProvDescuento[numeroItem-1].igvLista = ((totalb*IGV)/(1+IGV)).toFixed(2);
+            //     listaProvDescuento[numeroItem-1].precioVentaLista = (totalb/(1+IGV)).toFixed(2);
+            //     let arrayTotalListab = [...totalLista];
+            //     arrayTotalListab[numeroItem-1] = listaProvDescuento[numeroItem-1].totalLista
+            //     setTotalLista(arrayTotalListab)
+            //     setLista(listaProvDescuento);
+            //     break;
+
             case 'numeroDocumentoCliente':
-                completarDatosCliente(event)
+                setClienteNumeroDocumento(event.target.value)
                 break;
-            case 'tipoDocumentoCliente':
-                console.log("ENTRO TIPO DOCUMENTO CLIENTE");
-                let td = event.target.value
-                setTipoDocumentoCliente(td)
-                if(td == "DNI") {
-                    setTipoDocumentoClienteSunat("1")
-                    break;
+            case 'clienteDenominacion':
+                setClienteDenominacion(event.target.value)
+                break;
+            case 'clienteEmail':
+                setClienteEmail(event.target.value)
+                break;
+            case 'clienteCelular':
+                setClienteCelular(event.target.value)
+                break; 
+            case 'clienteDireccion':
+                setClienteDireccion(event.target.value)
+                break;
+            case 'cantidadRegalo':
+                setCantidadRegalo(event.target.value) 
+                if (event.target.value!==3 && alteroDescuento===false) {
+                    setShow(true);
+                    setAlteroDescuento(true);
                 }
-                if(td == "RUC") {
-                    setTipoDocumentoClienteSunat("6")
-                    break;
-                }
+                break;  
             case 'tipoMoneda':
                 console.log("ENTRO TIPO MONEDA");
                 let tm = event.target.value
@@ -644,15 +684,55 @@ const NuevaVenta = () => {
                     setTipoMonedaSunat(1)
                     break;
                 }
+            case 'distritoDestino':
+                setDistritoDestino(event.target.value);
+                if (habilitarDelivery===true) {
+                    setTotalDelivery(event.target.value)
+                }
+                break;
+            case 'autorizador':
+                setAutorizador(event.target.value);
+                setHabilitarBotonAutorizacion(true)
             default:
                 break;
         }
         // calculoFinal(numeroItem)
         // setValorDescripcion(event.target.value)        
     }
+    const cerrarModal = ()=>{
+        setTituloResultado("");
+        setResultadoEmisionComprobante("");
+    }
 
     return (
         <div>
+            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false} centered>
+                <div className="d-flex justify-content-center">
+                    <Modal.Header >
+                        <Modal.Title className="fw-bold">Regalos</Modal.Title>
+                    </Modal.Header>
+                </div>
+                <Modal.Body>
+                    Sugerimos que los regalos no pasen de esta cantidad por los siguientes motivos
+                     … Nulla vestibulum erat eu molestie cursus. Ut semper erat id molestie aliquam.
+                     <div className="d-flex justify-content-center flex-column align-items-center">
+                        <p className="fw-bold">¿Quién lo autorizó?</p>
+                        <select onChange={ manejadorEntrada } name="autorizador" className="form-select">
+                                    <option disabled="disabled" selected>Escoger un valor</option>
+                                    <option value="Carlos Ventura" >Carlos Ventura</option>
+                                    <option value="Luis Castillo" >Luis Castillo</option>
+                        </select>
+                     </div>
+                </Modal.Body>
+                <div className="d-flex justify-content-center">
+                    <Modal.Footer>
+                            <Button variant="secondary" onClick={handleClose} disabled={!habilitarBotonAutorizacion}>
+                                Aceptar
+                            </Button>
+                    </Modal.Footer>
+                </div>
+            </Modal>
+            
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h5">Vendedora / Nueva venta</h1>
                 {/* <div>
@@ -665,17 +745,42 @@ const NuevaVenta = () => {
             {/* http://46.183.113.134:3000/api/ventas */}
 
             <form onSubmit={ enviarDatos }>
-                <div className="wrapper-client-info row">
-                    <div className="owner-info col-5">
+                <div className="row mb-4">
+                    <div className="col-7"></div>
+                    <div className="col-3">
+                        <select onChange={ e => setTipoComprobante(e.target.value) } name="canalVenta" className="form-select">
+                            <option selected disabled>Elija un tipo de comprobante</option>
+                            <option value="2">Boleta</option>
+                            <option value="1">Factura</option>
+                            <option value="nv">Nota de Venta</option>
+                        </select>                                    
+                    </div>
+                    <div className="col-2">
+                        <select onChange={ e => setSerie(e.target.value) } name="serie" className="form-select">
+                            <option selected disabled>Elija una serie</option>
+                            {tipoComprobante==="2"?(<><option value="BBB1">B003</option><option value="BBB1">B004</option></>):
+                            tipoComprobante==="1"?(<><option value="FFF1">F003</option>,<option value="FFF1">F004</option></>):null}
+                            {/* <option value="B003">B003</option>
+                            <option value="B004">B004</option> */}
+                            
+                            {/* <option value="F003">F003</option>
+                            <option value="F004">F004</option> */}
+                        </select>                                    
+                    </div>
+                </div>
+                <div className="wrapper-client-info row m-3">
+                    <div className="owner-info col-9">
                         <div className="text-uppercase">Jaramillo Torero de Paez Manuela Maria</div>
                         <div>Av. Tacna Nro. 488</div>
                     </div>
-                    <div className="ruc-info col-7 d-flex justify-content-center text-center">
+                    <div className="ruc-info col-3 d-flex justify-content-center text-center fs-5">
                         <div>
                             <div>RUC 10095588986</div>
-                            <div className="text-uppercase">Nota de venta electrónica</div>
+                            <div className="text-uppercase">
+                                {tipoComprobante===1?"Factura":tipoComprobante===2?"Boleta":null} 
+                                &nbsp;electrónica</div>
                             <div>
-                                <span>NV10</span>-<span>9281</span>
+                                <span>{serie}</span>-<span>{numero}</span>
                             </div>
                         </div>
                     </div>
@@ -689,9 +794,9 @@ const NuevaVenta = () => {
                                 <th scope="col">PRESENTACIÓN</th>
                                 <th scope="col">COD</th>
                                 <th scope="col">CANT</th>
-                                <th scope="col">PU</th>
-                                <th scope="col">DSCTO</th>
-                                <th scope="col">PV</th>
+                                <th scope="col">Precio unitario</th>
+                                <th scope="col">Descuento</th>
+                                <th scope="col">Subtotal</th>
                                 <th scope="col">IGV</th>
                                 <th scope="col">TOT</th>
                                 <th scope="col"></th>
@@ -720,7 +825,7 @@ const NuevaVenta = () => {
                                                         listaPresentacion[valor.numeroLista-1].map(
                                                             (item) =>(<option value={item}>{item}</option>)
                                                             )
-                                                        }
+                                                    }
                                             </select>
                                         </td>
                                         <td>{valor.codigoLista}</td>
@@ -732,20 +837,12 @@ const NuevaVenta = () => {
                                             {valor.precioUnitarioLista}
                                         </td>
                                         <td>
-                                            <input id={valor.numeroLista} type="number" name="descuento" min="0" value={valor.descuentoLista} 
-                                            onChange={manejadorEntrada} disabled={!valor.modoValidar} />
+                                            <p>{valor.descuentoLista}</p>
                                         </td>
                                         <td>{valor.precioVentaLista}</td>
                                         <td>{valor.igvLista}</td>
                                         <td>{valor.totalLista}</td>
                                         <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm text-danger" type="button" >Eliminar</button>
-                                        {/* <td>
-                                            {
-                                                valor.modoValidar?
-                                                <button onClick= {()=>calculoFinal(valor.numeroLista)} className="btn btn-success btn-sm" type="button" >Validar</button>:
-                                                <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm" type="button" >Eliminar</button>
-                                            }
-                                        </td> */}
                                     </tr>
                                 ))
                             }
@@ -754,7 +851,7 @@ const NuevaVenta = () => {
                     {/* <div className="border-bottom my-4"></div> */}
                     <div className="d-flex justify-content-between mt-4">
                         <button type="button" className="btn btn-outline-danger" onClick={agregarProducto} disabled={detenerCreacion} >+ AGREGAR PRODUCTO</button>
-                        <p class="fs-5 me-5" >{ `TOTAL: S/. ${totalPagar}`}</p>
+                        <p class="fs-5 me-5" >{ `Total Productos: S/. ${totalPagar}`}</p>
                     </div>
                 </div>
                 <div className="border-bottom my-4"></div>
@@ -763,17 +860,14 @@ const NuevaVenta = () => {
                     <div className="row">
                         <div className="col-3 mb-3">
                             {/* <label for="exampleInputEmail1" className="form-label">Email address</label> */}
-                            <label for="tipoRegalo" className="form-label">Tipo de regalo</label>
-                            <select onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
-                                <option selected>Elige el tipo de regalo</option>
-                                <option value="Regalo Probadores">Regalo Probadores</option>
-                                <option value="Regalo Muestra x 50">Regalo Muestra x 50</option>
-                                <option value="Regalo Muestra x 100">Regalo Muestra x 100</option>
+                            <label for="tipoRegalo" className="form-label" >Tipo de regalo</label>
+                            <select disabled={!ofrecerRegalo} onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
+                                <option value="Regalo Probadores" selected>Regalo Probadores</option>
                             </select>
                         </div>
                         <div className="col-1 mb-3">
                             <label for="cantidadRegalo" className="form-label">Cantidad</label>
-                            <input className="form-control" onChange={ e => setCantidadRegalo(parseInt(e.target.value)) } value={cantidadRegalo} type="number" id="cantidadRegalo" name="cantidadRegalo" min="0" max="5"></input>
+                            <input disabled={!ofrecerRegalo} className="form-control" onChange={manejadorEntrada} value={cantidadRegalo} type="number" id="cantidadRegalo" name="cantidadRegalo" min="0"></input>
                         </div>
                     </div>
                 </div>
@@ -786,58 +880,88 @@ const NuevaVenta = () => {
                                 <div className="col-6 mb-3">
                                     <label className="form-label">Tipo de documento</label>
                                     {/* <select onChange={ e => setTipoDocumentoCliente(e.target.value) } name="tipoDocumentoCliente" className="form-select"> */}
-                                    <select onChange={ manejadorEntrada } name="tipoDocumentoCliente" className="form-select">
+                                    {/* <select onChange={ manejadorEntrada } name="tipoDocumentoCliente" className="form-select">
                                         <option selected>Elige el tipo de documento</option>
                                         <option value="DNI">DNI</option>
                                         <option value="RUC">RUC</option>
-                                    </select>
+                                    </select> */}
+                                    <select onChange={ e => setClienteTipoDocumento(e.target.value) } name="clienteTipoDocumento" className="form-select">
+                                        <option value="1" selected>DNI</option>
+                                        <option value="6">RUC</option>
+                                        <option value="4">Carnet de Extranjería</option>
+                                        <option value="7">Pasaporte</option>
+                                        <option value="-">Varios (Ventas menores a S/700.00)</option>
+                                    </select> 
                                 </div>
                                 <div className="col-6 mb-3">
                                     <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
                                     {/* <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente" required></input> */}
-                                    <input className="form-control is-valid" name="numeroDocumentoCliente" type="search" onChange={manejadorEntrada}  list="listaclientes" />
-                                    {/* <datalist id="listaclientes">
-                                            {
-                                                listaProductos.map((item) =>
-                                                    (<option data-nombre-cliente="Hans" data-email-cliente="hans.e.huiza.n@gmail.com" data-celular="991570362" data-doc-cliente={item}>{item} 123</option>)
-                                                )
-                                            }
-                                    </datalist> */}
+                                    <input className="form-control" name="numeroDocumentoCliente" type="text" onChange={manejadorEntrada} value={clienteNumeroDocumento}/>
                                 </div>
                             </div>
                             <div className="mb-3">
                                 <label for="nombreCliente" className="form-label">Nombre del cliente</label>
-                                <input onChange={ e => setNombreCliente(e.target.value) } type="text" className="form-control" name="nombreCliente" id="nombreCliente"></input>
+                                <input onChange={manejadorEntrada} type="text" className="form-control" name="clienteDenominacion" id="nombreCliente"></input>
                             </div>
                             <div className="row">
                                 <div className="col-6 mb-3">
-                                    <label for="emailCliente" className="form-label">Email</label>
-                                    <input onChange={ e => setEmailCliente(e.target.value) } type="email" className="form-control" name="emailCliente" id="emailCliente" aria-describedby="emailHelp"></input>
+                                    <label for="emailCliente" className="form-label" value={clienteEmail}>Email</label>
+                                    <input onChange={manejadorEntrada} type="email" className="form-control" name="clienteEmail" id="emailCliente" aria-describedby="emailHelp"></input>
                                 </div>
                                 <div className="col-6 mb-3">
-                                    <label className="form-label" for="celular">Celular</label>
-                                    <input onChange={ e => setCelular(e.target.value) } className="form-control" type="tel" name="celular" id="celular"></input>
+                                    <label className="form-label" for="celular" value={clienteCelular}>Celular</label>
+                                    <input onChange={manejadorEntrada} className="form-control" type="tel" name="clienteCelular" id="celular"></input>
                                 </div>
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label">Provincia</label>
-                                <select onChange={ e => setProvincia(e.target.value) } name="provincia" className="form-select">
-                                    <option selected>Elige la provincia</option>
-                                    <option value="Barranca">Barranca</option>
-                                    <option value="Cajatambo">Cajatambo</option>
-                                    <option value="Canta">Canta</option>
-                                    <option value="Cañete">Cañete</option>
-                                    <option value="Huaral">Huaral</option>
-                                    <option value="Huarochirí">Huarochirí</option>
-                                    <option value="Huaura">Huaura</option>
-                                    <option value="Lima">Lima</option>
-                                    <option value="Oyón">Oyón</option>
-                                    <option value="Yauyos">Yauyos</option>
-                                </select>
+                            <div className="row mb-3">
+                                <div className="col-6">
+                                    <label className="form-label">Departamento</label>
+                                    <select onChange={ e => setDepartamento(e.target.value) } name="provincia" className="form-select">
+                                        <option value="Lima" selected>Lima</option>
+                                        <option value="Arequipa">Arequipa</option>
+                                    </select>
+                                </div>
+                                {departamento==="Lima"?(<>
+                                    <div className="col-6">
+                                        <label className="form-label">Provincia</label>
+                                        <select onChange={ e => setProvincia(e.target.value) } name="provincia" className="form-select">
+                                            <option value="Lima" selected>Lima</option>
+                                            <option value="Barranca">Barranca</option>
+                                            <option value="Cajatambo">Cajatambo</option>
+                                            <option value="Canta">Canta</option>
+                                            <option value="Cañete">Cañete</option>
+                                            <option value="Huaral">Huaral</option>
+                                            <option value="Huarochirí">Huarochirí</option>
+                                            <option value="Huaura">Huaura</option>
+                                            <option value="Oyón">Oyón</option>
+                                            <option value="Yauyos">Yauyos</option>
+                                        </select>
+                                    </div>
+                                </>):departamento==="Arequipa"?(<>
+                                    <div className="col-6">
+                                        <label className="form-label">Provincia</label>
+                                        <select onChange={ e => setProvincia(e.target.value) } name="provincia" className="form-select">
+                                            <option value="Arequipa" selected>Arequipa</option>
+                                            <option value="Camaná">Camaná</option>
+                                            <option value="Caravelí">Caravelí</option>
+                                            <option value="Castilla">Castilla</option>
+                                            <option value="Caylloma">Caylloma</option>
+                                            <option value="Condesuyos">Condesuyos</option>
+                                            <option value="Islay">Islay</option>
+                                            <option value="La Unión">La Unión</option>
+                                        </select>
+                                    </div>
+                                </>):null}
                             </div>
                             <div className="mb-3">
                                 <label for="direccionCliente" className="form-label">Dirección</label>
-                                <input onChange={ e => setDireccionCliente(e.target.value) } type="text" className="form-control" name="direccionCliente" id="direccionCliente"></input>
+                                <input onChange={ e => setClienteDireccion(e.target.value) } type="text" className="form-control" 
+                                    name="clienteDireccion" id="direccionCliente" value={clienteDireccion}></input>
+                            </div>
+                            <div className="mb-3">
+                                <label for="direccionCliente" className="form-label">Referencias</label>
+                                <input onChange={ e => setReferencias(e.target.value) } type="text" className="form-control" 
+                                    name="referencias" id="referencias" value={referencias}></input>
                             </div>
                         </div>
                     </div>
@@ -862,16 +986,19 @@ const NuevaVenta = () => {
                             </div>
                             <div className="row">
                                 <div className="col-7 mb-3">
-                                    <label className="form-label">Moneda</label>
+                                    <label for="moneda" className="form-label">Tipo de moneda</label>
+                                    <select onChange={ e => setMoneda(e.target.value) } name="moneda" className="form-select" aria-label="Default select example" id="moneda">
+                                        <option selected value="1">Soles</option>
+                                    </select>
+                                    {/* <label className="form-label">Moneda</label>
                                     <select onChange={ manejadorEntrada } name="tipoMoneda" className="form-select">
                                         <option selected>Elige el tipo de moneda</option>
-                                        <option value="soles">Soles</option>
-                                        {/* <option value="dolares">Dolares</option> */}
-                                    </select>
+                                        <option value="1">Soles</option>
+                                    </select> */}
                                 </div>
                                 <div className="col-5 mb-3">
                                     <label for="igv" className="form-label">IGV</label>
-                                    <input onChange={ e => setIgv(e.target.value) } type="text" className="form-control" name="igv" id="igv" value="0.18" disabled readonly></input>
+                                    <input  type="text" className="form-control" name="igv" id="igv" value={IGV} disabled readonly></input>
                                 </div>
                             </div>
                             <div className="row">
@@ -885,7 +1012,7 @@ const NuevaVenta = () => {
                                 </div>
                                 <div className="col-5 mb-3">
                                     <label for="noperacion" className="form-label">Nro. Operación</label>
-                                    <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion" disabled={(condicionPago == "tarjeta") ? "" : "disabled"}></input>
+                                    <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion" disabled={(condicionPago === "tarjeta") ? "" : "disabled"}></input>
                                 </div>
                             </div>
                             <div className="row">
@@ -925,23 +1052,49 @@ const NuevaVenta = () => {
                     </div>
                 </div>
                 <div className="row mb-4">
-                    <div className="col-3 mb-3">
-                        <label className="form-label">¿Envío por delivery?</label>
-                        <div>
-                            <div className="form-check form-check-inline">
-                                <input onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="true" name="delivery" id="delivery1"></input>
-                                <label className="form-check-label" for="delivery1">
-                                    Sí
-                                </label>
+                    <div className="col-6 mb-3">
+                        <div className="row">
+                            <div className="col-6">
+                                <label className="form-label">¿Envío por delivery?</label>
+                                <div>
+                                    <div className="form-check form-check-inline">
+                                        <input onChange={ e => deliveryChecked(e)} className="form-check-input" type="radio" value="true" name="delivery" id="delivery1"></input>
+                                        <label className="form-check-label" for="delivery1">
+                                            Sí
+                                        </label>
+                                    </div>
+                                    <div className="form-check form-check-inline">
+                                        <input checked={!habilitarDelivery} onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="false" name="delivery" id="delivery2"></input>
+                                        <label className="form-check-label" for="delivery2">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="form-check form-check-inline">
-                                <input onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="false" name="delivery" id="delivery2"></input>
-                                <label className="form-check-label" for="delivery2">
-                                    No
-                                </label>
+                            <div className="col-6">
+                                <label className="form-label">Distrito destino</label>
+                                <div>
+                                    <div className="col-12 mb-3">
+                                        <select onChange={ manejadorEntrada} name="distritoDestino" className="form-select" disabled={!habilitarDelivery}>
+                                            <option value="10" selected>Centro de Lima</option>
+                                            <option value="10">Breña</option>
+                                            <option value="10">Lince</option>
+                                            <option value="10">Rimac</option>
+                                        </select>
+                                    </div> 
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div className="col-6 mb-3"></div>
+                                                                               
+                    {/* <select onChange={ e => setClienteTipoDocumento(e.target.value) } name="clienteTipoDocumento" className="form-select">
+                                        <option value="1" selected>DNI</option>
+                                        <option value="6">RUC</option>
+                                        <option value="4">Carnet de Extranjería</option>
+                                        <option value="7">Pasaporte</option>
+                                        <option value="-">Varios (Ventas menores a S/700.00)</option>
+                    </select> */}
                     {/* <div className="col-3 mb-3">
                         <label for="direccionCliente" className="form-label">Dirección</label>
                         <input onChange={ e => setDireccionCliente(e.target.value) } type="text" className="form-control" name="direccionCliente" id="direccionCliente"></input>
@@ -953,21 +1106,35 @@ const NuevaVenta = () => {
                 </div>
                 <div className="mb-3">
                     <div className="info-total mb-4">
+                        
                         <div className="row">
-                            <div className="col-11">Gravada:</div>
-                            <div className="col-1">{gravada}</div>
-                        </div>
-                        <div className="row">
-                            <div className="col-11">Descuento:</div>
-                            <div className="col-1">0.00</div>
-                        </div>
-                        <div className="row">
-                            <div className="col-11">IGV(18%):</div>
-                            <div className="col-1">442.37</div>
+                            <div className="col-11">Sub Total productos:</div>
+                            <div className="col-1">{(totalPagar*(1/(1+IGV))).toFixed(2)}</div>
                         </div>
                         <div className="row">
                             <div className="col-11">Delivery:</div>
-                            <div className="col-1">25.90</div>
+                            <div className="col-1">{(totalDelivery*(1/(1+IGV))).toFixed(2)}</div>
+                        </div>
+                        {/* <div className="row">
+                            <div className="col-11">Descuento Total:</div>
+                            <div className="col-1">{(totalDescuento*(1/(1+IGV))).toFixed(2)}</div>
+                        </div> */}
+                        <div className="row">
+                            <div className="col-11">Total gravada:</div>
+                            <div className="col-1">{totalGravada}</div>
+                        </div>
+                        <div className="row">
+                            <div className="col-11">Total IGV(18%):</div>
+                            <div className="col-1">{totalIgv}</div>
+                        </div>
+                        <div className="row">
+                            <div className="col-11">ICBPER:</div>
+                            <div className="col-1">{(cantidadBolsa*0.1).toFixed(2)}</div>
+                        </div>
+                        <hr></hr>
+                        <div className="row fs-4">
+                            <div className="col-11">TOTAL:</div>
+                            <div className="col-1">S/.{(sumaTotalFinal.toFixed(2))}</div>
                         </div>
                     </div>
                 </div>    
@@ -1037,30 +1204,40 @@ const NuevaVenta = () => {
                                     <div className="border-bottom"></div>
                                     <div className="p-4 text-end">
                                         <div className="row">
-                                            <div className="col-8">Gravada:</div>
+                                            <div className="col-8">Total productos:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">{gravada}</div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-8">Descuento:</div>
-                                            <div className="col-1">S/</div>
-                                            <div className="col-3">{descuentoTotal}</div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-8">IGV(18%):</div>
-                                            <div className="col-1">S/</div>
-                                            <div className="col-3">{totalIgv}</div>
+                                            <div className="col-3">0.00</div>
                                         </div>
                                         <div className="row">
                                             <div className="col-8">Delivery:</div>
                                             <div className="col-1">S/</div>
                                             <div className="col-3">25.90</div>
                                         </div>
+                                        <div className="row">
+                                            <div className="col-8">Descuento:</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">{totalDescuento}</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-8">Total gravada:</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">{gravada}</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-8">Total IGV(18%):</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">{totalIgv}</div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-8">ICBPER:</div>
+                                            <div className="col-1">S/</div>
+                                            <div className="col-3">0.10</div>
+                                        </div>
                                     </div>
                                     <div className="border-bottom"></div>
                                     <div className="p-4 text-end">
                                         <div className="row">
-                                            <div className="col-8">Total:</div>
+                                            <div className="col-8">TOTAL:</div>
                                             <div className="col-1">S/</div>
                                             <div className="col-3">{totalLista}</div>
                                         </div>
@@ -1072,7 +1249,7 @@ const NuevaVenta = () => {
                                             Representación impresa de la
                                         </div>
                                         <div>
-                                            NOTA DE VENTA ELECTRONICA
+                                            {tipoComprobante} ELECTRONICA
                                         </div>
                                     </div>
                                 </div>
@@ -1092,28 +1269,28 @@ const NuevaVenta = () => {
                                             <h5 className="modal-title" id="staticBackdropLabel">Emisión de comprobante</h5>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body d-flex justify-content-center align-content-center">
+                                        <div class="modal-body d-flex flex-column justify-content-center align-content-center">
                                             {
                                                 tituloResultado==="error"?<p className="text-danger text-center fw-bold">¡Ocurrió un error en la emisión!</p>:
                                                 tituloResultado==="exito"?<p className="text-success text-center fw-bold">¡Éxito!</p>:null
                                             }
                                             {
-                                                resultadoEmisionComprobante?<h4>{resultadoEmisionComprobante}</h4>:
-                                                <div>
+                                                resultadoEmisionComprobante?<h4 className="text-center">{resultadoEmisionComprobante}</h4>:
+                                                <div className="d-flex flex-row justify-content-center align-items-center">
                                                     <div className="spinner-border" role="status">
                                                         <span className="visually-hidden">Loading...</span>
                                                     </div>
-                                                    <p>Enviando...</p>
+                                                    <p>&nbsp;&nbsp;Enviando...</p>
                                                 </div>
                                             }
                                         </div>
                                         <div className="modal-footer">
                                             {
                                                 botonImprimir?<button type="button" class="btn btn-success" >
-                                                    <a href={linkDescarga} download className="text-white" target="_blank">Imprimir</a>
+                                                    <a href={linkDescarga} download className="text-white" target="_blank">Descargar</a>
                                                     </button>:null
                                             }
-                                            <button type="button" class="btn btn-secondary " data-bs-dismiss="modal">Cerrar</button>
+                                            <button type="button" class="btn btn-secondary " data-bs-dismiss="modal" onClick={cerrarModal}>Cerrar</button>
                                             {/* <button type="button" class="btn btn-primary">Understood</button> */}
                                         </div>
                                     </div>
