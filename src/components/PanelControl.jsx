@@ -53,13 +53,13 @@ const PanelControl = (props) => {
             </header>
             <div className="container-fluid">
                 <div className="row">
-                    <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                    <nav id="sidebarMenu" className="px-0 col-md-3 col-lg-2 d-md-block sidebar collapse">
                         <div className="position-sticky pt-3">
                             <div className="accordion" id="accordionExample">
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="headingOne">
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                             DASHBOARD
                                         </button>
                                     </h2>
@@ -76,7 +76,7 @@ const PanelControl = (props) => {
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="headingTwo">
-                                        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                        <button className="text-white accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                                             REPORTES ADMIN
                                         </button>
                                     </h2>
@@ -102,7 +102,7 @@ const PanelControl = (props) => {
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="headingThree">
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                             VENDEDORA
                                         </button>
                                     </h2>
@@ -149,7 +149,7 @@ const PanelControl = (props) => {
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="headingFor">
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFor" aria-expanded="false" aria-controls="collapseFor">
+                                        <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFor" aria-expanded="false" aria-controls="collapseFor">
                                             MANTENIMIENTO
                                         </button>
                                     </h2>
@@ -166,7 +166,7 @@ const PanelControl = (props) => {
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="headingFive">
-                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                        <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                                             CONFIGURACIÓN
                                         </button>
                                     </h2>
