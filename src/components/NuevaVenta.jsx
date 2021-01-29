@@ -759,7 +759,8 @@ const NuevaVenta = () => {
                         <select onChange={ e => setSerie(e.target.value) } name="serie" className="form-select">
                             <option selected disabled>Elija una serie</option>
                             {tipoComprobante==="2"?(<><option value="BBB1">B003</option><option value="BBB1">B004</option></>):
-                            tipoComprobante==="1"?(<><option value="FFF1">F003</option>,<option value="FFF1">F004</option></>):null}
+                            tipoComprobante==="1"?(<><option value="FFF1">F003</option><option value="FFF1">F004</option></>):
+                            tipoComprobante==="nv"?(<option value="NV01">F003</option>):null}
                             {/* <option value="B003">B003</option>
                             <option value="B004">B004</option> */}
                             
