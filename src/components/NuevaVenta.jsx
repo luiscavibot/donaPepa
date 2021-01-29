@@ -717,7 +717,7 @@ const NuevaVenta = () => {
                             {tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null} 
                                 &nbsp;electrónica</div>
                             <div className="serie">
-                                <span>{serie}</span>-<span>{numero}</span>
+                                <span>{serie}</span>
                             </div>
                         </div>
                     </div>
@@ -727,16 +727,18 @@ const NuevaVenta = () => {
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">DESCRIPCIÓN</th>
-                                <th scope="col">PRESENTACIÓN</th>
-                                <th scope="col">COD</th>
-                                <th scope="col">CANT</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Presentación</th>
+                                <th scope="col">Cod.</th>
+                                <th scope="col">Cant.</th>
                                 <th scope="col">Precio U.</th>
                                 <th scope="col">Descuento</th>
                                 <th scope="col">Subtotal</th>
                                 <th scope="col">IGV</th>
-                                <th scope="col">TOT</th>
+                                <th scope="col">Tot.</th>
+                                <th scope="col">ICBPER</th>
                                 <th scope="col"></th>
+                                <th scope="col">Desc.</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -779,8 +781,12 @@ const NuevaVenta = () => {
                                         <td valign="middle" align="center">{valor.precioVentaLista}</td>
                                         <td valign="middle" align="center">{valor.igvLista}</td>
                                         <td valign="middle" align="center">{valor.totalLista}</td>
+                                        <td valign="middle" align="center">{valor.impuestoBolsas}</td>
                                         <td valign="middle" align="center">
                                             <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" >Eliminar</button>
+                                        </td>
+                                        <td valign="middle" align="center">
+                                            <button type="button" class="btn btn-warning btn-sm">Estado</button>
                                         </td>
                                     </tr>
                                 ))
