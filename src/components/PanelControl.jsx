@@ -13,7 +13,11 @@ import {
   } from "react-router-dom";
 import {auth} from '../firebase'
 import ReportesVentas from './ReportesVentas';
+import VendedoraReporte from './VendedoraReporte';
 import NuevaVenta from './NuevaVenta';
+import VendedoraAnulacion from './VendedoraAnulacion';
+import VendedoraLiquidacion from './VendedoraLiquidacion';
+import VendedoraBorrador from './VendedoraBorrador';
 
 const PanelControl = (props) => {
 
@@ -106,10 +110,38 @@ const PanelControl = (props) => {
                                         <div className="accordion-body">
                                             <NavLink 
                                                 className="list-group-item text-start" 
+                                                to="/panelcontrol/vendedora-reporte"
+                                                exact
+                                            >
+                                                REPORTE
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
                                                 to="/panelcontrol/nueva-venta"
                                                 exact
                                             >
                                                 NUEVA VENTA
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/vendedora-anulacion"
+                                                exact
+                                            >
+                                                ANULACIÓN
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/vendedora-liquidacion"
+                                                exact
+                                            >
+                                                LIQUIDACIÓN
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/vendedora-borrador"
+                                                exact
+                                            >
+                                                BORRADOR
                                             </NavLink>
                                         </div>
                                     </div>
@@ -163,8 +195,20 @@ const PanelControl = (props) => {
                                     <h1 className="h5">Reportes de Liquidación Maestro</h1>
                                 </div>
                             </Route>
+                            <Route path={`${path}/vendedora-reporte`}>
+                                <VendedoraReporte />
+                            </Route>
                             <Route path={`${path}/nueva-venta`}>
                                 <NuevaVenta />
+                            </Route>
+                            <Route path={`${path}/vendedora-anulacion`}>
+                                <VendedoraAnulacion />
+                            </Route>
+                            <Route path={`${path}/vendedora-liquidacion`}>
+                                <VendedoraLiquidacion />
+                            </Route>
+                            <Route path={`${path}/vendedora-borrador`}>
+                                <VendedoraBorrador />
                             </Route>
                         </Switch>
                     </main>
