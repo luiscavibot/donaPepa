@@ -1,0 +1,10 @@
+table {
+    th, td {
+        text-align: center;
+        border: none;
+        font-weight: normal;
+    }
+    thead {
+        background-color: $gray;
+    }
+}

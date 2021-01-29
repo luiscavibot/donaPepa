@@ -668,8 +668,8 @@ const NuevaVenta = () => {
                 </div>
             </Modal>
             
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h5">Vendedora / Nueva venta</h1>
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
+                <h1 className="fw-bold h5 text-black-header">Vendedora / Nueva venta</h1>
                 {/* <div>
                     <button type="button" className="btn btn-secondary btn-sm me-1">Copiar</button>
                     <button type="button" className="btn btn-secondary btn-sm me-1" >Imprimir</button>
@@ -705,19 +705,19 @@ const NuevaVenta = () => {
                     </div>
                 </div>
                 <div className="wrapper-client-info row m-3">
-                    <div className="owner-info col-9">
-                        <div className="text-uppercase">Jaramillo Torero de Paez Manuela Maria</div>
+                    <div className="owner-info col-5 py-4">
+                        <div className="text-uppercase mb-2 fw-bold">Jaramillo Torero de Paez Manuela Maria</div>
                         <div>Av. Tacna Nro. 488</div>
+                        <div>Lima - Lima - Lima</div>
                     </div>
-                    <div className="ruc-info col-3 d-flex justify-content-center text-center fs-5">
-                        <div>
-                            <div>RUC 10095588986</div>
-                            <div className="text-uppercase">
-                                {tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null} 
+                    <div className="col-7 d-flex justify-content-center text-center">
+                        <div className="ruc-info py-4">
+                            <div className="ruc mb-2">RUC 10095588986</div>
+                            <div className="desc text-uppercase mb-2">
+                            {tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null} 
                                 &nbsp;electrónica</div>
-                            <div>
-                                <span>{serie}</span>
-                                {/* -<span>{numero}</span> */}
+                            <div className="serie">
+                                <span>{serie}</span>-<span>{numero}</span>
                             </div>
                         </div>
                     </div>
@@ -743,9 +743,9 @@ const NuevaVenta = () => {
                             {
                                 lista.map(valor => (
                                     <tr>
-                                        <th>{valor.numeroLista}</th>
+                                        <th valign="middle" align="center">{valor.numeroLista}</th>
                                         <td>
-                                            <input id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
+                                            <input className="form-control" id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
                                             placeholder="Ingrese un producto" list="listaproductos" disabled={!valor.modoValidar} value={valor.descripcionLista} />
                                             <datalist id="listaproductos">
                                                     {
@@ -756,7 +756,7 @@ const NuevaVenta = () => {
                                             </datalist>
                                         </td>
                                         <td>
-                                            <select id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} value={valor.presentacionLista} disabled={!valor.modoValidar}>
+                                            <select className="form-select" id={valor.numeroLista} name ="presentacion" onChange={manejadorEntrada} value={valor.presentacionLista} disabled={!valor.modoValidar}>
                                                     
                                                     {   
                                                         listaPresentacion[valor.numeroLista-1].map(
@@ -765,21 +765,23 @@ const NuevaVenta = () => {
                                                     }
                                             </select>
                                         </td>
-                                        <td>{valor.codigoLista}</td>
+                                        <td valign="middle" align="center">{valor.codigoLista}</td>
                                         <td>
-                                            <input id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={valor.cantidadLista}
+                                            <input className="form-control" id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={valor.cantidadLista}
                                              onChange={manejadorEntrada}  list="off" autoComplete="off" disabled={!valor.modoValidar}/>
                                         </td>
-                                        <td>
+                                        <td valign="middle" align="center">
                                             {valor.precioUnitarioLista}
                                         </td>
-                                        <td>
+                                        <td valign="middle" align="center">
                                             <p>{valor.descuentoLista}</p>
                                         </td>
-                                        <td>{valor.precioVentaLista}</td>
-                                        <td>{valor.igvLista}</td>
-                                        <td>{valor.totalLista}</td>
-                                        <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-danger btn-sm text-danger" type="button" >Eliminar</button>
+                                        <td valign="middle" align="center">{valor.precioVentaLista}</td>
+                                        <td valign="middle" align="center">{valor.igvLista}</td>
+                                        <td valign="middle" align="center">{valor.totalLista}</td>
+                                        <td valign="middle" align="center">
+                                            <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" >Eliminar</button>
+                                        </td>
                                     </tr>
                                 ))
                             }
@@ -788,7 +790,7 @@ const NuevaVenta = () => {
                     {/* <div className="border-bottom my-4"></div> */}
                     <div className="d-flex justify-content-between mt-4">
                         <button type="button" className="btn btn-outline-danger" onClick={agregarProducto} disabled={detenerCreacion} >+ AGREGAR PRODUCTO</button>
-                        <p class="fs-5 me-5" >{ `Total Productos: S/. ${totalPagar}`}</p>
+                        <p class="fs-5 me-5 text-black-header" >{ `Total Productos: S/. ${totalPagar}`}</p>
                     </div>
                 </div>
                 <div className="border-bottom my-4"></div>
@@ -1075,7 +1077,7 @@ const NuevaVenta = () => {
                                 <div className="">
                                     <div className="bg-gray p-4">
                                         <div className="d-flex justify-content-between mb-3">
-                                            <div className="text-uppercase sub-title">Jaramillo Torero de Paez Manuela Maria</div>
+                                            <div className="text-uppercase sub-title text-black-header">Jaramillo Torero de Paez Manuela Maria</div>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="row mb-3">
@@ -1091,7 +1093,7 @@ const NuevaVenta = () => {
                                         <div className="h5">Serie: {serie}</div>
                                     </div>
                                     <div className="p-4">
-                                        <div className="mb-3">ADQUIRIENTE</div>
+                                        <div className="mb-3 text-black">ADQUIRIENTE</div>
                                         <div>
                                             <div className="text-uppercase">{nombreCliente}</div>
                                             <div>Fecha de emisión: {fechaSunat}</div>
@@ -1138,7 +1140,7 @@ const NuevaVenta = () => {
                                         </table>
                                     </div>
                                     <div className="border-bottom"></div>
-                                    <div className="p-4 text-end">
+                                    <div className="p-4 text-end text-black">
                                         <div className="row">
                                             <div className="col-8">Sub Total productos:</div>
                                             <div className="col-1">S/</div>
@@ -1166,7 +1168,7 @@ const NuevaVenta = () => {
                                         </div>
                                     </div>
                                     <div className="border-bottom"></div>
-                                    <div className="p-4 text-end">
+                                    <div className="p-4 text-end text-black-header">
                                         <div className="row">
                                             <div className="col-8">TOTAL:</div>
                                             <div className="col-1">S/</div>

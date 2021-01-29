@@ -2,6 +2,19 @@ body {
     font-size: 14px;
 }
 
+.text-black {
+    color: #000 !important;
+}
+
+.text-black-header {
+    color: $color-text-header-table
+}
+
+main {
+    background-color: $background-main;
+    color: $color-text-gray;
+}
+
 .sub-title {
     font-size: 20px;
 }
@@ -18,4 +31,25 @@ body {
 
 .bg-gray {
     background-color: $background-gray;
+}
+
+.border-bottom {
+    border-bottom: 1px solid $divisor !important;
+}
+
+.wrapper-client-info {
+    .owner-info {
+        font-size: 1.2rem;
+    }
+    .ruc-info {
+        padding-left: 25%;
+        padding-right: 25%;
+        background-color: #fff;
+        // .ruc, .serie {
+        //     font-size: 1rem;
+        // }
+        .desc {
+            font-size: 1.15rem;
+        }
+    }
 }
