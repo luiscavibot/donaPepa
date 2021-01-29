@@ -4,8 +4,8 @@ import VendedoraReporteActivos from "./VendedoraReporteActivos";
 const VendedoraReporte = () => {
     return (
         <div>
-            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h5">Vendedora / Reporte</h1>
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
+                <h1 className="fw-bold h5">Vendedora / Reporte</h1>
                 {/* <div>
                     <button type="button" className="btn btn-secondary btn-sm me-1">Copiar</button>
                     <button type="button" className="btn btn-secondary btn-sm me-1" >Imprimir</button>
