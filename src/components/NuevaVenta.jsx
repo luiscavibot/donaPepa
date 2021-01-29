@@ -12,6 +12,7 @@ import { useBootstrapPrefix } from 'react-bootstrap/esm/ThemeProvider'
 const NuevaVenta = () => {
 
     const IGV = 0.18
+    const ICBPER= 0.3
     const [descripcion, setDescripcion] = useState('')
     const [precioUnitario, setPrecioUnitario] = useState(0)
     //******************************** */
@@ -46,7 +47,8 @@ const NuevaVenta = () => {
     const [alteroDescuento, setAlteroDescuento] = useState(false)
     const [habilitarBotonAutorizacion, setHabilitarBotonAutorizacion] = useState(false)
     const [totalGravada, setTotalGravada] = useState(0)
-    const [toalIgv, setToalIgv] = useState(0)
+    const [totalIgv, setTotalIgv] = useState(0)
+    // const [toalIgv, setToalIgv] = useState(0)
     //*************************************************** */
     const [tipoRegalo, setTipoRegalo] = useState('')
     const [cantidadRegalo, setCantidadRegalo] = useState(0)
@@ -67,9 +69,8 @@ const NuevaVenta = () => {
     const [cantidadBolsa, setCantidadBolsa] = useState(0)
     const [direccionCliente, setDireccionCliente] = useState('')
     const [referencias, setReferencias] = useState('')
-    const [gravada, setGravada] = useState(0)
+    // const [gravada, setGravada] = useState(0)
     const [descuentoTotal, setDescuentoTotal] = useState(0)
-    const [totalIgv, setTotalIgv] = useState(0)
     const [totalDelivery, setTotalDelivery] = useState(0)
     const [totalPagar, setTotalPagar] = useState(0)
 
@@ -168,14 +169,15 @@ const NuevaVenta = () => {
                 unidad_de_medida: "NIU",
                 codigo: valor.codigoLista,
                 codigo_producto_sunat: "",
-                descripcion: valor.descripcionLista,
+                descripcion: valor.descripcionLista +" "+ valor.presentacionLista,
                 cantidad: valor.cantidadLista*1.0,
-                valor_unitario: valor.precioUnitarioLista*(1/(1+IGV)),
+                valor_unitario: parseFloat((valor.precioUnitarioLista*(1/(1+IGV))).toFixed(2)),
                 precio_unitario: valor.precioUnitarioLista,
-                descuento: valor.descuentoLista*1.0,
-                subtotal: valor.precioVentaLista,
-                tipo_de_igv: "1",
+                descuento: valor.descuentoLista*(1/(1+IGV)),
+                subtotal: parseFloat(valor.precioVentaLista),
+                tipo_de_igv: 1,
                 igv: valor.igvLista*1.0,
+                impuesto_bolsas: parseFloat(valor.impuestoBolsas),
                 total: valor.totalLista*1.0,
                 anticipo_regularizacion: false,
                 anticipo_documento_serie: "",
@@ -183,15 +185,37 @@ const NuevaVenta = () => {
             }
             return obj
         })
+        if (cantidadBolsa>0) {
+            itemsProv.push({
+                unidad_de_medida: "NIU",
+                codigo: "",
+                codigo_producto_sunat: "",
+                descripcion: "Bolsa plástica",
+                cantidad: cantidadBolsa,
+                valor_unitario: 0,
+                precio_unitario: 0,
+                descuento: 0,
+                subtotal: 0,
+                tipo_de_igv: 1,
+                igv: 0,
+                impuesto_bolsas: parseFloat(cantidadBolsa*ICBPER),
+                total: 0,
+                anticipo_regularizacion: false,
+                anticipo_documento_serie: "",
+                anticipo_documento_numero: "" 
+            })
+        }
+
+
         setItem(itemsProv);
         const emitir = async () =>{
             const documento = {
                 operacion: "generar_comprobante",
-                tipo_de_comprobante: tipoComprobante,
+                tipo_de_comprobante: parseInt(tipoComprobante,10),
                 serie: "FFF1",
-                numero: numero,
+                numero: 8,
                 sunat_transaction: 1,
-                cliente_tipo_de_documento: clienteTipoDocumento,
+                cliente_tipo_de_documento: parseInt(clienteTipoDocumento,10),
                 cliente_numero_de_documento: clienteNumeroDocumento,
                 cliente_denominacion: clienteDenominacion,
                 cliente_direccion: clienteDireccion,
@@ -200,24 +224,24 @@ const NuevaVenta = () => {
                 cliente_email_2: "",
                 fecha_de_emision: fechaSunat,
                 fecha_de_vencimiento: "",
-                moneda: moneda,
-                tipo_de_cambio: "",
-                porcentaje_de_igv: 18.00,
+                moneda: 1,
+                tipo_de_cambio: 3.14,
+                porcentaje_de_igv: (IGV*100),
                 descuento_global: "",
                 total_descuento: "",
                 total_anticipo: "",
-                total_gravada: 600,
+                total_gravada: parseFloat(totalGravada),
                 total_inafecta: "",
                 total_exonerada: "",
-                total_igv: 108,
+                total_igv: parseFloat(totalIgv),
                 total_gratuita: "",
                 total_otros_cargos: "",
-                total: 708,
+                total: (totalGravada*1.0) + (totalIgv*1.0),
                 percepcion_tipo: "",
                 percepcion_base_imponible: "",
                 total_percepcion: "",
                 total_incluido_percepcion: "",
-                total_impuestos_bolsas: "",
+                total_impuestos_bolsas: parseFloat(cantidadBolsa*ICBPER),
                 detraccion: false,
                 observaciones: "",
                 documento_que_se_modifica_tipo: "",
@@ -228,14 +252,14 @@ const NuevaVenta = () => {
                 enviar_automaticamente_a_la_sunat: true,
                 enviar_automaticamente_al_cliente: true,
                 condiciones_de_pago: "",
-                medio_de_pago: "Whatsapp",
+                medio_de_pago: condicionPago,
                 placa_vehiculo: "",
                 orden_compra_servicio: "",  
-                formato_de_pdf: "",
+                formato_de_pdf: "TICKET",
                 generado_por_contingencia: "",
                 bienes_region_selva: "",
                 servicios_region_selva: "",
-                items: item,
+                items: itemsProv,
                 // guias: [
                 //     {
                 //         guia_tipo: 1,
@@ -249,7 +273,7 @@ const NuevaVenta = () => {
                     "Content-Type" : "application/json"
                 }
             };
-
+            console.log(documento);
             await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
             .then(function (params) {
                 console.log("se activó el then");
@@ -276,97 +300,6 @@ const NuevaVenta = () => {
             })       
         };
 
-        // const registrarVenta = async ()=>{
-        //     const config = {
-        //         headers: { 
-        //             "Content-Type" : "application/json"
-        //         }
-        //     };
-            
-            
-            
-        //     await axios.post('http://46.183.113.134:3000/api/ventas/registrarVenta', {
-                
-                
-            
-            
-        //         usuario: "Vendedor-general",
-        //         serie: "FFF1",
-        //         numero: 8,
-        //         items: [
-        //             {
-        //                 unidad_de_medida: "NIU",
-        //                 codigo: "001",
-        //                 codigo_producto_sunat: "10000000",
-        //                 descripcion: "DETALLE DEL PRODUCTO",
-        //                 cantidad: 1,
-        //                 valor_unitario: 500,
-        //                 precio_unitario: 590,
-        //                 descuento: "",
-        //                 subtotal: 500,
-        //                 tipo_de_igv: 1,
-        //                 igv: 90,
-        //                 total: 590,
-        //                 anticipo_regularizacion: false,
-        //                 anticipo_documento_serie: "",
-        //                 anticipo_documento_numero: ""
-        //             },
-        //             {
-        //                 unidad_de_medida: "NIU",
-        //                 codigo: "001",
-        //                 codigo_producto_sunat: "20000000",
-        //                 descripcion: "DETALLE DEL PRODUCTO",
-        //                 cantidad: 1,
-        //                 valor_unitario: 20,
-        //                 precio_unitario: 23.60,
-        //                 descuento: "",
-        //                 subtotal: 100,
-        //                 tipo_de_igv: 1,
-        //                 igv: 18,
-        //                 total: 118,
-        //                 anticipo_regularizacion: false,
-        //                 anticipo_documento_serie: "",
-        //                 anticipo_documento_numero: ""
-        //             }        
-        //         ],
-        //         regalo:{
-        //             tipoRegalo:"muestra",
-        //             cantidad: 2             
-        //         },
-        //         tipoDocumentoCliente: 6,
-        //         numeroDocumentoCliente: "20600695771",
-        //         fechaEmision: "25-01-2021",
-        //         nombreCliente: "Clientaso",
-        //         tipoMoneda:1,
-        //         igv:108,
-        //         email:"lcastillov123@gmail.com",
-        //         celular:"986934174",
-        //         condicionPago: "Tarjeta",
-        //         numeroOperacion:"qqqqqqa",  
-        //         provincia: "Lima",
-        //         canalVenta: "Whatsapp",
-        //         delivery: true,
-        //         direccion: "CALLE LIBERTAD 116 MIRAFLORES - LIMA - PERU",
-        //         referencias: "Al costado de Metro",
-        //         gravada:600,
-        //         descuento:"",
-        //         totalIgv:108,
-        //         totalPagar:708,
-        //         regalo:{
-        //             tipoRegalo:"muestra",
-        //             cantidad: 2             
-        //         },
-        //         celularCliente: "986934174",
-        //         provincia:"Lima",
-        //         referencias: "Al costado del vecino",
-        //         delivery: true,
-        //         canalVenta: "Whatsapp",
-        //         numeroOperacion: "000009y",
-        //     },config)
-        //     .then(console.log)
-        //     .catch(console.log)
-        // }
-
         emitir();    
 
     }
@@ -387,6 +320,7 @@ const NuevaVenta = () => {
                 igvLista: 0,
                 totalLista: 0,
                 modoValidar: true,
+                impuestoBolsas: 0
             }
         ]);
         setDetenerCreacion(true);
@@ -474,7 +408,7 @@ const NuevaVenta = () => {
         setTotalGravada(sumaTotalGravadaProv.toFixed(2));
         let sumaTotalIgvProv = ((totalPagar*1.0)+(totalDelivery*1.0))*(IGV/(1+IGV))
         setTotalIgv(sumaTotalIgvProv.toFixed(2))
-        let sumaTotalFinalProv = (totalDelivery*1.0) + (totalPagar*1.0) + (cantidadBolsa*0.1)
+        let sumaTotalFinalProv = (totalDelivery*1.0) + (totalPagar*1.0) + (cantidadBolsa*ICBPER)
         setSumaTotalFinal(sumaTotalFinalProv)
     }, [totalDelivery,totalPagar,cantidadBolsa])
 
@@ -532,6 +466,7 @@ const NuevaVenta = () => {
             robj["igvLista"]= obj.igvLista;
             robj["totalLista"]= obj.totalLista;
             robj["modoValidar"]= obj.modoValidar;
+            robj["impuestoBolsas"]= obj.impuestoBolsas;
             return robj
         })
         
@@ -758,9 +693,9 @@ const NuevaVenta = () => {
                     <div className="col-2">
                         <select onChange={ e => setSerie(e.target.value) } name="serie" className="form-select">
                             <option selected disabled>Elija una serie</option>
-                            {tipoComprobante==="2"?(<><option value="BBB1">B003</option><option value="BBB1">B004</option></>):
-                            tipoComprobante==="1"?(<><option value="FFF1">F003</option><option value="FFF1">F004</option></>):
-                            tipoComprobante==="nv"?(<option value="NV01">F003</option>):null}
+                            {tipoComprobante==="2"?(<><option value="B003">B003</option><option value="B004">B004</option></>):
+                            tipoComprobante==="1"?(<><option value="F003">F003</option><option value="F004">F004</option></>):
+                            tipoComprobante==="nv"?(<option value="NV10">NV10</option>):null}
                             {/* <option value="B003">B003</option>
                             <option value="B004">B004</option> */}
                             
@@ -778,10 +713,11 @@ const NuevaVenta = () => {
                         <div>
                             <div>RUC 10095588986</div>
                             <div className="text-uppercase">
-                                {tipoComprobante===1?"Factura":tipoComprobante===2?"Boleta":null} 
+                                {tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null} 
                                 &nbsp;electrónica</div>
                             <div>
-                                <span>{serie}</span>-<span>{numero}</span>
+                                <span>{serie}</span>
+                                {/* -<span>{numero}</span> */}
                             </div>
                         </div>
                     </div>
@@ -795,7 +731,7 @@ const NuevaVenta = () => {
                                 <th scope="col">PRESENTACIÓN</th>
                                 <th scope="col">COD</th>
                                 <th scope="col">CANT</th>
-                                <th scope="col">Precio unitario</th>
+                                <th scope="col">Precio U.</th>
                                 <th scope="col">Descuento</th>
                                 <th scope="col">Subtotal</th>
                                 <th scope="col">IGV</th>
@@ -897,7 +833,7 @@ const NuevaVenta = () => {
                                 <div className="col-6 mb-3">
                                     <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
                                     {/* <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente" required></input> */}
-                                    <input className="form-control" name="numeroDocumentoCliente" type="text" onChange={manejadorEntrada} value={clienteNumeroDocumento}/>
+                                    <input className="form-control" name="numeroDocumentoCliente" required type="text" onChange={manejadorEntrada} value={clienteNumeroDocumento}/>
                                 </div>
                             </div>
                             <div className="mb-3">
@@ -1004,25 +940,28 @@ const NuevaVenta = () => {
                             </div>
                             <div className="row">
                                 <div className="col-7 mb-3">
-                                    <label className="form-label">Condicion de pago</label>
+                                    <label className="form-label">Medio de pago</label>
                                     <select onChange={ e => setCondicionPago(e.target.value) } name="condicionPago" className="form-select">
-                                        <option selected>Elige la condicion de pago</option>
+                                        <option disabled selected>Elige la condicion de pago</option>
                                         <option value="tarjeta">Tarjeta</option>
                                         <option value="contado">Contado</option>
+                                        <option value="yape">Yape</option>
                                     </select>
                                 </div>
                                 <div className="col-5 mb-3">
                                     <label for="noperacion" className="form-label">Nro. Operación</label>
-                                    <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion" disabled={(condicionPago === "tarjeta") ? "" : "disabled"}></input>
+                                    <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion"></input>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-7 mb-3">
                                     <label className="form-label">Canal de venta</label>
                                     <select onChange={ e => setCanalVenta(e.target.value) } name="canalVenta" className="form-select">
-                                        <option selected>Elige la canal de venta</option>
-                                        <option value="whatsapp">whatsapp</option>
-                                        <option value="llamada">llamada</option>
+                                        <option disabled selected>Elige la canal de venta</option>
+                                        <option value="whatsapp">Whatsapp</option>
+                                        <option value="llamada">Llamada</option>
+                                        <option value="llamada">Tienda</option>
+                                        <option value="llamada">Internet</option>
                                     </select>
                                 </div>
                             </div>
@@ -1088,22 +1027,6 @@ const NuevaVenta = () => {
                         </div>
                     </div>
                     <div className="col-6 mb-3"></div>
-                                                                               
-                    {/* <select onChange={ e => setClienteTipoDocumento(e.target.value) } name="clienteTipoDocumento" className="form-select">
-                                        <option value="1" selected>DNI</option>
-                                        <option value="6">RUC</option>
-                                        <option value="4">Carnet de Extranjería</option>
-                                        <option value="7">Pasaporte</option>
-                                        <option value="-">Varios (Ventas menores a S/700.00)</option>
-                    </select> */}
-                    {/* <div className="col-3 mb-3">
-                        <label for="direccionCliente" className="form-label">Dirección</label>
-                        <input onChange={ e => setDireccionCliente(e.target.value) } type="text" className="form-control" name="direccionCliente" id="direccionCliente"></input>
-                    </div> */}
-                    {/* <div className="col-3 mb-3">
-                        <label for="referencias" className="form-label">Referencias</label>
-                        <input onChange={ e => setReferencias(e.target.value) } type="text" className="form-control" name="referencias" id="referencias"></input>
-                    </div> */}
                 </div>
                 <div className="mb-3">
                     <div className="info-total mb-4">
@@ -1130,7 +1053,7 @@ const NuevaVenta = () => {
                         </div>
                         <div className="row">
                             <div className="col-11">ICBPER:</div>
-                            <div className="col-1">{(cantidadBolsa*0.1).toFixed(2)}</div>
+                            <div className="col-1">{(cantidadBolsa*ICBPER).toFixed(2)}</div>
                         </div>
                         <hr></hr>
                         <div className="row fs-4">
@@ -1141,7 +1064,7 @@ const NuevaVenta = () => {
                 </div>    
                 <div className="row mb-4">
                     <div className="col-4">
-                        <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#previewModal">PREVISUALIZAR</button>
+                        <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#previewModal">PREVISUALIZAR COMPROBANTE</button>
                         <div className="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
                             <div className="modal-dialog modal-lg">
                                 <div className="modal-content">
@@ -1160,30 +1083,36 @@ const NuevaVenta = () => {
                                                 <div>Av. Tacna Nro. 488</div>
                                                 <div>Lima - Lima - Lima</div>
                                                 <div>RUC 10095588986</div>
-                                                <div className="text-uppercase">NOTA DE VENTA ELECTRONICA</div>
+                                                <div className="text-uppercase">{tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null} 
+                                                &nbsp;electrónica</div>
                                             </div>
                                             <div className="col"></div>
                                         </div>
-                                        <div className="h5">NV10-9281</div>
+                                        <div className="h5">Serie: {serie}</div>
                                     </div>
                                     <div className="p-4">
                                         <div className="mb-3">ADQUIRIENTE</div>
                                         <div>
-                                            <div>Nro. Documento: {numeroDocumentoCliente}</div>
                                             <div className="text-uppercase">{nombreCliente}</div>
                                             <div>Fecha de emisión: {fechaSunat}</div>
-                                            <div>Moneda: {tipoMoneda}</div>
-                                            <div>IGV: 18%</div>
+                                            <div>Moneda: {moneda==="1"?"Soles":null}</div>
+                                            <div>IGV: {IGV*100}%</div>
                                         </div>
                                     </div>
                                     <div className="p-4">
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">CANTIDAD</th>
-                                                    <th scope="col">DESCRIPCIÓN</th>
-                                                    <th scope="col">PU</th>
-                                                    <th scope="col">TOTAL</th>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Descripción</th>
+                                                    <th scope="col">Presentación</th>
+                                                    <th scope="col">Cód.</th>
+                                                    <th scope="col">Cant.</th>
+                                                    <th scope="col">Precio U.</th>
+                                                    <th scope="col">Desc.</th>
+                                                    <th scope="col">Subtotal</th>
+                                                    <th scope="col">IGV</th>
+                                                    <th scope="col">Total</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1191,9 +1120,15 @@ const NuevaVenta = () => {
                                                     lista.map((item) =>
                                                         (
                                                             <tr>
-                                                                <td>{item.cantidadLista}</td>
+                                                                <td>{item.numeroLista}</td>
                                                                 <td>{item.descripcionLista}</td>
-                                                                <td>PU</td>
+                                                                <td>{item.presentacionLista}</td>
+                                                                <td>{item.codigoLista}</td>
+                                                                <td>{item.cantidadLista}</td>
+                                                                <td>{item.precioUnitarioLista}</td>
+                                                                <td>{item.descuentoLista}</td>
+                                                                <td>{item.precioVentaLista}</td>
+                                                                <td>{item.igvLista}</td>
                                                                 <td>{item.totalLista}</td>
                                                             </tr>
                                                         )
@@ -1205,34 +1140,29 @@ const NuevaVenta = () => {
                                     <div className="border-bottom"></div>
                                     <div className="p-4 text-end">
                                         <div className="row">
-                                            <div className="col-8">Total productos:</div>
+                                            <div className="col-8">Sub Total productos:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">0.00</div>
+                                            <div className="col-3">{(totalPagar*(1/(1+IGV))).toFixed(2)}</div>
                                         </div>
                                         <div className="row">
                                             <div className="col-8">Delivery:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">25.90</div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-8">Descuento:</div>
-                                            <div className="col-1">S/</div>
-                                            <div className="col-3">{totalDescuento}</div>
+                                            <div className="col-3">{(totalDelivery*(1/(1+IGV))).toFixed(2)}</div>
                                         </div>
                                         <div className="row">
                                             <div className="col-8">Total gravada:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">{gravada}</div>
+                                            <div className="col-3">{totalGravada}</div>
                                         </div>
                                         <div className="row">
-                                            <div className="col-8">Total IGV(18%):</div>
+                                            <div className="col-8">Total IGV({IGV}%):</div>
                                             <div className="col-1">S/</div>
                                             <div className="col-3">{totalIgv}</div>
                                         </div>
                                         <div className="row">
                                             <div className="col-8">ICBPER:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">0.10</div>
+                                            <div className="col-3">{(cantidadBolsa*ICBPER).toFixed(2)}</div>
                                         </div>
                                     </div>
                                     <div className="border-bottom"></div>
@@ -1240,7 +1170,7 @@ const NuevaVenta = () => {
                                         <div className="row">
                                             <div className="col-8">TOTAL:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">{totalLista}</div>
+                                            <div className="col-3">{(sumaTotalFinal.toFixed(2))}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -1250,7 +1180,8 @@ const NuevaVenta = () => {
                                             Representación impresa de la
                                         </div>
                                         <div>
-                                            {tipoComprobante} ELECTRONICA
+                                        {tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null} 
+                                        &nbsp;electrónica
                                         </div>
                                     </div>
                                 </div>
