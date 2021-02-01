@@ -783,7 +783,7 @@ const NuevaVenta = () => {
                                         <td valign="middle" align="center">{valor.totalLista}</td>
                                         <td valign="middle" align="center">{valor.impuestoBolsas}</td>
                                         <td valign="middle" align="center">
-                                            <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" >Eliminar</button>
+                                            <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" ><i class="far fa-trash-alt"></i></button>
                                         </td>
                                         <td valign="middle" align="center">
                                             <button type="button" class="btn btn-warning btn-sm">Estado</button>
