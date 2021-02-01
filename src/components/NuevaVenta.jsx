@@ -12,14 +12,14 @@ import { useBootstrapPrefix } from 'react-bootstrap/esm/ThemeProvider'
 const NuevaVenta = () => {
 
     const IGV = 0.18
-    const ICBPER= 0.3
+    const ICBPER= 0.003
     const [descripcion, setDescripcion] = useState('')
     const [precioUnitario, setPrecioUnitario] = useState(0)
     //******************************** */
     //Hooks de estado para Nubefact-inicio
     const [usuario, setUsuario] = useState('')
     const [serie, setSerie] = useState('')
-    const [numero, setNumero] = useState(7)
+    const [numero, setNumero] = useState(1)
     const [tipoComprobante, setTipoComprobante] = useState(null)
     const [clienteTipoDocumento, setClienteTipoDocumento] = useState("1")
     const [clienteNumeroDocumento, setClienteNumeroDocumento] = useState(null)
@@ -29,6 +29,7 @@ const NuevaVenta = () => {
     const [lista, setLista] = useState([])
     const [item, setItem] = useState([])
     const [sumaTotalFinal, setSumaTotalFinal] = useState(0.0)
+    const [totalIcbper, setTotalIcbper] = useState(0)
     //***************************************** */
     //Hooks de estado Adicionales para la BD-inicio
     const [provincia, setProvincia] = useState("Lima")
@@ -37,8 +38,10 @@ const NuevaVenta = () => {
     const [departamento, setDepartamento] = useState("Lima")
     const [distritoDestino, setDistritoDestino] = useState(10)
     const [totalDescuento, setTotalDescuento] = useState(0)
+    const [fechaEmision, setFechaEmision] = useState(null)
     //******************************************/
     //Hooks de estado para funcionaldiades extra
+    const [finOperacion, setFinOperacion] = useState(false)
     const [ofrecerRegalo, setOfrecerRegalo] = useState(false)
     const [minimaCantidadRegalos, setMinimaCantidadRegalos] = useState(0)
     const [show, setShow] = useState(false);
@@ -52,6 +55,7 @@ const NuevaVenta = () => {
     //*************************************************** */
     const [tipoRegalo, setTipoRegalo] = useState('')
     const [cantidadRegalo, setCantidadRegalo] = useState(0)
+
     const [numeroDocumentoCliente, setNumeroDocumentoCliente] = useState('')
     const [dateInicio, setDateInicio] = useState(new Date())
     const [fechaSunat, setFechaSunat] = useState('')
@@ -59,8 +63,6 @@ const NuevaVenta = () => {
     const [tipoMoneda, setTipoMoneda] = useState('')
     const [tipoMonedaSunat, setTipoMonedaSunat] = useState()
     const [igv, setIgv] = useState(0.18)
-    const [celular, setCelular] = useState('')
-    const [emailCliente, setEmailCliente] = useState('')
     const [condicionPago, setCondicionPago] = useState('')
     const [numeroOperacion, setNumeroOperacion] = useState('')
     const [canalVenta, setCanalVenta] = useState('')
@@ -158,12 +160,14 @@ const NuevaVenta = () => {
         dateNewFormatSunat = `${day}-${month}-${year}`
         }
         // setDateInicio(date)
-        setFechaSunat(dateNewFormatSunat)
+        setFechaEmision(date);
+        setFechaSunat(dateNewFormatSunat);
     }
 
     const enviarDatos = (e) => {
         e.preventDefault()
         console.log("inicio el axios para enviar la data final a nubefact");
+        let numeracionObtenida = 0;
         let itemsProv = lista.map(function(valor) {
             let obj={
                 unidad_de_medida: "NIU",
@@ -185,35 +189,32 @@ const NuevaVenta = () => {
             }
             return obj
         })
-        if (cantidadBolsa>0) {
-            itemsProv.push({
-                unidad_de_medida: "NIU",
-                codigo: "",
-                codigo_producto_sunat: "",
-                descripcion: "Bolsa plástica",
-                cantidad: cantidadBolsa,
-                valor_unitario: 0,
-                precio_unitario: 0,
-                descuento: 0,
-                subtotal: 0,
-                tipo_de_igv: 1,
-                igv: 0,
-                impuesto_bolsas: parseFloat(cantidadBolsa*ICBPER),
-                total: 0,
-                anticipo_regularizacion: false,
-                anticipo_documento_serie: "",
-                anticipo_documento_numero: "" 
-            })
-        }
-
-
         setItem(itemsProv);
+
+        const obtenerNumeracion = async ()=>{
+            try {
+                console.log("Estoy por activar la consulta de numeracion");
+                let comprobante = tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null;
+                console.log("El comprobante es: ", comprobante);
+                let res = await axios.get(`http://46.183.113.134:3000/api/numeracion?tipoComprobante=${comprobante}&serie=FFF1`);
+
+                console.log("La numeración obtenida es: ", res.data[0].numeroActual);
+                numeracionObtenida = res.data[0].numeroActual + 1.0;
+
+            } catch (error) {
+                console.error(error);
+            }                
+        
+        };
+
+
         const emitir = async () =>{
-            const documento = {
+            await obtenerNumeracion()
+            let documento = {
                 operacion: "generar_comprobante",
                 tipo_de_comprobante: parseInt(tipoComprobante,10),
-                serie: "FFF1",
-                numero: 8,
+                serie: serie,
+                numero: numeracionObtenida,
                 sunat_transaction: 1,
                 cliente_tipo_de_documento: parseInt(clienteTipoDocumento,10),
                 cliente_numero_de_documento: clienteNumeroDocumento,
@@ -236,12 +237,101 @@ const NuevaVenta = () => {
                 total_igv: parseFloat(totalIgv),
                 total_gratuita: "",
                 total_otros_cargos: "",
-                total: (totalGravada*1.0) + (totalIgv*1.0),
+                total: sumaTotalFinal,
                 percepcion_tipo: "",
                 percepcion_base_imponible: "",
                 total_percepcion: "",
                 total_incluido_percepcion: "",
-                total_impuestos_bolsas: parseFloat(cantidadBolsa*ICBPER),
+                total_impuestos_bolsas: parseFloat(totalIcbper),
+                detraccion: false,
+                observaciones: "",
+                documento_que_se_modifica_tipo: "",
+                documento_que_se_modifica_serie: "",
+                documento_que_se_modifica_numero: "",
+                tipo_de_nota_de_credito: "",
+                tipo_de_nota_de_debito: "",
+                enviar_automaticamente_a_la_sunat: true,
+                enviar_automaticamente_al_cliente: true,
+                condiciones_de_pago: "",
+                medio_de_pago: condicionPago,
+                placa_vehiculo: "",
+                orden_compra_servicio: "",  
+                formato_de_pdf: "TICKET",
+                generado_por_contingencia: "",
+                bienes_region_selva: "",
+                servicios_region_selva: "",
+                items: itemsProv
+            }
+
+            const config = {
+                headers: { 
+                    "Content-Type" : "application/json"
+                }
+            };
+            console.log(documento);
+            await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
+            .then(async function (params) {
+                console.log("se activó el then");
+                if (params.data.errors) {
+                    setResultadoEmisionComprobante(params.data.errors);
+                    setTituloResultado("error")
+                }else{
+                    console.log(params.data);
+                    setTituloResultado("exito")
+                    if (params.data.aceptada_por_sunat) {
+                        setResultadoEmisionComprobante(params.data.sunat_description);
+                        setBotonImprimir(true);
+                        setLinkDescarga(params.data.enlace_del_pdf);
+                        await registrarVenta();
+                        await actualizarNumeracion(numeracionObtenida)
+                        setFinOperacion(true)
+                    }else{
+                        setResultadoEmisionComprobante("Se emitió correctamente a NubeFact, pero no llegó aún a la SUNAT. Revise la plataforma de facturación o comuníquese con su proveedor");
+                    }  
+                }
+            })
+            .catch(function (params) {
+                console.log("se activó el catch");
+                console.log(params.data);
+                setResultadoEmisionComprobante(params.data.errors);
+            })       
+        };
+        emitir();
+        const registrarVenta = async () =>{
+            let documento ={
+                usuario: "Vendedor General",
+                operacion: "generar_comprobante",
+                tipo_de_comprobante: parseInt(tipoComprobante,10),
+                serie: serie,
+                numero: numeracionObtenida,
+                sunat_transaction: 1,
+                cliente_tipo_de_documento: parseInt(clienteTipoDocumento,10),
+                cliente_numero_de_documento: clienteNumeroDocumento,
+                cliente_denominacion: clienteDenominacion,
+                cliente_direccion: clienteDireccion,
+                cliente_email: clienteEmail,
+                cliente_email_1: "",
+                cliente_email_2: "",
+                fecha_de_emision: fechaSunat,
+                fecha_de_vencimiento: "",
+                moneda: 1,
+                tipo_de_cambio: 3.14,
+                porcentaje_de_igv: (IGV*100),
+                descuento_global: "",
+                total_descuento: "",
+                total_anticipo: "",
+                total_gravada: parseFloat(totalGravada),
+                total_inafecta: "",
+                total_exonerada: "",
+                total_igv: parseFloat(totalIgv),
+                total_gratuita: "",
+                total_otros_cargos: "",
+                total: sumaTotalFinal,
+                percepcion_tipo: "",
+                percepcion_base_imponible: "",
+                total_percepcion: "",
+                total_incluido_percepcion: "",
+                total_impuestos_bolsas: parseFloat(totalIcbper),
                 detraccion: false,
                 observaciones: "",
                 documento_que_se_modifica_tipo: "",
@@ -260,49 +350,48 @@ const NuevaVenta = () => {
                 bienes_region_selva: "",
                 servicios_region_selva: "",
                 items: itemsProv,
-                // guias: [
-                //     {
-                //         guia_tipo: 1,
-                //         guia_serie_numero: "0001-23"
-                //     }
-                // ]
+                //****VALORES EXTRA */
+                tipoRegalo: tipoRegalo,
+                cantidadRegalo: cantidadRegalo,
+                celular:clienteCelular,
+                numeroOperacion:numeroOperacion,  
+                provincia: provincia,
+                canalVenta: canalVenta,
+                clienteReferencias: referencias,
+                clienteDepartamento: departamento,
+                clienteProvincia: provincia,
             }
-
             const config = {
                 headers: { 
                     "Content-Type" : "application/json"
                 }
             };
-            console.log(documento);
-            await axios.post('http://46.183.113.134:3000/api/ventas', documento, config)
+            console.log("Este documento va para el registro:" ,documento);
+            await axios.post('http://46.183.113.134:3000/api/ventas/registrarVenta', documento, config)
             .then(function (params) {
-                console.log("se activó el then");
-                if (params.data.errors) {
-                    setResultadoEmisionComprobante(params.data.errors);
-                    setTituloResultado("error")
-                }else{
-                    console.log(params.data);
-                    setTituloResultado("exito")
-                    if (params.data.aceptada_por_sunat) {
-                        setResultadoEmisionComprobante(params.data.sunat_description);
-                        setBotonImprimir(true);
-                        setLinkDescarga(params.data.enlace_del_pdf);
-                        // registrarVenta();
-                    }else{
-                        setResultadoEmisionComprobante("Se emitió correctamente a NubeFact, pero no llegó aún a la SUNAT. Revise la plataforma de facturación o comuníquese con su proveedor");
-                    }  
-                }
+                console.log("Resultado de consulta: ", params.data );
             })
             .catch(function (params) {
-                console.log("se activó el catch");
-                console.log(params.data);
-                setResultadoEmisionComprobante(params.data.errors);
+                console.log("Resultado de consulta: ", params.data );
             })       
-        };
-
-        emitir();    
+        }    
 
     }
+
+    const actualizarNumeracion =  async (numeracionActualizar) => {
+        console.log("A continuación se actualizará la numeración");
+        let comprobante = tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null;
+        console.log("La numeracion que actualizaré es:",numeracionActualizar);
+        console.log("El tipo de comprobante es:", comprobante);
+        console.log("Y la serie es: ", serie);
+        await axios.put(`http://46.183.113.134:3000/api/numeracion?tipoComprobante=${comprobante}&serie=${serie}&numeroActual=${numeracionActualizar}`, {})
+        .then(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+        })
+        .catch(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+        })  
+    } 
 
     const agregarProducto = async () => {
         console.log("AGREGAR PRODUCTO");
@@ -348,10 +437,6 @@ const NuevaVenta = () => {
                 listaProv[numero-1].totalLista = total.toFixed(2);
                 listaProv[numero-1].igvLista = ((total*IGV)/(1+IGV)).toFixed(2);
                 listaProv[numero-1].precioVentaLista = (total/(1+IGV)).toFixed(2);
-                // let precioVenta = (listaProv[numero-1].precioUnitarioLista*listaProv[numero-1].cantidadLista*(1/(1+IGV)))-listaProv[numero-1].descuentoLista;
-                // listaProv[numero-1].precioVentaLista = precioVenta.toFixed(2);
-                // listaProv[numero-1].igvLista = (precioVenta*IGV).toFixed(2);
-                // listaProv[numero-1].totalLista = (precioVenta*1.18).toFixed(2);
                 let arrayTotalLista = [...totalLista];
                 arrayTotalLista[numero-1] = listaProv[numero-1].totalLista
                 setTotalLista(arrayTotalLista)
@@ -402,47 +487,21 @@ const NuevaVenta = () => {
         setTotalPagar(sumaTotal.toFixed(2));
 
     }, [totalLista,setTotalPagar])
-    useEffect(() => {
 
+    useEffect(() => {
+        let sumaTotalIcbper = 0.00;
+        lista.forEach(value =>{
+            sumaTotalIcbper = sumaTotalIcbper + (value.impuestoBolsas*1.0);
+        })
+        setTotalIcbper(sumaTotalIcbper.toFixed(2));
         let sumaTotalGravadaProv = ((totalDelivery*1.0)+(totalPagar*1.0))*(1/(1+IGV))
         setTotalGravada(sumaTotalGravadaProv.toFixed(2));
         let sumaTotalIgvProv = ((totalPagar*1.0)+(totalDelivery*1.0))*(IGV/(1+IGV))
         setTotalIgv(sumaTotalIgvProv.toFixed(2))
-        let sumaTotalFinalProv = (totalDelivery*1.0) + (totalPagar*1.0) + (cantidadBolsa*ICBPER)
+        let sumaTotalFinalProv = (totalDelivery*1.0) + (totalPagar*1.0) + (sumaTotalIcbper)
         setSumaTotalFinal(sumaTotalFinalProv)
+    
     }, [totalDelivery,totalPagar,cantidadBolsa])
-
-    
-
-    // const calculoFinal = (numeroItem) => {
-    
-    //     // let precioVenta=((precioUnitarioLista[numeroItem-1]*listaCantidad[numeroItem-1])-descuentoLista[numeroItem-1]);
-    //     let listaProv = [...lista];
-    //     console.log("LLAMADO A CALCULO FINAL (Precio Unitario)",listaProv.precioUnitarioLista);
-
-    //     let precioVenta = ((listaProv[numeroItem-1].precioUnitarioLista)*(listaProv[numeroItem-1].cantidadLista)*(1/1+IGV))-listaProv[numeroItem-1].descuentoLista;
-        
-    //     listaProv[numeroItem-1].precioVentaLista = precioVenta.toFixed(2);
-    //     listaProv[numeroItem-1].igvLista = (precioVenta*IGV).toFixed(2);
-    //     listaProv[numeroItem-1].totalLista = (precioVenta*1.18).toFixed(2);
-            
-    //     let listaProvPrecioVentaLista = [...precioVentaLista]
-    //     listaProvPrecioVentaLista[numeroItem-1]= precioVenta.toFixed(2);
-    //     setPrecioVentaLista(listaProvPrecioVentaLista);
-    
-    //     let listaProvIgvLista = [...igvLista]
-    //     listaProvIgvLista[numeroItem-1]= (precioVenta*IGV).toFixed(2);
-    //     setIgvLista(listaProvIgvLista);
-    
-    //     let listaProvTotalLista = [...totalLista]
-    //     listaProvTotalLista[numeroItem-1]= (precioVenta*1.18).toFixed(2);
-    //     setTotalLista(listaProvTotalLista);
-
-    //     let modoValidarProv = [...lista]
-    //     modoValidarProv[numeroItem-1].modoValidar= false;
-    //     setLista(modoValidarProv);
-    //     setDetenerCreacion(false)
-    // }
 
     const eliminarFila = (numeroItem) => {
         let sumaTotal = 0.00;
@@ -486,50 +545,6 @@ const NuevaVenta = () => {
         setListaPresentacion(nuevaListab);
     }
 
-    // const completarDatosCliente = (e) =>{
-    //     let inputNroDoc = e.target
-    //     console.log(inputNroDoc)
-    //     let inputNombreCliente = document.querySelector("input[name='nombreCliente']")
-    //     let inputEmailCliente = document.querySelector("input[name='emailCliente']")
-    //     let inputCelular = document.querySelector("input[name='celular']")
-    //     let list = inputNroDoc.getAttribute('list')
-    //     let options = document.querySelectorAll('#' + list + ' option')
-    //     let inputValue = inputNroDoc.value
-    //     console.log(inputNroDoc.value)
-    //     console.log(inputCelular.value)
-    //     // console.log(options[0])
-
-    //     // inputNombreCliente.value = "Hanhu"
-    //     // inputEmailCliente.value = "hans.e.huiza.n@gmail.com"
-    //     // inputCelular = "991570362"
-
-    //     // setNombreCliente(inputNombreCliente.value)
-    //     // setEmailCliente(inputEmailCliente.value)
-    //     // setCelular(inputCelular)
-
-    //     // console.log(inputNombreCliente);
-
-
-    //     for(let i = 0; i < options.length; i++) {
-    //         let option = options[i];
-    
-    //         if(option.innerText === inputValue) {
-    //             inputNroDoc.value = option.getAttribute('data-doc-cliente')
-    //             inputNombreCliente.value = option.getAttribute('data-nombre-cliente')
-    //             inputEmailCliente.value = option.getAttribute('data-email-cliente')
-    //             inputCelular.value = option.getAttribute('data-celular')
-
-    //             break;
-    //         }
-    //     }
-
-    //     setNumeroDocumentoCliente(inputNroDoc.value)
-    //     setNombreCliente(inputNombreCliente.value)
-    //     setEmailCliente(inputEmailCliente.value)
-    //     setCelular(inputCelular.value)
-    //     // console.log("celular");
-    // }
-
     const manejadorEntrada = (event) =>{
         let numeroItem = event.target.id;
         let name=event.target.name;
@@ -537,6 +552,9 @@ const NuevaVenta = () => {
             case 'descripcion':
                 let listaProvDescripcion = [...lista]
                 listaProvDescripcion[numeroItem-1].descripcionLista = event.target.value;//seteo el valor elegido en el datalist de descripcion
+                if (event.target.value==="Bolsa de plástico") {
+                    listaProvDescripcion[numeroItem-1].impuestoBolsas = ICBPER*listaProvDescripcion[numeroItem-1].cantidadLista;
+                }
                 setLista(listaProvDescripcion) 
                 presentaciones(event.target.value, numeroItem);//con esto se logra setear la lista a elegir en presentacion
                 setDetenerCreacion(false);
@@ -565,7 +583,9 @@ const NuevaVenta = () => {
                     setMinimaCantidadRegalos(0)
                     setCantidadRegalo(0)
                 }
-
+                if (listaProvCantidad[numeroItem-1].descripcionLista==="Bolsa de plástico") {
+                    listaProvCantidad[numeroItem-1].impuestoBolsas = (ICBPER*listaProvCantidad[numeroItem-1].cantidadLista).toFixed(2);
+                }
                 let total = listaProvCantidad[numeroItem-1].precioUnitarioLista*(event.target.value)-listaProvCantidad[numeroItem-1].descuentoLista;
                 listaProvCantidad[numeroItem-1].totalLista = total.toFixed(2);
                 listaProvCantidad[numeroItem-1].igvLista = ((total*IGV)/(1+IGV)).toFixed(2);
@@ -635,8 +655,11 @@ const NuevaVenta = () => {
         // setValorDescripcion(event.target.value)        
     }
     const cerrarModal = ()=>{
-        setTituloResultado("");
-        setResultadoEmisionComprobante("");
+        // setTituloResultado("");
+        // setResultadoEmisionComprobante("");
+        if (finOperacion===true) {  
+            window.location.reload()
+        }
     }
 
     return (
@@ -694,7 +717,7 @@ const NuevaVenta = () => {
                         <select onChange={ e => setSerie(e.target.value) } name="serie" className="form-select">
                             <option selected disabled>Elija una serie</option>
                             {tipoComprobante==="2"?(<><option value="B003">B003</option><option value="B004">B004</option></>):
-                            tipoComprobante==="1"?(<><option value="F003">F003</option><option value="F004">F004</option></>):
+                            tipoComprobante==="1"?(<><option value="F003">F003</option><option value="F004">F004</option><option value="FFF1">F111</option></>):
                             tipoComprobante==="nv"?(<option value="NV10">NV10</option>):null}
                             {/* <option value="B003">B003</option>
                             <option value="B004">B004</option> */}
@@ -973,84 +996,11 @@ const NuevaVenta = () => {
                                     </select>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col-7 mb-3">
-                                    <label className="form-label">¿Incluye bolsa?</label>
-                                    <div>
-                                        <div className="form-check form-check-inline">
-                                            <input onChange={ e => bolsaChecked(e) } className="form-check-input" type="radio" value="true" name="bolsa" id="bolsa1"></input>
-                                            <label className="form-check-label" for="bolsa1">
-                                                Sí
-                                            </label>
-                                        </div>
-                                        <div className="form-check form-check-inline">
-                                            <input onChange={ e => bolsaChecked(e) } className="form-check-input" type="radio" value="false" name="bolsa" id="bolsa2"></input>
-                                            <label className="form-check-label" for="bolsa2">
-                                                No
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-5 mb-3">
-                                    <label for="cantidadBolsa" className="form-label">Cantidad</label>
-                                    <input className="form-control" onChange={ e => setCantidadBolsa(parseInt(e.target.value)) } value={cantidadBolsa} type="number" id="cantidadBolsa" name="cantidadBolsa" min="0" disabled={(conBolsa) ? "" : "disabled"}></input>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="row mb-4">
-                    <div className="col-6 mb-3">
-                        <div className="row">
-                            <div className="col-6">
-                                <label className="form-label">¿Envío por delivery?</label>
-                                <div>
-                                    <div className="form-check form-check-inline">
-                                        <input onChange={ e => deliveryChecked(e)} className="form-check-input" type="radio" value="true" name="delivery" id="delivery1"></input>
-                                        <label className="form-check-label" for="delivery1">
-                                            Sí
-                                        </label>
-                                    </div>
-                                    <div className="form-check form-check-inline">
-                                        <input checked={!habilitarDelivery} onChange={ e => deliveryChecked(e) } className="form-check-input" type="radio" value="false" name="delivery" id="delivery2"></input>
-                                        <label className="form-check-label" for="delivery2">
-                                            No
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-6">
-                                <label className="form-label">Distrito destino</label>
-                                <div>
-                                    <div className="col-12 mb-3">
-                                        <select onChange={ manejadorEntrada} name="distritoDestino" className="form-select" disabled={!habilitarDelivery}>
-                                            <option value="10" selected>Centro de Lima</option>
-                                            <option value="10">Breña</option>
-                                            <option value="10">Lince</option>
-                                            <option value="10">Rimac</option>
-                                        </select>
-                                    </div> 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-6 mb-3"></div>
                 </div>
                 <div className="mb-3">
                     <div className="info-total mb-4">
-                        
-                        <div className="row">
-                            <div className="col-11">Sub Total productos:</div>
-                            <div className="col-1">{(totalPagar*(1/(1+IGV))).toFixed(2)}</div>
-                        </div>
-                        <div className="row">
-                            <div className="col-11">Delivery:</div>
-                            <div className="col-1">{(totalDelivery*(1/(1+IGV))).toFixed(2)}</div>
-                        </div>
-                        {/* <div className="row">
-                            <div className="col-11">Descuento Total:</div>
-                            <div className="col-1">{(totalDescuento*(1/(1+IGV))).toFixed(2)}</div>
-                        </div> */}
                         <div className="row">
                             <div className="col-11">Total gravada:</div>
                             <div className="col-1">{totalGravada}</div>
@@ -1061,7 +1011,7 @@ const NuevaVenta = () => {
                         </div>
                         <div className="row">
                             <div className="col-11">ICBPER:</div>
-                            <div className="col-1">{(cantidadBolsa*ICBPER).toFixed(2)}</div>
+                            <div className="col-1">{totalIcbper}</div>
                         </div>
                         <hr></hr>
                         <div className="row fs-4">
@@ -1076,10 +1026,6 @@ const NuevaVenta = () => {
                         <div className="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
                             <div className="modal-dialog modal-lg">
                                 <div className="modal-content">
-                                {/* <div class="modal-header">
-                                    <h5 class="modal-title" id="previewModalLabel">Modal title</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div> */}
                                 <div className="">
                                     <div className="bg-gray p-4">
                                         <div className="d-flex justify-content-between mb-3">
@@ -1099,7 +1045,7 @@ const NuevaVenta = () => {
                                         <div className="h5">Serie: {serie}</div>
                                     </div>
                                     <div className="p-4">
-                                        <div className="mb-3 text-black">ADQUIRIENTE</div>
+                                        <div className="mb-3 text-black">CLIENTE: {clienteDenominacion}</div>
                                         <div>
                                             <div className="text-uppercase">{nombreCliente}</div>
                                             <div>Fecha de emisión: {fechaSunat}</div>
@@ -1147,16 +1093,16 @@ const NuevaVenta = () => {
                                     </div>
                                     <div className="border-bottom"></div>
                                     <div className="p-4 text-end text-black">
-                                        <div className="row">
+                                        {/* <div className="row">
                                             <div className="col-8">Sub Total productos:</div>
                                             <div className="col-1">S/</div>
                                             <div className="col-3">{(totalPagar*(1/(1+IGV))).toFixed(2)}</div>
-                                        </div>
-                                        <div className="row">
+                                        </div> */}
+                                        {/* <div className="row">
                                             <div className="col-8">Delivery:</div>
                                             <div className="col-1">S/</div>
                                             <div className="col-3">{(totalDelivery*(1/(1+IGV))).toFixed(2)}</div>
-                                        </div>
+                                        </div> */}
                                         <div className="row">
                                             <div className="col-8">Total gravada:</div>
                                             <div className="col-1">S/</div>
@@ -1170,7 +1116,7 @@ const NuevaVenta = () => {
                                         <div className="row">
                                             <div className="col-8">ICBPER:</div>
                                             <div className="col-1">S/</div>
-                                            <div className="col-3">{(cantidadBolsa*ICBPER).toFixed(2)}</div>
+                                            <div className="col-3">{totalIcbper}</div>
                                         </div>
                                     </div>
                                     <div className="border-bottom"></div>
