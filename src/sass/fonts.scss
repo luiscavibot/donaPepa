@@ -1,0 +1,65 @@
+$sofia-font-path: "../fonts/WOFF";
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Regular Az.woff") format("woff");
+    font-style: normal;
+    font-family: "Sofia";
+    font-weight: 400;
+}
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Regular Italic Az.woff") format("woff");
+    font-style: italic;
+    font-family: "Sofia";
+    font-weight: 400;
+}
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Medium Az.woff") format("woff");
+    font-style: normal;
+    font-family: "Sofia";
+    font-weight: 500;
+}
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Medium Italic Az.woff") format("woff");
+    font-style: italic;
+    font-family: "Sofia";
+    font-weight: 500;
+}
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Semi Bold Az.woff") format("woff");
+    font-style: normal;
+    font-family: "Sofia";
+    font-weight: 600;
+}
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Semi Bold Italic Az.woff") format("woff");
+    font-style: italic;
+    font-family: "Sofia";
+    font-weight: 600;
+}
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Bold Az.woff") format("woff");
+    font-style: normal;
+    font-family: "Sofia";
+    font-weight: 700;
+}
+
+@font-face {
+    // This is parsed as a normal function call that takes a quoted string.
+    src: url("#{$sofia-font-path}/Sofia Pro Bold Italic Az.woff") format("woff");
+    font-style: italic;
+    font-family: "Sofia";
+    font-weight: 700;
+}

@@ -1,6 +1,17 @@
+@import "./fonts.scss";
+
 @import "./variables.scss";
+
+@import "./theme-colors.scss";
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+
+@import "./custom.scss";
+
 @import "./global.scss";
 
 @import "./modal.scss";
 @import "./sidebar.scss";
 @import "./table.scss";
+@import "./form.scss";
+@import "./button.scss";
