@@ -15,6 +15,10 @@ main {
     color: $color-text-gray;
 }
 
+body, button, input, optgroup, select, textarea {
+    font-family: "Sofia", sans-serif !important;
+}
+
 .sub-title {
     font-size: 20px;
 }
@@ -52,4 +56,8 @@ main {
             font-size: 1.15rem;
         }
     }
+}
+
+.table-productos tbody .cont-input-cantidad {
+    width: 110px;
 }

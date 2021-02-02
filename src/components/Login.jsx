@@ -203,7 +203,7 @@ const Login = (props) => {
                   <input type="checkbox" className="form-check-input" id="exampleCheck1" />
                   <label className="form-check-label">Recordar contraseña</label>
                 </div>
-                <button type="submit" className="btn btn-primary w-100">Ingresar</button>
+                <button type="submit" className="btn btn-danger w-100">Ingresar</button>
                 <p className="text-center pt-3 olvidaste">¿Olvidaste tu contraseña? Click aquí</p>
               </form>
             </div>

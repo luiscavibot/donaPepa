@@ -227,7 +227,7 @@ const NuevaVenta = () => {
     }, [])
 
     const ExampleCustomInput = ({ value, onClick }) => (
-        <div className="d-flex border align-items-center justify-content-between form-control" onClick={onClick}>
+        <div className="d-flex align-items-center justify-content-between form-control" onClick={onClick}>
           <div>{value}</div>
           <div>
               <i className="far fa-calendar p-1 rounded-3 text-center"></i>
@@ -859,13 +859,13 @@ const NuevaVenta = () => {
                     </div>
                 </div>
                 <div className="mb-3">
-                    <table className="table">
+                    <table className="table table-productos">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
+                                <th scope="col">Cod.</th>
                                 <th scope="col">Descripción</th>
                                 <th scope="col">Presentación</th>
-                                <th scope="col">Cod.</th>
                                 <th scope="col">Cant.</th>
                                 <th scope="col">Precio U.</th>
                                 <th scope="col">Descuento</th>
@@ -882,8 +882,9 @@ const NuevaVenta = () => {
                                 lista.map(valor => (
                                     <tr>
                                         <th valign="middle" align="center">{valor.numeroLista}</th>
+                                        <td valign="middle" align="center">{valor.codigoLista}</td>
                                         <td>
-                                            <input className="form-control" id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
+                                            <input className="form-control text-center" id={valor.numeroLista} name = "descripcion" type="search" onChange={manejadorEntrada} 
                                             placeholder="Ingrese un producto" list="listaproductos" disabled={!valor.modoValidar} value={valor.descripcionLista} />
                                             <datalist id="listaproductos">
                                                     {
@@ -903,9 +904,8 @@ const NuevaVenta = () => {
                                                     }
                                             </select>
                                         </td>
-                                        <td valign="middle" align="center">{valor.codigoLista}</td>
-                                        <td>
-                                            <input className="form-control" id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={valor.cantidadLista}
+                                        <td className="cont-input-cantidad">
+                                            <input className="form-control text-center" id={valor.numeroLista} min="1" step="1" type="number" name="cantidad" value={valor.cantidadLista}
                                              onChange={manejadorEntrada}  list="off" autoComplete="off" disabled={!valor.modoValidar}/>
                                         </td>
                                         <td valign="middle" align="center">
@@ -919,7 +919,7 @@ const NuevaVenta = () => {
                                         <td valign="middle" align="center">{valor.totalLista}</td>
                                         <td valign="middle" align="center">{valor.impuestoBolsas}</td>
                                         <td valign="middle" align="center">
-                                            <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" >Eliminar</button>
+                                            <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" ><i class="far fa-trash-alt"></i></button>
                                         </td>
                                         <td valign="middle" align="center">
                                             
@@ -958,7 +958,8 @@ const NuevaVenta = () => {
                     </div>
                 </div>
                 <div className="border-bottom my-4"></div>
-                <div className="row">
+                <div className="pe-5 me-5">
+                    <div className="row">
                     <div className="col-6 mb-3">
                         <div className="mb-3 sub-title">Datos del cliente</div>
                         <div>
@@ -1117,8 +1118,8 @@ const NuevaVenta = () => {
                         </div>
                     </div>
                 </div>
-                <div className="mb-3">
-                    <div className="info-total mb-4">
+                    <div className="mb-5">
+                    <div className="info-total mb-4 ms-n4">
                         <div className="row">
                             <div className="col-11">Total gravada:</div>
                             <div className="col-1">{totalGravada}</div>
@@ -1138,9 +1139,9 @@ const NuevaVenta = () => {
                         </div>
                     </div>
                 </div>    
-                <div className="row mb-4">
+                    <div className="row mb-4">
                     <div className="col-4">
-                        <button type="button" className="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#previewModal">PREVISUALIZAR COMPROBANTE</button>
+                        <button type="button" className="btn btn-gray btn-w-large" data-bs-toggle="modal" data-bs-target="#previewModal">PREVISUALIZAR COMPROBANTE</button>
                         <div className="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
                             <div className="modal-dialog modal-lg">
                                 <div className="modal-content">
@@ -1158,7 +1159,11 @@ const NuevaVenta = () => {
                                                 <div className="text-uppercase">{tipoComprobante==="1"?"Factura":tipoComprobante==="2"?"Boleta":tipoComprobante==="nv"?"Nota de Venta":null} 
                                                 &nbsp;electrónica</div>
                                             </div>
-                                            <div className="col"></div>
+                                            <div className="col">
+                                                <div className="px-5 mx-4">
+                                                    <img src='../img/donapepa.png' className="" alt="Doña Pepa"/>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="h5">Serie: {serie}</div>
                                     </div>
@@ -1265,7 +1270,7 @@ const NuevaVenta = () => {
                         <div className="d-flex justify-content-end">
                             {/* <button type="button" className="btn btn-outline-danger me-2" onChange={guardarBorrador}>GUARDAR EN BORRADOR</button> */}
                             {/* Button trigger modal */}
-                            <button type="button" class="btn btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#staticBackdropDos">
+                            <button type="button" class="btn btn-outline-danger me-2 btn-w-large" data-bs-toggle="modal" data-bs-target="#staticBackdropDos">
                             GUARDAR EN BORRADOR
                             </button>
 
@@ -1291,7 +1296,7 @@ const NuevaVenta = () => {
                                 </div>
                             </div>
 
-                            <button type="submit" className="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop">EMITIR</button>
+                            <button type="submit" className="btn btn-danger btn-w-large" data-bs-toggle="modal" data-bs-target="#staticBackdrop">EMITIR</button>
                             {/* <input className="btn btn-danger" type="submit" value="EMITIR"></input> */}
                             <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                 <div className="modal-dialog modal-dialog-centered">
@@ -1329,6 +1334,7 @@ const NuevaVenta = () => {
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </form>
         </div>

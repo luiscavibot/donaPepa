@@ -2,6 +2,8 @@ $gray: #F0F0F0;
 $gray-light: #FAFAFA;
 $gray-strong: #707070;
 $gray-strong-opa25:#70707040;
+$red: #D31A2B;
+$red-light: #E51A2F;
 
 
 $color-text-gray: #646464;
@@ -10,7 +12,7 @@ $color-text-header-table: #222222;
 $background-gray: $gray;
 $background-gray-light: $gray-light;
 $background-main: $gray-light;
-$background-sidebar-red: #D31A2B;
-$select-sidebar: #E51A2F;
-$button-red: #D31A2B;
+$background-sidebar-red: $red;
+$select-sidebar: $red-light;
+$button-red: $red;
 $divisor: $gray-strong-opa25;
