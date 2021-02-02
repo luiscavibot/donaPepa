@@ -17,6 +17,7 @@ const NuevaVenta = () => {
     const [precioUnitario, setPrecioUnitario] = useState(0)
     //******************************** */
     //Hooks de estado para Nubefact-inicio
+    const [guardadoExitosamente, setGuardadoExitosamente] = useState(false)
     const [usuario, setUsuario] = useState('')
     const [serie, setSerie] = useState('')
     const [numero, setNumero] = useState(1)
@@ -97,6 +98,118 @@ const NuevaVenta = () => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+    const guardarBorrador = ()=>{
+
+        let itemsProvBorrador = lista.map(function(valor) {
+
+            let obj={
+                unidad_de_medida: "NIU",
+                codigo: valor.codigoLista,
+                codigo_producto_sunat: "",
+                descripcion: valor.descripcionLista +" "+ valor.presentacionLista,
+                cantidad: valor.cantidadLista*1.0,
+                valor_unitario: parseFloat((valor.precioUnitarioLista*(1/(1+IGV))).toFixed(2)),
+                precio_unitario: valor.precioUnitarioLista,
+                descuento: valor.descuentoLista*(1/(1+IGV)),
+                subtotal: parseFloat(valor.precioVentaLista),
+                tipo_de_igv: 1,
+                igv: valor.igvLista*1.0,
+                impuesto_bolsas: parseFloat(valor.impuestoBolsas),
+                total: valor.totalLista*1.0,
+                anticipo_regularizacion: false,
+                anticipo_documento_serie: "",
+                anticipo_documento_numero: ""            
+            }
+            return obj
+        });
+
+        const enviarBorrador = async () =>{
+
+            let documento ={
+                usuario: "Vendedor General",
+                operacion: "generar_comprobante",
+                tipo_de_comprobante: parseInt(tipoComprobante,10),
+                serie: serie,
+                numero: null,
+                sunat_transaction: 1,
+                cliente_tipo_de_documento: parseInt(clienteTipoDocumento,10),
+                cliente_numero_de_documento: clienteNumeroDocumento,
+                cliente_denominacion: clienteDenominacion,
+                cliente_direccion: clienteDireccion,
+                cliente_email: clienteEmail,
+                cliente_email_1: "",
+                cliente_email_2: "",
+                fecha_de_emision: fechaSunat,
+                fecha_de_vencimiento: "",
+                moneda: 1,
+                tipo_de_cambio: 3.14,
+                porcentaje_de_igv: (IGV*100),
+                descuento_global: "",
+                total_descuento: "",
+                total_anticipo: "",
+                total_gravada: parseFloat(totalGravada),
+                total_inafecta: "",
+                total_exonerada: "",
+                total_igv: parseFloat(totalIgv),
+                total_gratuita: "",
+                total_otros_cargos: "",
+                total: sumaTotalFinal,
+                percepcion_tipo: "",
+                percepcion_base_imponible: "",
+                total_percepcion: "",
+                total_incluido_percepcion: "",
+                total_impuestos_bolsas: parseFloat(totalIcbper),
+                detraccion: false,
+                observaciones: "",
+                documento_que_se_modifica_tipo: "",
+                documento_que_se_modifica_serie: "",
+                documento_que_se_modifica_numero: "",
+                tipo_de_nota_de_credito: "",
+                tipo_de_nota_de_debito: "",
+                enviar_automaticamente_a_la_sunat: true,
+                enviar_automaticamente_al_cliente: true,
+                condiciones_de_pago: "",
+                medio_de_pago: condicionPago,
+                placa_vehiculo: "",
+                orden_compra_servicio: "",  
+                formato_de_pdf: "TICKET",
+                generado_por_contingencia: "",
+                bienes_region_selva: "",
+                servicios_region_selva: "",
+                items: itemsProvBorrador,
+                //****VALORES EXTRA */
+                tipoRegalo: tipoRegalo,
+                cantidadRegalo: cantidadRegalo,
+                celular:clienteCelular,
+                numeroOperacion:numeroOperacion,  
+                provincia: provincia,
+                canalVenta: canalVenta,
+                clienteReferencias: referencias,
+                clienteDepartamento: departamento,
+                clienteProvincia: provincia,
+            }
+            const config = {
+                headers: { 
+                    "Content-Type" : "application/json"
+                }
+            };
+            console.log("Este documento va para el registro en Borrador:" ,documento);
+            await axios.post('http://46.183.113.134:3000/api/borrador', documento, config)
+            .then(function (params) {
+                console.log("Resultado de consulta: ", params.data );
+                setGuardadoExitosamente(true)
+                setTimeout(() => {
+                    window.location.reload()
+                }, 1200);
+            })
+            .catch(function (params) {
+                console.log("Resultado de consulta: ", params.data );
+            })     
+        };
+        enviarBorrador();
+    }
 
     useEffect(() => {
         const getProducts = async () =>{
@@ -189,7 +302,7 @@ const NuevaVenta = () => {
             }
             return obj
         })
-        setItem(itemsProv);
+        // setItem(itemsProv);
 
         const obtenerNumeracion = async ()=>{
             try {
@@ -809,7 +922,12 @@ const NuevaVenta = () => {
                                             <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" ><i class="far fa-trash-alt"></i></button>
                                         </td>
                                         <td valign="middle" align="center">
-                                            <button type="button" class="btn btn-warning btn-sm">Estado</button>
+                                            
+                                            {
+                                                (valor.descripcionLista==="Panetón buon natale" && valor.cantidadLista>9)?
+                                                <button type="button" className ="btn btn-danger btn-sm">Mandar a Sup</button>:
+                                                <button type="button" class="btn btn-warning btn-sm">Sin descuento</button>
+                                            }
                                         </td>
                                     </tr>
                                 ))
@@ -829,13 +947,13 @@ const NuevaVenta = () => {
                         <div className="col-3 mb-3">
                             {/* <label for="exampleInputEmail1" className="form-label">Email address</label> */}
                             <label for="tipoRegalo" className="form-label" >Tipo de regalo</label>
-                            <select disabled={!ofrecerRegalo} onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
+                            <select onChange={ e => setTipoRegalo(e.target.value) } name="tipoRegalo" className="form-select" aria-label="Default select example">
                                 <option value="Regalo Probadores" selected>Regalo Probadores</option>
                             </select>
                         </div>
                         <div className="col-1 mb-3">
                             <label for="cantidadRegalo" className="form-label">Cantidad</label>
-                            <input disabled={!ofrecerRegalo} className="form-control" onChange={manejadorEntrada} value={cantidadRegalo} type="number" id="cantidadRegalo" name="cantidadRegalo" min="0"></input>
+                            <input className="form-control" onChange={manejadorEntrada} value={cantidadRegalo} type="number" id="cantidadRegalo" name="cantidadRegalo" min="0"></input>
                         </div>
                     </div>
                 </div>
@@ -1150,7 +1268,34 @@ const NuevaVenta = () => {
                     </div>
                     <div className="col-8">
                         <div className="d-flex justify-content-end">
-                            <button type="button" className="btn btn-outline-danger me-2 btn-w-large">GUARDAR EN BORRADOR</button>
+                            {/* <button type="button" className="btn btn-outline-danger me-2" onChange={guardarBorrador}>GUARDAR EN BORRADOR</button> */}
+                            {/* Button trigger modal */}
+                            <button type="button" class="btn btn-outline-danger me-2 btn-w-large" data-bs-toggle="modal" data-bs-target="#staticBackdropDos">
+                            GUARDAR EN BORRADOR
+                            </button>
+
+                            {/* Modal */}
+                            <div class="modal fade" id="staticBackdropDos" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Enviar a borrador</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body d-flex justify-content-center">
+                                        {   
+                                            guardadoExitosamente?"Se guardó exitosamente en el módulo BORRADOR":"¿Está seguro de enviar el presente comprobante al módulo BORRADOR?"
+                                            
+                                        }
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" disabled={guardadoExitosamente}>Cerrar</button>
+                                            <button type="button" class="btn btn-primary" onClick={guardarBorrador} disabled={guardadoExitosamente}>Aceptar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button type="submit" className="btn btn-danger btn-w-large" data-bs-toggle="modal" data-bs-target="#staticBackdrop">EMITIR</button>
                             {/* <input className="btn btn-danger" type="submit" value="EMITIR"></input> */}
                             <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
