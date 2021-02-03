@@ -880,7 +880,7 @@ const NuevaVenta = () => {
                         <tbody>
                             {
                                 lista.map(valor => (
-                                    <tr>
+                                    <tr className="border-bottom">
                                         <th valign="middle" align="center">{valor.numeroLista}</th>
                                         <td valign="middle" align="center">{valor.codigoLista}</td>
                                         <td>
@@ -919,14 +919,14 @@ const NuevaVenta = () => {
                                         <td valign="middle" align="center">{valor.totalLista}</td>
                                         <td valign="middle" align="center">{valor.impuestoBolsas}</td>
                                         <td valign="middle" align="center">
-                                            <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-outline-danger btn-sm" type="button" ><i class="far fa-trash-alt"></i></button>
+                                            <button onClick= {()=>eliminarFila(valor.numeroLista)} className="btn btn-sm" type="button" ><i class="far fa-trash-alt h5"></i></button>
                                         </td>
                                         <td valign="middle" align="center">
                                             
                                             {
                                                 (valor.descripcionLista==="Panetón buon natale" && valor.cantidadLista>9)?
-                                                <button type="button" className ="btn btn-danger btn-sm">Mandar a Sup</button>:
-                                                <button type="button" class="btn btn-warning btn-sm">Sin descuento</button>
+                                                <button type="button" className ="btn btn-danger">Mandar a Sup</button>:
+                                                <button type="button" class="btn btn-warning">Sin descuento</button>
                                             }
                                         </td>
                                     </tr>
@@ -942,7 +942,7 @@ const NuevaVenta = () => {
                 </div>
                 <div className="border-bottom my-4"></div>
                 <div className="mb-3">
-                    <div className="mb-3 sub-title">Datos de regalos</div>
+                    <div className="mb-5 sub-title">Datos de regalos</div>
                     <div className="row">
                         <div className="col-3 mb-3">
                             {/* <label for="exampleInputEmail1" className="form-label">Email address</label> */}
@@ -961,10 +961,10 @@ const NuevaVenta = () => {
                 <div className="pe-5 me-5">
                     <div className="row">
                     <div className="col-6 mb-3">
-                        <div className="mb-3 sub-title">Datos del cliente</div>
+                        <div className="mb-5 sub-title">Datos del cliente</div>
                         <div>
                             <div className="row">
-                                <div className="col-6 mb-3">
+                                <div className="col-6 mb-4">
                                     <label className="form-label">Tipo de documento</label>
                                     {/* <select onChange={ e => setTipoDocumentoCliente(e.target.value) } name="tipoDocumentoCliente" className="form-select"> */}
                                     {/* <select onChange={ manejadorEntrada } name="tipoDocumentoCliente" className="form-select">
@@ -980,27 +980,27 @@ const NuevaVenta = () => {
                                         <option value="-">Varios (Ventas menores a S/700.00)</option>
                                     </select> 
                                 </div>
-                                <div className="col-6 mb-3">
+                                <div className="col-6 mb-4">
                                     <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
                                     {/* <input onChange={ e => setNumeroDocumentoCliente(e.target.value) } type="text" className="form-control is-valid" name="numeroDocumentoCliente" id="numeroDocumentoCliente" required></input> */}
                                     <input className="form-control" name="numeroDocumentoCliente" required type="text" onChange={manejadorEntrada} value={clienteNumeroDocumento}/>
                                 </div>
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-4">
                                 <label for="nombreCliente" className="form-label">Nombre del cliente</label>
                                 <input onChange={manejadorEntrada} type="text" className="form-control" name="clienteDenominacion" id="nombreCliente"></input>
                             </div>
                             <div className="row">
-                                <div className="col-6 mb-3">
+                                <div className="col-6 mb-4">
                                     <label for="emailCliente" className="form-label" value={clienteEmail}>Email</label>
                                     <input onChange={manejadorEntrada} type="email" className="form-control" name="clienteEmail" id="emailCliente" aria-describedby="emailHelp"></input>
                                 </div>
-                                <div className="col-6 mb-3">
+                                <div className="col-6 mb-4">
                                     <label className="form-label" for="celular" value={clienteCelular}>Celular</label>
                                     <input onChange={manejadorEntrada} className="form-control" type="tel" name="clienteCelular" id="celular"></input>
                                 </div>
                             </div>
-                            <div className="row mb-3">
+                            <div className="row mb-4">
                                 <div className="col-6">
                                     <label className="form-label">Departamento</label>
                                     <select onChange={ e => setDepartamento(e.target.value) } name="provincia" className="form-select">
@@ -1040,12 +1040,12 @@ const NuevaVenta = () => {
                                     </div>
                                 </>):null}
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-4">
                                 <label for="direccionCliente" className="form-label">Dirección</label>
                                 <input onChange={ e => setClienteDireccion(e.target.value) } type="text" className="form-control" 
                                     name="clienteDireccion" id="direccionCliente" value={clienteDireccion}></input>
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-4">
                                 <label for="direccionCliente" className="form-label">Referencias</label>
                                 <input onChange={ e => setReferencias(e.target.value) } type="text" className="form-control" 
                                     name="referencias" id="referencias" value={referencias}></input>
@@ -1053,10 +1053,10 @@ const NuevaVenta = () => {
                         </div>
                     </div>
                     <div className="col-6 mb-3">
-                        <div className="mb-3 sub-title">Datos de la venta</div>
+                        <div className="mb-5 sub-title">Datos de la venta</div>
                         <div>
                             <div className="row">
-                                <div className="col-7 mb-3">
+                                <div className="col-7 mb-4">
                                     <label className="form-label">Fecha</label>
                                     <div>
                                         <DatePicker 
@@ -1072,7 +1072,7 @@ const NuevaVenta = () => {
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-7 mb-3">
+                                <div className="col-7 mb-4">
                                     <label for="moneda" className="form-label">Tipo de moneda</label>
                                     <select onChange={ e => setMoneda(e.target.value) } name="moneda" className="form-select" aria-label="Default select example" id="moneda">
                                         <option selected value="1">Soles</option>
@@ -1083,13 +1083,13 @@ const NuevaVenta = () => {
                                         <option value="1">Soles</option>
                                     </select> */}
                                 </div>
-                                <div className="col-5 mb-3">
+                                <div className="col-5 mb-4">
                                     <label for="igv" className="form-label">IGV</label>
                                     <input  type="text" className="form-control" name="igv" id="igv" value={IGV} disabled readonly></input>
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-7 mb-3">
+                                <div className="col-7 mb-4">
                                     <label className="form-label">Medio de pago</label>
                                     <select onChange={ e => setCondicionPago(e.target.value) } name="condicionPago" className="form-select">
                                         <option disabled selected>Elige la condicion de pago</option>
@@ -1098,13 +1098,13 @@ const NuevaVenta = () => {
                                         <option value="yape">Yape</option>
                                     </select>
                                 </div>
-                                <div className="col-5 mb-3">
+                                <div className="col-5 mb-4">
                                     <label for="noperacion" className="form-label">Nro. Operación</label>
                                     <input onChange={ e => setNumeroOperacion(e.target.value) } type="text" className="form-control" name="noperacion" id="noperacion"></input>
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-7 mb-3">
+                                <div className="col-7 mb-4">
                                     <label className="form-label">Canal de venta</label>
                                     <select onChange={ e => setCanalVenta(e.target.value) } name="canalVenta" className="form-select">
                                         <option disabled selected>Elige la canal de venta</option>
