@@ -21,6 +21,7 @@ import VendedoraLiquidacion from './VendedoraLiquidacion';
 import VendedoraBorrador from './VendedoraBorrador';
 import CrearCliente from './CrearCliente';
 import ListaClientes from './ListaClientes';
+import Cliente from './Cliente';
 
 const PanelControl = (props) => {
 
@@ -113,7 +114,7 @@ const PanelControl = (props) => {
                                         <div className="accordion-body">
                                             <NavLink 
                                                 className="list-group-item text-start" 
-                                                to="/panelcontrol/cliente"
+                                                to="/panelcontrol/clientes"
                                                 exact
                                             >
                                                 CLIENTE
@@ -205,7 +206,7 @@ const PanelControl = (props) => {
                                     <h1 className="h5">Reportes de Liquidación Maestro</h1>
                                 </div>
                             </Route>
-                            <Route path={`${path}/cliente`}>
+                            <Route path={`${path}/clientes`}>
                                 <ListaClientes />
                             </Route>
                             <Route path={`${path}/vendedora-reporte`}>
@@ -225,6 +226,9 @@ const PanelControl = (props) => {
                             </Route>
                             <Route path={`${path}/crear-cliente`}>
                                 <CrearCliente />
+                            </Route>
+                            <Route path={`${path}/cliente`}>
+                                <Cliente />
                             </Route>
                         </Switch>
                     </main>
