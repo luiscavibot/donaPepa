@@ -202,7 +202,7 @@ const NuevaVenta = () => {
                 setGuardadoExitosamente(true)
                 setTimeout(() => {
                     window.location.reload()
-                }, 1200);
+                }, 800);
             })
             .catch(function (params) {
                 console.log("Resultado de consulta: ", params.data );
