@@ -13,11 +13,15 @@ import {
   } from "react-router-dom";
 import {auth} from '../firebase'
 import ReportesVentas from './ReportesVentas';
+import ContenidoCliente from './ContenidoCliente';
 import VendedoraReporte from './VendedoraReporte';
 import NuevaVenta from './NuevaVenta';
 import VendedoraAnulacion from './VendedoraAnulacion';
 import VendedoraLiquidacion from './VendedoraLiquidacion';
 import VendedoraBorrador from './VendedoraBorrador';
+import CrearCliente from './CrearCliente';
+import ListaClientes from './ListaClientes';
+import Cliente from './Cliente';
 
 const PanelControl = (props) => {
 
@@ -76,11 +80,11 @@ const PanelControl = (props) => {
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="headingTwo">
-                                        <button className="text-white accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                        <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                             REPORTES ADMIN
                                         </button>
                                     </h2>
-                                    <div id="collapseTwo" className="accordion-collapse collapse show" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                    <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                         <div className="accordion-body">
                                             <NavLink 
                                                 className="list-group-item text-start" 
@@ -108,6 +112,13 @@ const PanelControl = (props) => {
                                     </h2>
                                     <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                         <div className="accordion-body">
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/clientes"
+                                                exact
+                                            >
+                                                CLIENTE
+                                            </NavLink>
                                             <NavLink 
                                                 className="list-group-item text-start" 
                                                 to="/panelcontrol/vendedora-reporte"
@@ -195,6 +206,9 @@ const PanelControl = (props) => {
                                     <h1 className="h5">Reportes de Liquidación Maestro</h1>
                                 </div>
                             </Route>
+                            <Route path={`${path}/clientes`}>
+                                <ListaClientes />
+                            </Route>
                             <Route path={`${path}/vendedora-reporte`}>
                                 <VendedoraReporte />
                             </Route>
@@ -209,6 +223,12 @@ const PanelControl = (props) => {
                             </Route>
                             <Route path={`${path}/vendedora-borrador`}>
                                 <VendedoraBorrador />
+                            </Route>
+                            <Route path={`${path}/crear-cliente`}>
+                                <CrearCliente />
+                            </Route>
+                            <Route path={`${path}/cliente`}>
+                                <Cliente />
                             </Route>
                         </Switch>
                     </main>
