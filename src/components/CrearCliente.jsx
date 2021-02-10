@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'moment/locale/es'
@@ -16,16 +17,17 @@ import {
 
 function CrearCliente() {
 
-    const [buscador, setBuscador] = useState(false)
+    // const [buscador, setBuscador] = useState(false)
 
-    const [clienteTipoDocumento, setClienteTipoDocumento] = useState("1")
-    const [clienteNumeroDocumento, setClienteNumeroDocumento] = useState(null)
+    const [clienteTipoDocumento, setClienteTipoDocumento] = useState("")
+    const [clienteNumeroDocumento, setClienteNumeroDocumento] = useState("")
+    const [clienteTipo, setClienteTipo] = useState("all")
     const [clienteNombre, setClienteNombre] = useState("")
-    const [clienteCelular, setClienteCelular] = useState("")
-    const [clienteEmail, setClienteEmail] = useState("")
     const [clienteEdad, setClienteEdad] = useState(0)
     const [clienteRangoEdad, setClienteRangoEdad] = useState("")
     const [clienteCumple, setClienteCumple] = useState(new Date());
+    const [clienteCelular, setClienteCelular] = useState("")
+    const [clienteEmail, setClienteEmail] = useState("")
     const [clienteFamilia, setClienteFamilia] = useState("")
     const [clienteEdadHijos, setClienteEdadHijos] = useState("")
     const [clienteDireccion, setClienteDireccion] = useState("")
@@ -40,9 +42,9 @@ function CrearCliente() {
     const [clienteDeporte, setClienteDeporte] = useState("")
     const [clientePublicidad, setClientePublicidad] = useState(true)
 
-    const [contador, setContador] = useState(1)
+    // const [contador, setContador] = useState(1)
 
-    const [desactivar, setDesactivar] = useState(false)
+    // const [desactivar, setDesactivar] = useState(false)
 
     const ExampleCustomInput = ({ value, onClick }) => (
         <div className="d-flex align-items-center justify-content-between form-control" onClick={onClick}>
@@ -57,7 +59,7 @@ function CrearCliente() {
         // console.log(event.target.value);
         // setBuscador(event.target.value);
         if (event.target.value==="") {
-            setBuscador(true);
+            // setBuscador(true);
         }else{
             consultaBuscador(event.target.value);
         }
@@ -75,11 +77,69 @@ function CrearCliente() {
         
     }
 
+    const publicidadChecked = (e) => {
+        console.log("entro a delivery checked")
+        console.log(e.target.value)
+        if (e.target.value === "true") {
+            setClientePublicidad(true)
+            return
+        }
+        setClientePublicidad(false);
+        return
+    }
+
+    const enviarCliente = async (e) => {
+        e.preventDefault()
+        
+        let cliente = {
+            tipoDocumento: clienteTipoDocumento,
+            nroDocumento: clienteNumeroDocumento,
+            tipo: clienteTipo,
+            nombre: clienteNombre,
+            edad: clienteEdad,
+            rangoEdad: clienteRangoEdad,
+            fechaCumple: clienteCumple,
+            celular: clienteCelular,
+            email: clienteEmail,
+            familia: clienteFamilia,
+            edadHijos: clienteEdadHijos,
+            direccion: clienteDireccion,
+            distrito: clienteDistrito,
+            referencias: clienteReferencias,
+            provincia: clienteProvincia,
+            codigoPostal: clienteCodigoPostal,
+            entretenimiento1: clienteEntrenamiento1,
+            entretenimiento2: clienteEntrenamiento2,
+            entretenimiento3: clienteEntrenamiento3,
+            haceDeportes: clienteHaceDeporte,
+            deportes: clienteDeporte,
+            deseaPublicidad: clientePublicidad,
+        }
+        const config = {
+            headers: { 
+                "Content-Type" : "application/json"
+            }
+        };
+        console.log("Este form va para el registro en Clientes:" ,cliente);
+        await axios.post('http://localhost:3000/api/clientes', cliente, config)
+        .then(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+            // setGuardadoExitosamente(true)
+            // setTimeout(() => {
+            //     window.location.reload()
+            // }, 1200);
+        })
+        .catch(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+        })
+    }
+
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-5 border-bottom">
                 <h1 className="fw-bold h5 text-black-header">Creando cliente</h1>
             </div>
+            <form onSubmit={ enviarCliente }>
             <div>
                 
                 <div className="mb-5 sub-title">Datos del cliente</div>
@@ -88,27 +148,26 @@ function CrearCliente() {
                         <div className="col-3 mb-4">
                             <label className="form-label">Tipo de documento</label>
                             <select onChange={ e => setClienteTipoDocumento(e.target.value) } name="clienteTipoDocumento" className="form-select">
-                                <option value="1" selected>DNI</option>
-                                <option value="6">RUC</option>
-                                <option value="4">Carnet de Extranjería</option>
-                                <option value="7">Pasaporte</option>
-                                <option value="-">Varios (Ventas menores a S/700.00)</option>
+                                <option value="" selected>--</option>
+                                <option value="DNI">DNI</option>
+                                <option value="RUC">RUC</option>
+                                <option value="Carnet de extranjería">Carnet de Extranjería</option>
+                                <option value="pasaporte">Pasaporte</option>
+                                <option value="varios">Varios (Ventas menores a S/700.00)</option>
                             </select> 
                         </div>
                         <div className="col-3 mb-4">
                             <label for="numeroDocumentoCliente" className="form-label">Nro. Documento</label>
-                            <input className="form-control" name="numeroDocumentoCliente" required type="text" onChange={ e => setClienteNumeroDocumento(e.target.value) } value={clienteNumeroDocumento}/>
+                            <input className="form-control" name="numeroDocumentoCliente" type="text" onChange={ e => setClienteNumeroDocumento(e.target.value) } value={clienteNumeroDocumento}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-3 mb-4">
                             <label className="form-label">Tipo de cliente</label>
-                            <select onChange={ e => setClienteTipoDocumento(e.target.value) } name="clienteTipoDocumento" className="form-select">
-                                <option value="1" selected>Persona natural</option>
-                                <option value="6">RUC</option>
-                                <option value="4">Carnet de Extranjería</option>
-                                <option value="7">Pasaporte</option>
-                                <option value="-">Varios (Ventas menores a S/700.00)</option>
+                            <select onChange={ e => setClienteTipo(e.target.value) } name="clienteTipo" className="form-select">
+                                <option value="" selected>--</option>
+                                <option value="persona natural">Persona natural</option>
+                                <option value="persona jurídica">Persona jurídica</option>
                             </select> 
                         </div>
                         <div className="col-3 mb-4">
@@ -122,11 +181,10 @@ function CrearCliente() {
                         <div className="col-1 mb-4">
                             <label className="form-label">Rango de edad</label>
                             <select onChange={ e => setClienteRangoEdad(e.target.value) } name="clienteRangoEdad" className="form-select">
-                                <option value="1" selected>18 - 25</option>
-                                <option value="6">25 - 45</option>
-                                <option value="4">Carnet de Extranjería</option>
-                                <option value="7">Pasaporte</option>
-                                <option value="-">Varios (Ventas menores a S/700.00)</option>
+                                <option value="" selected>--</option>
+                                <option value="18 - 25">18 - 25</option>
+                                <option value="26 - 45">26 - 45</option>
+                                <option value="46 - más">46 - más</option>
                             </select> 
                         </div>
                         <div className="col-2 mb-4">
@@ -187,21 +245,24 @@ function CrearCliente() {
                         <div className="col-3 mb-4">
                             <label className="form-label">Provincia</label>
                             <select onChange={ e => setClienteProvincia(e.target.value) } name="clienteProvincia" className="form-select">
-                                <option value="1" selected>Lima</option>
-                                <option value="6">RUC</option>
-                                <option value="4">Carnet de Extranjería</option>
-                                <option value="7">Pasaporte</option>
-                                <option value="-">Varios (Ventas menores a S/700.00)</option>
+                                <option value="" selected>--</option>
+                                <option value="Lima">Lima</option>
+                                <option value="Barranca">Barranca</option>
+                                <option value="Cajatambo">Cajatambo</option>
+                                <option value="Canta">Canta</option>
+                                <option value="Cañete">Cañete</option>
+                                <option value="Huaral">Huaral</option>
+                                <option value="Huarochirí">Huarochirí</option>
+                                <option value="Huaura">Huaura</option>
+                                <option value="Oyón">Oyón</option>
+                                <option value="Yauyos">Yauyos</option>
                             </select> 
                         </div>
                         <div className="col-2 mb-4">
                             <label className="form-label">Código Postal</label>
                             <select onChange={ e => setClienteCodigoPostal(e.target.value) } name="clienteCodigoPostal" className="form-select">
-                                <option value="1" selected>Lima 13</option>
-                                <option value="6">RUC</option>
-                                <option value="4">Carnet de Extranjería</option>
-                                <option value="7">Pasaporte</option>
-                                <option value="-">Varios (Ventas menores a S/700.00)</option>
+                                <option value="" selected>--</option>
+                                <option value="Lima 13">Lima 13</option>
                             </select> 
                         </div>
                     </div>
@@ -231,21 +292,17 @@ function CrearCliente() {
                         <div className="col-3 mb-4">
                             <label className="form-label">Deportes</label>
                             <select onChange={ e => setClienteHaceDeporte(e.target.value) } name="clienteHaceDeporte" className="form-select">
-                                <option value="1" selected>Sí practico</option>
-                                <option value="6">RUC</option>
-                                <option value="4">Carnet de Extranjería</option>
-                                <option value="7">Pasaporte</option>
-                                <option value="-">Varios (Ventas menores a S/700.00)</option>
+                                <option value="" selected>--</option>
+                                <option value="Sí practico">Sí practico</option>
+                                <option value="No practico">No practico</option>
                             </select> 
                         </div>
                         <div className="col-2 mb-4">
                             <label className="form-label">Deportes</label>
                             <select onChange={ e => setClienteDeporte(e.target.value) } name="clienteDeporte" className="form-select">
-                                <option value="1" selected>Futbol</option>
-                                <option value="6">RUC</option>
-                                <option value="4">Carnet de Extranjería</option>
-                                <option value="7">Pasaporte</option>
-                                <option value="-">Varios (Ventas menores a S/700.00)</option>
+                                <option value="" selected>--</option>
+                                <option value="Futbol">Futbol</option>
+                                <option value="Voley">Voley</option>
                             </select> 
                         </div>
                     </div>
@@ -256,19 +313,23 @@ function CrearCliente() {
                 <label className="form-label">¿Desea recibir publicidad?</label>
                 <div>
                     <div class="form-check form-check-inline">
-                        <input onChange={ e => setClientePublicidad(e.target.value) } class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={true}/>
+                        {/* <input onChange={ e => setClientePublicidad(e.target.value) } class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={true}/> */}
+                        <input onChange={ e => publicidadChecked(e) } class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={true}/>
                         <label class="form-check-label" for="inlineRadio1">Sí</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input onChange={ e => setClientePublicidad(e.target.value) } class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value={false}/>
+                        {/* <input onChange={ e => setClientePublicidad(e.target.value) } class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value={false}/> */}
+                        <input onChange={ e => publicidadChecked(e) } class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value={false}/>
                         <label class="form-check-label" for="inlineRadio2">No</label>
                     </div>
                 </div>
             </div>
 
             <div className="d-grid col-3 mx-auto mb-5">
-                <button type="button" class="btn btn-danger text-uppercase">Guardar</button>
+                <button type="submit" class="btn btn-danger text-uppercase">Guardar</button>
             </div>
+
+            </form>
             
         </>
     )

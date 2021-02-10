@@ -240,11 +240,17 @@ function ListaClientes() {
                     </thead>
                     <tbody>
                         {
-                            listaClientes.map((row,index) => (
+                            listaClientes.map((row,index) => {
+                                let birthday = new Date(row.fechaCumple)
+                                let yyyy = birthday.getFullYear()
+                                let mm = birthday.getMonth() + 1
+                                let dd = birthday.getDate()
+                                let BDayformat = yyyy + "-" + mm + "-" + dd
+                                return(
                                 <tr>
                                     <td >{index + 1}</td>
                                     <td >{row.nombre}</td>
-                                    <td >fecha</td> 
+                                    <td >{BDayformat}</td> 
                                     <td >total</td>
                                     <td>
                                     <NavLink 
@@ -257,7 +263,8 @@ function ListaClientes() {
                                     {/* <button type="button" class="btn btn-primary">Ver más</button> */}
                                 </td>
                                 </tr>
-                            ))
+                                )
+                            })
                         }
 
                             
