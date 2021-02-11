@@ -16,7 +16,7 @@ import {
     withRouter
   } from "react-router-dom";
 
-function ContenidoCliente() {
+const ContenidoCliente = () => {
 
     let { path } = useRouteMatch();
 

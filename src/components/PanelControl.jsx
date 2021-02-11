@@ -227,7 +227,7 @@ const PanelControl = (props) => {
                             <Route path={`${path}/crear-cliente`}>
                                 <CrearCliente />
                             </Route>
-                            <Route path={`${path}/cliente`}>
+                            <Route path={`${path}/cliente/:id`}>
                                 <Cliente />
                             </Route>
                         </Switch>

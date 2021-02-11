@@ -9,13 +9,13 @@ import {
     Switch,
     Route,
     NavLink,
-    // Link,
+    Link,
     // useParams,
     useRouteMatch,
     withRouter
   } from "react-router-dom";
 
-function ListaClientes() {
+const ListaClientes = () => {
 
     const [listaClientes, setListaClientes] = useState([])
     
@@ -250,16 +250,22 @@ function ListaClientes() {
                                 <tr>
                                     <td >{index + 1}</td>
                                     <td >{row.nombre}</td>
-                                    <td >{BDayformat}</td> 
+                                    <td >{BDayformat}</td>
                                     <td >total</td>
                                     <td>
-                                    <NavLink 
+                                    <Link 
                                         className="btn btn-link" 
-                                        to="/panelcontrol/cliente"
+                                        // to="/panelcontrol/cliente"
+                                        to = {{
+                                            pathname: `/panelcontrol/cliente/${row.id}`,
+                                            // state: {
+                                            //     name: row.id
+                                            // }
+                                        }}
                                         exact
                                     >
                                         Ver más
-                                    </NavLink>
+                                    </Link>
                                     {/* <button type="button" class="btn btn-primary">Ver más</button> */}
                                 </td>
                                 </tr>

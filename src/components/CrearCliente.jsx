@@ -4,18 +4,7 @@ import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'moment/locale/es'
 
-import {
-    // BrowserRouter as Router,
-    Switch,
-    Route,
-    NavLink,
-    // Link,
-    // useParams,
-    useRouteMatch,
-    withRouter
-  } from "react-router-dom";
-
-function CrearCliente() {
+const CrearCliente = () => {
 
     // const [buscador, setBuscador] = useState(false)
 
@@ -192,7 +181,7 @@ function CrearCliente() {
                                     <div>
                                         <DatePicker 
                                             selected={clienteCumple} 
-                                            onChange={(date) => setClienteCumple(date)} 
+                                            onChange={(date) => setClienteCumple(date.setHours(0,0,0,0))} 
                                             locale="es"
                                             customInput={<ExampleCustomInput />} 
                                             dateFormat="dd/MM/yyyy"
