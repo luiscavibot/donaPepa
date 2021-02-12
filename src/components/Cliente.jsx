@@ -6,13 +6,13 @@ import 'moment/locale/es'
 
 import {
     // BrowserRouter as Router,
-    Switch,
-    Route,
-    NavLink,
-    // Link,
+    // Switch,
+    // Route,
+    // NavLink,
+    Link,
     useParams,
-    useRouteMatch,
-    withRouter
+    // useRouteMatch,
+    // withRouter
   } from "react-router-dom";
 
 const Cliente = () => {
@@ -87,13 +87,16 @@ const Cliente = () => {
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
                 <h1 className="fw-bold h5 text-black-header">{nombre}</h1>
-                <NavLink 
+                <Link 
                     className="btn btn-danger" 
                     to="/panelcontrol/crear-cliente"
+                    to = {{
+                        pathname: `/panelcontrol/editar-cliente/${id}`,
+                    }}
                     exact
                 >
                     Editar
-                </NavLink>
+                </Link>
                 {/* <button type="button" class="btn btn-danger">Crear Cliente</button> */}
             </div>
             <div>

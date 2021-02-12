@@ -20,6 +20,7 @@ import VendedoraAnulacion from './VendedoraAnulacion';
 import VendedoraLiquidacion from './VendedoraLiquidacion';
 import VendedoraBorrador from './VendedoraBorrador';
 import CrearCliente from './CrearCliente';
+import EditarCliente from './EditarCliente';
 import ListaClientes from './ListaClientes';
 import Cliente from './Cliente';
 
@@ -226,6 +227,9 @@ const PanelControl = (props) => {
                             </Route>
                             <Route path={`${path}/crear-cliente`}>
                                 <CrearCliente />
+                            </Route>
+                            <Route path={`${path}/editar-cliente/:id`}>
+                                <EditarCliente />
                             </Route>
                             <Route path={`${path}/cliente/:id`}>
                                 <Cliente />

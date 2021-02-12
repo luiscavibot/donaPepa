@@ -258,9 +258,6 @@ const ListaClientes = () => {
                                         // to="/panelcontrol/cliente"
                                         to = {{
                                             pathname: `/panelcontrol/cliente/${row.id}`,
-                                            // state: {
-                                            //     name: row.id
-                                            // }
                                         }}
                                         exact
                                     >
