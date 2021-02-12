@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'moment/locale/es'
@@ -9,12 +10,18 @@ import {
     Route,
     NavLink,
     // Link,
-    // useParams,
+    useParams,
     useRouteMatch,
     withRouter
   } from "react-router-dom";
 
-function Cliente() {
+const Cliente = () => {
+
+    const { id } = useParams();
+
+    // const [cliente, setCliente] = useState([])
+
+    const [nombre, setNombre] = useState('')
     
     const [dateInicio, setDateInicio] = useState(new Date());
     const [dateFin, setDateFin] = useState(new Date());
@@ -62,10 +69,24 @@ function Cliente() {
         
     }
 
+    useEffect(() => {
+        const getClientes = async () =>{
+            try {
+                console.log("activaremos el axios para obtener datos del cliente");
+                let res = await axios.get(`http://localhost:3000/api/clientes/${id}`);
+                console.log("datos obtenidos del cliente",res.data);
+                setNombre(res.data.nombre);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getClientes();
+    }, [])
+
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
-                <h1 className="fw-bold h5 text-black-header">Martín Perez</h1>
+                <h1 className="fw-bold h5 text-black-header">{nombre}</h1>
                 <NavLink 
                     className="btn btn-danger" 
                     to="/panelcontrol/crear-cliente"

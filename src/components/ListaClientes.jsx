@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'moment/locale/es'
@@ -8,13 +9,15 @@ import {
     Switch,
     Route,
     NavLink,
-    // Link,
+    Link,
     // useParams,
     useRouteMatch,
     withRouter
   } from "react-router-dom";
 
-function ListaClientes() {
+const ListaClientes = () => {
+
+    const [listaClientes, setListaClientes] = useState([])
     
     const [dateInicio, setDateInicio] = useState(new Date());
     const [dateFin, setDateFin] = useState(new Date());
@@ -61,6 +64,20 @@ function ListaClientes() {
     const siguiente = () => {
         
     }
+
+    useEffect(() => {
+        const getClientes = async () =>{
+            try {
+                console.log("activaremos el axios para obtener todos los objetos de clientes");
+                let res = await axios.get('http://localhost:3000/api/clientes');
+                console.log("Lista obtenida por consulta a CLIENTES",res.data);
+                setListaClientes(res.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getClientes();
+    }, [])
 
     return (
         <>
@@ -222,57 +239,41 @@ function ListaClientes() {
                         </tr>
                     </thead>
                     <tbody>
-                            {/* {rows.map((row) => (
+                        {
+                            listaClientes.map((row,index) => {
+                                let birthday = new Date(row.fechaCumple)
+                                let yyyy = birthday.getFullYear()
+                                let mm = birthday.getMonth() + 1
+                                let dd = birthday.getDate()
+                                let BDayformat = yyyy + "-" + mm + "-" + dd
+                                return(
                                 <tr>
-                                    <td >{row.tipoDocumento}</td>
-                                    <td >{row.serie}</td>
-                                    <td >{row.numero}</td>
-                                    <td >{row.cliente}</td>
-                                    <td >{row.categoria}</td>
-                                    <td >{row.producto}</td>
-                                    <td >{row.cantidad}</td>
-                                    <td >{row.descuento}</td>
-                                    <td >{row.precioUnitario}</td>
-                                    <td >{row.vendedor}</td>
-                                    <td >{row.monto}</td>
-                                    <td >{moment(row.fecha).format('L')}</td>
-                                    <td >{row.local}</td>
-                                    <td >{row.estado}</td>
+                                    <td >{index + 1}</td>
+                                    <td >{row.nombre}</td>
+                                    <td >{BDayformat}</td>
+                                    <td >total</td>
+                                    <td>
+                                    <Link 
+                                        className="btn btn-link" 
+                                        // to="/panelcontrol/cliente"
+                                        to = {{
+                                            pathname: `/panelcontrol/cliente/${row.id}`,
+                                            // state: {
+                                            //     name: row.id
+                                            // }
+                                        }}
+                                        exact
+                                    >
+                                        Ver más
+                                    </Link>
+                                    {/* <button type="button" class="btn btn-primary">Ver más</button> */}
+                                </td>
                                 </tr>
-                            ))} */}
+                                )
+                            })
+                        }
 
-                            <tr>
-                                <td>1</td>
-                                <td>Martin Perez</td>
-                                <td>17-12-2020</td>
-                                <td>1196.00</td>
-                                <td>
-                                    <NavLink 
-                                        className="btn btn-link" 
-                                        to="/panelcontrol/cliente"
-                                        exact
-                                    >
-                                        Ver más
-                                    </NavLink>
-                                    {/* <button type="button" class="btn btn-primary">Ver más</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Mayolo Quijano Noriega</td>
-                                <td>17-12-2020</td>
-                                <td>350.00</td>
-                                <td>
-                                    <NavLink 
-                                        className="btn btn-link" 
-                                        to="/panelcontrol/cliente"
-                                        exact
-                                    >
-                                        Ver más
-                                    </NavLink>
-                                    {/* <button type="button" class="btn btn-primary">Ver más</button> */}
-                                </td>
-                            </tr>
+                            
                     </tbody>
                 </table>
                 <div className="d-flex justify-content-end">
