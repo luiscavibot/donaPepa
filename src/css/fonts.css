@@ -1,0 +1,56 @@
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Regular Az.woff") format("woff");
+  font-style: normal;
+  font-family: "Sofia";
+  font-weight: 400;
+}
+
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Regular Italic Az.woff") format("woff");
+  font-style: italic;
+  font-family: "Sofia";
+  font-weight: 400;
+}
+
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Medium Az.woff") format("woff");
+  font-style: normal;
+  font-family: "Sofia";
+  font-weight: 500;
+}
+
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Medium Italic Az.woff") format("woff");
+  font-style: italic;
+  font-family: "Sofia";
+  font-weight: 500;
+}
+
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Semi Bold Az.woff") format("woff");
+  font-style: normal;
+  font-family: "Sofia";
+  font-weight: 600;
+}
+
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Semi Bold Italic Az.woff") format("woff");
+  font-style: italic;
+  font-family: "Sofia";
+  font-weight: 600;
+}
+
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Bold Az.woff") format("woff");
+  font-style: normal;
+  font-family: "Sofia";
+  font-weight: 700;
+}
+
+@font-face {
+  src: url("../fonts/WOFF/Sofia Pro Bold Italic Az.woff") format("woff");
+  font-style: italic;
+  font-family: "Sofia";
+  font-weight: 700;
+}
+/*# sourceMappingURL=fonts.css.map */

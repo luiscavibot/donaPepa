@@ -21,7 +21,6 @@ const VendedoraLiquidacion = () => {
 
     const [desactivar, setDesactivar] = useState(false)
 
-    const [fechaReporte, setFechaReporte] = useState(new Date());
     // const [dateFin, setDateFin] = useState(new Date());
     //********************************************************* */
     //State's Hooks fundamentales:
@@ -32,10 +31,15 @@ const VendedoraLiquidacion = () => {
      //********************************************************** */
     //UseEffects 
     useEffect(() => {
+        
+
+        let fechaActualFormateada= getDateFormatSunat(new Date())
+        console.log("ESTA FECHA SE USARÁ: ",fechaActualFormateada);
+
         const getBorradores = async () =>{
             try {
                 console.log("activaremos el axios para obtener todos los objetos de borrador");
-                let res = await axios.get('http://46.183.113.134:3000/api/ventas');
+                let res = await axios.get(`http://46.183.113.134:3000/api/ventas?fechaEmision=${fechaActualFormateada}`);
                 console.log("Lista obtenida por consulta a BORRADOR",res.data);
                 setListaLiquidacion(res.data);
                 let suma = sumaTotalLiquidacion(res.data);
@@ -64,6 +68,23 @@ const VendedoraLiquidacion = () => {
         }
 
     }, [])
+
+    //******************************* */
+    //Functions 
+    const getDateFormatSunat = date => {
+        let day = date.getDate()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear()
+        let dateNewFormatSunat = ""
+
+        if(month < 10){
+        dateNewFormatSunat = `${day}-0${month}-${year}`
+        }else{
+        dateNewFormatSunat = `${day}-${month}-${year}`
+        }
+
+        return dateNewFormatSunat
+    }
 
     const ExampleCustomInput = ({ value, onClick }) => (
         <div className="d-flex border align-items-center justify-content-between form-control" onClick={onClick}>
