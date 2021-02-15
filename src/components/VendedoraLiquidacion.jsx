@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import DatePicker, {registerLocale} from 'react-datepicker';
+// import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 // import '../css/adicional.css';
-import es from 'date-fns/locale/es';
-import {db} from '../firebase';
-import moment from 'moment'
+// import es from 'date-fns/locale/es';
+// import {db} from '../firebase';
+// import moment from 'moment'
 import 'moment/locale/es'
+import axios from 'axios';
+
 
 const VendedoraLiquidacion = () => {
 
@@ -19,8 +21,70 @@ const VendedoraLiquidacion = () => {
 
     const [desactivar, setDesactivar] = useState(false)
 
-    const [fechaReporte, setFechaReporte] = useState(new Date());
     // const [dateFin, setDateFin] = useState(new Date());
+    //********************************************************* */
+    //State's Hooks fundamentales:
+    const [totalLiquidacion, setTotalLiquidacion] = useState([0,0,0,0])
+    //********************************************************** */
+     //State's Hooks de apoyo:
+     const [listaLiquidacion, setListaLiquidacion] = useState([])
+     //********************************************************** */
+    //UseEffects 
+    useEffect(() => {
+        
+
+        let fechaActualFormateada= getDateFormatSunat(new Date())
+        console.log("ESTA FECHA SE USARÁ: ",fechaActualFormateada);
+
+        const getBorradores = async () =>{
+            try {
+                console.log("activaremos el axios para obtener todos los objetos de borrador");
+                let res = await axios.get(`http://46.183.113.134:3000/api/ventas?fechaEmision=${fechaActualFormateada}`);
+                console.log("Lista obtenida por consulta a BORRADOR",res.data);
+                setListaLiquidacion(res.data);
+                let suma = sumaTotalLiquidacion(res.data);
+                console.log("El objeto que tiene todas las sumas es: ",suma);
+                setTotalLiquidacion(suma);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getBorradores();
+
+        const sumaTotalLiquidacion = (row)=>{
+            let sumaTotal = {
+                total: 0,
+                total_igv: 0,
+                total_gravada: 0,
+                total_impuestos_bolsas: 0
+            };
+            row.forEach(value =>{
+                sumaTotal.total = sumaTotal.total + value.total;
+                sumaTotal.total_igv = sumaTotal.total_igv + value.total_igv;
+                sumaTotal.total_gravada = sumaTotal.total_gravada + value.total_gravada;
+                sumaTotal.total_impuestos_bolsas = sumaTotal.total_impuestos_bolsas + value.total_impuestos_bolsas*1.0;
+            })
+            return [sumaTotal.total.toFixed(2),sumaTotal.total_igv.toFixed(2),sumaTotal.total_gravada.toFixed(2),sumaTotal.total_impuestos_bolsas.toFixed(2)]
+        }
+
+    }, [])
+
+    //******************************* */
+    //Functions 
+    const getDateFormatSunat = date => {
+        let day = date.getDate()
+        let month = date.getMonth() + 1
+        let year = date.getFullYear()
+        let dateNewFormatSunat = ""
+
+        if(month < 10){
+        dateNewFormatSunat = `${day}-0${month}-${year}`
+        }else{
+        dateNewFormatSunat = `${day}-${month}-${year}`
+        }
+
+        return dateNewFormatSunat
+    }
 
     const ExampleCustomInput = ({ value, onClick }) => (
         <div className="d-flex border align-items-center justify-content-between form-control" onClick={onClick}>
@@ -128,7 +192,13 @@ const VendedoraLiquidacion = () => {
                                 </div>
                                 <div className="d-flex align-items-center ms-3">
                                     <div>Total:</div>
-                                    <div>S/. <span>3500</span></div>
+                                    <div>S/. <span>{totalLiquidacion[0]}</span></div>
+                                    {/* <div>Total IGV:</div>
+                                    <div>S/. <span>{totalLiquidacion[1]}</span></div>
+                                    <div>Total Gravada:</div>
+                                    <div>S/. <span>{totalLiquidacion[2]}</span></div>
+                                    <div>Tota ICBPER:</div>
+                                    <div>S/. <span>{totalLiquidacion[3]}</span></div> */}
                                 </div>
                             </div>
                         </div>
@@ -157,53 +227,36 @@ const VendedoraLiquidacion = () => {
                 <table className="table" id="tblData">
                     <thead className="table-ligth">
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col">Fecha</th>
                             <th scope="col">Tipo</th>
-                            <th scope="col">Nro Documento</th>
-                            <th scope="col">Producto</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Precio Unitario</th>
-                            <th scope="col">Precio Total</th>
+                            <th scope="col">Serie</th>
+                            <th scope="col">Nro Comp.</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Tot. Grav.</th>
+                            <th scope="col">Tot. IGV</th>
+                            <th scope="col">ICBPER</th>
+                            <th scope="col">Total</th>                                                    
                         </tr>
                     </thead>
                     <tbody>
-                            {/* {rows.map((row) => (
+                        {
+                            listaLiquidacion.map((row) => (
                                 <tr>
-                                    <td >{row.tipoDocumento}</td>
+                                    <td>{row.fecha_de_emision}</td>
+                                    <td >{row.tipo_de_comprobante===1?"Factura":
+                                    row.tipo_de_comprobante===2?"Boleta":
+                                    row.tipo_de_comprobante==="nv"?"Nota de Venta":null
+                                    }</td>
                                     <td >{row.serie}</td>
                                     <td >{row.numero}</td>
-                                    <td >{row.cliente}</td>
-                                    <td >{row.categoria}</td>
-                                    <td >{row.producto}</td>
-                                    <td >{row.cantidad}</td>
-                                    <td >{row.descuento}</td>
-                                    <td >{row.precioUnitario}</td>
-                                    <td >{row.vendedor}</td>
-                                    <td >{row.monto}</td>
-                                    <td >{moment(row.fecha).format('L')}</td>
-                                    <td >{row.local}</td>
-                                    <td >{row.estado}</td>
-                                </tr>
-                            ))} */}
-
-                            <tr>
-                                <td>10772</td>
-                                <td>10</td>
-                                <td>NV10</td>
-                                <td>6797</td>
-                                <td>25</td>
-                                <td>225.00</td>
-                                <td>265.50</td>
-                            </tr>
-                            <tr>
-                                <td>10772</td>
-                                <td>10</td>
-                                <td>NV10</td>
-                                <td>6797</td>
-                                <td>25</td>
-                                <td>225.00</td>
-                                <td>265.50</td>
-                            </tr>
+                                    <td >{row.cliente_denominacion}</td>
+                                    <td >{row.total_gravada}</td>
+                                    <td >{row.total_igv}</td>
+                                    <td >{row.total_impuestos_bolsas}</td>
+                                    <td >{row.total}</td>
+                                </tr>        
+                            ))
+                        }      
                     </tbody>
                 </table>
                 <div className="d-flex justify-content-end">
