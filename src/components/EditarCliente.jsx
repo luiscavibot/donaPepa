@@ -123,7 +123,7 @@ const EditarCliente = () => {
             }
         };
         console.log("Este form va para el registro en Clientes:" ,cliente);
-        await axios.post(`http://localhost:3000/api/clientes/${id}`, cliente, config)
+        await axios.put(`http://localhost:3000/api/clientes/${id}`, cliente, config)
         .then(function (params) {
             console.log("Resultado de consulta: ", params.data );
             // setGuardadoExitosamente(true)
