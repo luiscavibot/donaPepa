@@ -146,6 +146,7 @@ const EditarCliente = () => {
                 setClienteNumeroDocumento(res.data.nroDocumento)
                 setClienteTipo(res.data.tipo)
                 setClienteNombre(res.data.nombre)
+                setClienteEdad(res.data.edad)
             } catch (error) {
                 console.error(error);
             }
@@ -166,7 +167,7 @@ const EditarCliente = () => {
                     <div className="row">
                         <div className="col-3 mb-4">
                             <label className="form-label">Tipo de documento</label>
-                            <select onChange={ e => setClienteTipoDocumento(e.target.value) } name="clienteTipoDocumento" className="form-select">
+                            <select onChange={ e => setClienteTipoDocumento(e.target.value) } value={clienteTipoDocumento} name="clienteTipoDocumento" className="form-select">
                                 <option value="" selected>--</option>
                                 <option value="DNI">DNI</option>
                                 <option value="RUC">RUC</option>
@@ -183,10 +184,10 @@ const EditarCliente = () => {
                     <div className="row">
                         <div className="col-3 mb-4">
                             <label className="form-label">Tipo de cliente</label>
-                            <select onChange={ e => setClienteTipo(e.target.value) } name="clienteTipo" className="form-select">
+                            <select onChange={ e => setClienteTipo(e.target.value) } value={clienteTipo} name="clienteTipo" className="form-select">
                                 <option value="" selected>--</option>
-                                <option value="persona natural">Persona natural</option>
-                                <option value="persona jurídica">Persona jurídica</option>
+                                <option value="Persona natural">Persona natural</option>
+                                <option value="Persona jurídica">Persona jurídica</option>
                             </select> 
                         </div>
                         <div className="col-3 mb-4">
