@@ -25,7 +25,7 @@ const VendedoraReporte = () => {
                     <VendedoraReporteActivos/>
                 </div>
                 <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <VendedoraReporteActivos/>
+                    {/* <VendedoraReporteActivos/> */}
                 </div>
             </div>
         </div>

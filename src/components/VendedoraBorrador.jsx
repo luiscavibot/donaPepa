@@ -18,27 +18,33 @@ const VendedoraBorrador = () => {
     const [listaBorradores, setListaBorradores] = useState([])
     //************* */
 
-    const [metodoPago, setMetodoPago] = useState('todos');
+    const [metodoPago, setMetodoPago] = useState('');
 
-    const [delivery, setDelivery] = useState('todos')
+    const [delivery, setDelivery] = useState('')
 
     const [tipoCliente, setTipoCliente] = useState('todos')
 
     const [buscador, setBuscador] = useState(false)
 
+    const [busqueda, setBusqueda] = useState('')
+
     const [contador, setContador] = useState(1)
 
     const [desactivar, setDesactivar] = useState(false)
 
-    const [fechaReporte, setFechaReporte] = useState(new Date());
+    const [fechaInicial, setFechaInicial] = useState('');
+
+    const [fechaFinal, setFechaFinal] = useState('');
     // const [dateFin, setDateFin] = useState(new Date());
+
     //************* */
     //UseEfects:
     useEffect(() => {
         const getBorradores = async () =>{
             try {
                 console.log("activaremos el axios para obtener todos los objetos de borrador");
-                let res = await axios.get('http://46.183.113.134:3000/api/borrador');
+                // let res = await axios.get('http://46.183.113.134:3000/api/borrador');
+                let res = await axios.get('http://localhost:3030/api/borrador');
                 console.log("Lista obtenida por consulta a BORRADOR",res.data);
                 setListaBorradores(res.data);
             } catch (error) {
@@ -169,19 +175,42 @@ const VendedoraBorrador = () => {
         </div>
     );
 
-    const buscadorGeneral = (event) => {
-        // console.log(event.target.value);
-        // setBuscador(event.target.value);
-        if (event.target.value==="") {
-            setBuscador(true);
-        }else{
-            consultaBuscador(event.target.value);
-        }
-    }
+    // const buscadorGeneral = (event) => {
+    //     console.log(event.target.value);
+       
+    //     // console.log(this.prueba);
+    //     // if (event.target.value==="") {
+    //     //     setBuscador(true);
+    //     // }else{
+    //     //     console.log(event.target.value);
+    //     //     // setBusqueda(event.target.value);
+    //     //     // consultaBuscador();
+    //     // }
+    // }
 
-    const consultaBuscador = () => {
-
-    }
+    useEffect(() => {
+        
+        const consultaBuscador = async () => {
+            try {
+                await axios.get('http://localhost:3030/api/borrador/filtro', {params: {
+                    pago: metodoPago,
+                    general: busqueda,
+                    delivery: delivery,
+                    fecha_inicial: fechaInicial,
+                    fecha_final: fechaFinal
+                }}).
+                then(res => {
+                    setListaBorradores(res.data);
+                    console.log(res.data);
+                })
+            } catch (error) {
+                console.error(error);
+            }
+            
+        }   
+        consultaBuscador(); 
+    }, [metodoPago,delivery,busqueda,fechaInicial,fechaFinal,setListaBorradores])
+    
 
     const anterior = () => {
 
@@ -209,12 +238,12 @@ const VendedoraBorrador = () => {
                             <div className="mb-3">
                                 <div className="row">
                                     <div className="col-auto">
-                                        <label className="col-form-label">Fecha:</label>
+                                        <label className="col-form-label">Fecha inicial:</label>
                                     </div>
                                     <div className="col-auto">
                                         <DatePicker 
-                                            selected={fechaReporte} 
-                                            onChange={date => setFechaReporte(date)} 
+                                            selected={fechaInicial} 
+                                            onChange={date => setFechaInicial(date)} 
                                             locale="es"
                                             customInput={<ExampleCustomInput />} 
                                             dateFormat="dd/MM/yyyy"
@@ -225,8 +254,26 @@ const VendedoraBorrador = () => {
                             </div>
 
                             <div className="mb-3">
-                                <div className="">
-                                    <input className="form-control" type="text" placeholder="Búsqueda general" onChange={buscadorGeneral}/>
+                                <div className="row">
+                                    <div className="col-auto">
+                                        <label className="col-form-label">Fecha final:</label>
+                                    </div>
+                                    <div className="col-auto">
+                                        <DatePicker 
+                                            selected={fechaFinal} 
+                                            onChange={date => setFechaFinal(date)} 
+                                            locale="es"
+                                            customInput={<ExampleCustomInput />} 
+                                            dateFormat="dd/MM/yyyy"
+                                            wrapperClassName="form-control"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="mb-3">
+                                <div >
+                                    <input className="form-control" placeholder="Búsqueda general" onChange={e => setBusqueda(e.target.value)} />
                                 </div>
                             </div>
                             
@@ -254,7 +301,7 @@ const VendedoraBorrador = () => {
                                     </div>
                                     <div className="col-auto">
                                         <select className="form-select" value={metodoPago} onChange={e => setMetodoPago(e.target.value)}>
-                                            <option value="todos" selected>--</option>
+                                            <option value="" selected>--</option>
                                             <option value="tarjeta">tarjeta</option>
                                             <option value="contado">contado</option>
                                         </select>
@@ -296,9 +343,9 @@ const VendedoraBorrador = () => {
                                     </div>
                                     <div className="col-auto">
                                         <select onChange={e => setDelivery(e.target.value)} name="delivery" className="form-select">
-                                            <option value="todos" selected>--</option>
-                                            <option value="sin_delivery">Sin delivery</option>
-                                            <option value="con_delivery">Con delivery</option>
+                                            <option value="" selected>--</option>
+                                            <option value="2">Sin delivery</option>
+                                            <option value="1">Con delivery</option>
                                         </select>
                                     </div>
                                 </div>
