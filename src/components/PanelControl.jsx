@@ -25,6 +25,10 @@ import Cliente from './Vendedora/Cliente/Cliente';
 import Categoria from './Mantenimiento/Categoria';
 import Producto from './Mantenimiento/Producto';
 import Local from './Mantenimiento/Local';
+import Empleado from './Mantenimiento/Empleado';
+import Asignacion from './Mantenimiento/Asignacion';
+import Dashboard from './Dashboard';
+import Campaña from './Campañas/Campaña';
 
 const PanelControl = (props) => {
 
@@ -65,26 +69,19 @@ const PanelControl = (props) => {
                             <div className="accordion" id="accordionExample">
 
                                 <div className="accordion-item">
-                                    <h2 className="accordion-header" id="headingOne">
-                                        <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                            DASHBOARD
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOne" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                        <div className="accordion-body">
-                                            <ul>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <NavLink 
+                                        className="text-white accordion-button collapsed"
+                                        to="/panelcontrol/dashboard"
+                                        exact
+                                    >
+                                        DASHBOARD
+                                    </NavLink>
                                 </div>
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="headingTwo">
                                         <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                            REPORTES ADMIN
+                                            REPORTES
                                         </button>
                                     </h2>
                                     <div id="collapseTwo" className="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
@@ -115,13 +112,6 @@ const PanelControl = (props) => {
                                     </h2>
                                     <div id="collapseThree" className="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                         <div className="accordion-body">
-                                            <NavLink 
-                                                className="list-group-item text-start" 
-                                                to="/panelcontrol/clientes"
-                                                exact
-                                            >
-                                                CLIENTE
-                                            </NavLink>
                                             <NavLink 
                                                 className="list-group-item text-start" 
                                                 to="/panelcontrol/vendedora-reporte"
@@ -178,6 +168,13 @@ const PanelControl = (props) => {
                                             </NavLink>
                                             <NavLink 
                                                 className="list-group-item text-start" 
+                                                to="/panelcontrol/producto"
+                                                exact
+                                            >
+                                                PRODUCTO
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
                                                 to="/panelcontrol/local"
                                                 exact
                                             >
@@ -185,30 +182,37 @@ const PanelControl = (props) => {
                                             </NavLink>
                                             <NavLink 
                                                 className="list-group-item text-start" 
-                                                to="/panelcontrol/producto"
+                                                to="/panelcontrol/clientes"
                                                 exact
                                             >
-                                                PRODUCTO
+                                                CLIENTE
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/empleado"
+                                                exact
+                                            >
+                                                EMPLEADO
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/asignacion"
+                                                exact
+                                            >
+                                                ASIGNACIÓN
                                             </NavLink>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="accordion-item">
-                                    <h2 className="accordion-header" id="headingFive">
-                                        <button className="text-white accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                            CONFIGURACIÓN
-                                        </button>
-                                    </h2>
-                                    <div id="collapseFive" className="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
-                                        <div className="accordion-body">
-                                            <ul>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <NavLink 
+                                        className="text-white accordion-button collapsed"
+                                        to="/panelcontrol/campañas"
+                                        exact
+                                    >
+                                        CAMPAÑAS
+                                    </NavLink>
                                 </div>
 
                             </div>
@@ -217,6 +221,9 @@ const PanelControl = (props) => {
                 
                     <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                         <Switch>
+                            <Route path={`${path}/dashboard`}>
+                                <Dashboard />
+                            </Route>
                             <Route path={`${path}/reportes-ventas`}>
                                 <ReportesVentas />
                             </Route>
@@ -260,6 +267,15 @@ const PanelControl = (props) => {
                             </Route>
                             <Route path={`${path}/producto`}>
                                 <Producto />
+                            </Route>
+                            <Route path={`${path}/empleado`}>
+                                <Empleado />
+                            </Route>
+                            <Route path={`${path}/asignacion`}>
+                                <Asignacion />
+                            </Route>
+                            <Route path={`${path}/campañas`}>
+                                <Campaña />
                             </Route>
                         </Switch>
                     </main>
