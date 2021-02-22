@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 // import '../css/adicional.css';
-import es from 'date-fns/locale/es';
-import {db} from '../firebase';
-import moment from 'moment'
+// import es from 'date-fns/locale/es';
+// import {db} from '../firebase';
+// import moment from 'moment'
 import 'moment/locale/es'
 
 const VendedoraAnulacion = () => {
