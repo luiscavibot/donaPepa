@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'moment/locale/es'
 
 import {
     // BrowserRouter as Router,
-    Switch,
-    Route,
-    NavLink,
-    // Link,
-    // useParams,
-    useRouteMatch,
-    withRouter
+    // Switch,
+    // Route,
+    // NavLink,
+    Link,
+    useParams,
+    // useRouteMatch,
+    // withRouter
   } from "react-router-dom";
 
-function ListaClientes() {
+const Cliente = () => {
+
+    const { id } = useParams();
+
+    // const [cliente, setCliente] = useState([])
+
+    const [nombre, setNombre] = useState('')
     
     const [dateInicio, setDateInicio] = useState(new Date());
     const [dateFin, setDateFin] = useState(new Date());
@@ -62,17 +69,34 @@ function ListaClientes() {
         
     }
 
+    useEffect(() => {
+        const getClientes = async () =>{
+            try {
+                console.log("activaremos el axios para obtener datos del cliente");
+                let res = await axios.get(`http://localhost:3000/api/clientes/${id}`);
+                console.log("datos obtenidos del cliente",res.data);
+                setNombre(res.data.nombre);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getClientes();
+    }, [])
+
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
-                <h1 className="fw-bold h5 text-black-header">Lista de Clientes</h1>
-                <NavLink 
+                <h1 className="fw-bold h5 text-black-header">{nombre}</h1>
+                <Link 
                     className="btn btn-danger" 
                     to="/panelcontrol/crear-cliente"
+                    to = {{
+                        pathname: `/panelcontrol/editar-cliente/${id}`,
+                    }}
                     exact
                 >
-                    Crear Cliente
-                </NavLink>
+                    Editar
+                </Link>
                 {/* <button type="button" class="btn btn-danger">Crear Cliente</button> */}
             </div>
             <div>
@@ -151,62 +175,24 @@ function ListaClientes() {
                             
                         </div>
                         <div className="d-flex justify-content-between">
+
+                            <p className="mb-0">
+                                Es un cliente que compra al por mayor y seguido, ofrezcamosle 1 regalo de cortesía
+                            </p>
+                            
                             <div className="mb-3">
                                 <div className="row">
                                     <div className="col-auto">
-                                        <label className="col-form-label">Producto:</label>
+                                        <label className="col-form-label">Total:</label>
                                     </div>
-                                    <div className="col-auto">
-                                        <select name="producto" className="form-select" value={Producto} onChange={e => setProducto(e.target.value)}>
-                                            <option value="todos" selected>--</option>
-                                            <option value="producto1">producto1</option>
-                                            <option value="producto2">producto2</option>
-                                        </select>
+                                    <div className="col-auto d-flex align-items-center">
+                                        <div>
+                                            S/. 3500
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="mb-3">
-                                <div className="row">
-                                    <div className="col-auto">
-                                        <label className="col-form-label">Regalo:</label>
-                                    </div>
-                                    <div className="col-auto">
-                                        <select name="regalo" className="form-select" value={regalo} onChange={e => setRegalo(e.target.value)}>
-                                            <option value="todos" selected>--</option>
-                                            <option value="si">Sí</option>
-                                            <option value="no">No</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <div className="row">
-                                    <div className="col-auto">
-                                        <label className="col-form-label">Tipo de Cliente:</label>
-                                    </div>
-                                    <div className="col-auto">
-                                        <select name="tipoCliente" className="form-select" onChange={e => setTipoCliente(e.target.value)}>
-                                            <option value="todos" selected>--</option>
-                                            <option value="tipo-1">tipo 1</option>
-                                            <option value="tipo-2">tipo 2</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <div className="row">
-                                    <div className="col-auto">
-                                        <label className="col-form-label">Género:</label>
-                                    </div>
-                                    <div className="col-auto">
-                                        <select name="genero" className="form-select" onChange={e => setGenero(e.target.value)}>
-                                            <option value="todos" selected>--</option>
-                                            <option value="M">M</option>
-                                            <option value="F">F</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -215,9 +201,12 @@ function ListaClientes() {
                     <thead className="table-ligth">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Cliente</th>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Total en compras</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Nro Docuemnto</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Precio Unitario</th>
+                            <th scope="col">Precio Total</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -242,36 +231,24 @@ function ListaClientes() {
                             ))} */}
 
                             <tr>
-                                <td>1</td>
-                                <td>Martin Perez</td>
+                                <td>10772</td>
+                                <td>10</td>
+                                <td>NV10</td>
                                 <td>17-12-2020</td>
-                                <td>1196.00</td>
-                                <td>
-                                    <NavLink 
-                                        className="btn btn-link" 
-                                        to="/panelcontrol/cliente"
-                                        exact
-                                    >
-                                        Ver más
-                                    </NavLink>
-                                    {/* <button type="button" class="btn btn-primary">Ver más</button> */}
-                                </td>
+                                <td>Turrón tradicional</td>
+                                <td>25</td>
+                                <td>225.00</td>
+                                <td>265.50</td>
                             </tr>
                             <tr>
-                                <td>2</td>
-                                <td>Mayolo Quijano Noriega</td>
+                                <td>10772</td>
+                                <td>10</td>
+                                <td>NV10</td>
                                 <td>17-12-2020</td>
-                                <td>350.00</td>
-                                <td>
-                                    <NavLink 
-                                        className="btn btn-link" 
-                                        to="/panelcontrol/cliente"
-                                        exact
-                                    >
-                                        Ver más
-                                    </NavLink>
-                                    {/* <button type="button" class="btn btn-primary">Ver más</button> */}
-                                </td>
+                                <td>Turrón tradicional</td>
+                                <td>25</td>
+                                <td>225.00</td>
+                                <td>265.50</td>
                             </tr>
                     </tbody>
                 </table>
@@ -294,4 +271,4 @@ function ListaClientes() {
 
 }
 
-export default ListaClientes
+export default Cliente

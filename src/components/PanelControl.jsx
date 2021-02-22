@@ -13,15 +13,18 @@ import {
   } from "react-router-dom";
 import {auth} from '../firebase'
 import ReportesVentas from './ReportesVentas';
-import ContenidoCliente from './ContenidoCliente';
-import VendedoraReporte from './VendedoraReporte';
+import VendedoraReporte from './Vendedora/VendedoraReporte';
 import NuevaVenta from './NuevaVenta';
-import VendedoraAnulacion from './VendedoraAnulacion';
-import VendedoraLiquidacion from './VendedoraLiquidacion';
-import VendedoraBorrador from './VendedoraBorrador';
-import CrearCliente from './CrearCliente';
-import ListaClientes from './ListaClientes';
-import Cliente from './Cliente';
+import VendedoraAnulacion from './Vendedora/VendedoraAnulacion';
+import VendedoraLiquidacion from './Vendedora/VendedoraLiquidacion';
+import VendedoraBorrador from './Vendedora/VendedoraBorrador';
+import CrearCliente from './Vendedora/Cliente/CrearCliente';
+import EditarCliente from './Vendedora/Cliente/EditarCliente';
+import ListaClientes from './Vendedora/Cliente/ListaClientes';
+import Cliente from './Vendedora/Cliente/Cliente';
+import Categoria from './Mantenimiento/Categoria';
+import Producto from './Mantenimiento/Producto';
+import Local from './Mantenimiento/Local';
 
 const PanelControl = (props) => {
 
@@ -166,11 +169,27 @@ const PanelControl = (props) => {
                                     </h2>
                                     <div id="collapseFor" className="accordion-collapse collapse" aria-labelledby="headingFor" data-bs-parent="#accordionExample">
                                         <div className="accordion-body">
-                                            <ul>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                                <li>sdasd</li>
-                                            </ul>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/categoria"
+                                                exact
+                                            >
+                                                CATEGORÍA
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/local"
+                                                exact
+                                            >
+                                                LOCAL
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/producto"
+                                                exact
+                                            >
+                                                PRODUCTO
+                                            </NavLink>
                                         </div>
                                     </div>
                                 </div>
@@ -227,8 +246,20 @@ const PanelControl = (props) => {
                             <Route path={`${path}/crear-cliente`}>
                                 <CrearCliente />
                             </Route>
-                            <Route path={`${path}/cliente`}>
+                            <Route path={`${path}/editar-cliente/:id`}>
+                                <EditarCliente />
+                            </Route>
+                            <Route path={`${path}/cliente/:id`}>
                                 <Cliente />
+                            </Route>
+                            <Route path={`${path}/categoria`}>
+                                <Categoria />
+                            </Route>
+                            <Route path={`${path}/local`}>
+                                <Local />
+                            </Route>
+                            <Route path={`${path}/producto`}>
+                                <Producto />
                             </Route>
                         </Switch>
                     </main>

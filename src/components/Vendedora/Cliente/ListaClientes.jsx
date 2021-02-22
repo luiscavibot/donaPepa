@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'moment/locale/es'
@@ -8,13 +9,15 @@ import {
     Switch,
     Route,
     NavLink,
-    // Link,
+    Link,
     // useParams,
     useRouteMatch,
     withRouter
   } from "react-router-dom";
 
-function Cliente() {
+const ListaClientes = () => {
+
+    const [listaClientes, setListaClientes] = useState([])
     
     const [dateInicio, setDateInicio] = useState(new Date());
     const [dateFin, setDateFin] = useState(new Date());
@@ -62,16 +65,30 @@ function Cliente() {
         
     }
 
+    useEffect(() => {
+        const getClientes = async () =>{
+            try {
+                console.log("activaremos el axios para obtener todos los objetos de clientes");
+                let res = await axios.get('http://localhost:3000/api/clientes');
+                console.log("Lista obtenida por consulta a CLIENTES",res.data);
+                setListaClientes(res.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getClientes();
+    }, [])
+
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
-                <h1 className="fw-bold h5 text-black-header">Martín Perez</h1>
+                <h1 className="fw-bold h5 text-black-header">Lista de Clientes</h1>
                 <NavLink 
                     className="btn btn-danger" 
                     to="/panelcontrol/crear-cliente"
                     exact
                 >
-                    Editar
+                    Crear Cliente
                 </NavLink>
                 {/* <button type="button" class="btn btn-danger">Crear Cliente</button> */}
             </div>
@@ -151,24 +168,62 @@ function Cliente() {
                             
                         </div>
                         <div className="d-flex justify-content-between">
-
-                            <p className="mb-0">
-                                Es un cliente que compra al por mayor y seguido, ofrezcamosle 1 regalo de cortesía
-                            </p>
-                            
                             <div className="mb-3">
                                 <div className="row">
                                     <div className="col-auto">
-                                        <label className="col-form-label">Total:</label>
+                                        <label className="col-form-label">Producto:</label>
                                     </div>
-                                    <div className="col-auto d-flex align-items-center">
-                                        <div>
-                                            S/. 3500
-                                        </div>
+                                    <div className="col-auto">
+                                        <select name="producto" className="form-select" value={Producto} onChange={e => setProducto(e.target.value)}>
+                                            <option value="todos" selected>--</option>
+                                            <option value="producto1">producto1</option>
+                                            <option value="producto2">producto2</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-
+                            <div className="mb-3">
+                                <div className="row">
+                                    <div className="col-auto">
+                                        <label className="col-form-label">Regalo:</label>
+                                    </div>
+                                    <div className="col-auto">
+                                        <select name="regalo" className="form-select" value={regalo} onChange={e => setRegalo(e.target.value)}>
+                                            <option value="todos" selected>--</option>
+                                            <option value="si">Sí</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mb-3">
+                                <div className="row">
+                                    <div className="col-auto">
+                                        <label className="col-form-label">Tipo de Cliente:</label>
+                                    </div>
+                                    <div className="col-auto">
+                                        <select name="tipoCliente" className="form-select" onChange={e => setTipoCliente(e.target.value)}>
+                                            <option value="todos" selected>--</option>
+                                            <option value="tipo-1">tipo 1</option>
+                                            <option value="tipo-2">tipo 2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mb-3">
+                                <div className="row">
+                                    <div className="col-auto">
+                                        <label className="col-form-label">Género:</label>
+                                    </div>
+                                    <div className="col-auto">
+                                        <select name="genero" className="form-select" onChange={e => setGenero(e.target.value)}>
+                                            <option value="todos" selected>--</option>
+                                            <option value="M">M</option>
+                                            <option value="F">F</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -177,55 +232,45 @@ function Cliente() {
                     <thead className="table-ligth">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Nro Docuemnto</th>
-                            <th scope="col">Producto</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Precio Unitario</th>
-                            <th scope="col">Precio Total</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Total en compras</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                            {/* {rows.map((row) => (
+                        {
+                            listaClientes.map((row,index) => {
+                                let birthday = new Date(row.fechaCumple)
+                                let yyyy = birthday.getFullYear()
+                                let mm = birthday.getMonth() + 1
+                                let dd = birthday.getDate()
+                                let BDayformat = yyyy + "-" + mm + "-" + dd
+                                return(
                                 <tr>
-                                    <td >{row.tipoDocumento}</td>
-                                    <td >{row.serie}</td>
-                                    <td >{row.numero}</td>
-                                    <td >{row.cliente}</td>
-                                    <td >{row.categoria}</td>
-                                    <td >{row.producto}</td>
-                                    <td >{row.cantidad}</td>
-                                    <td >{row.descuento}</td>
-                                    <td >{row.precioUnitario}</td>
-                                    <td >{row.vendedor}</td>
-                                    <td >{row.monto}</td>
-                                    <td >{moment(row.fecha).format('L')}</td>
-                                    <td >{row.local}</td>
-                                    <td >{row.estado}</td>
+                                    <td >{index + 1}</td>
+                                    <td >{row.nombre}</td>
+                                    <td >{BDayformat}</td>
+                                    <td >total</td>
+                                    <td>
+                                    <Link 
+                                        className="btn btn-link" 
+                                        // to="/panelcontrol/cliente"
+                                        to = {{
+                                            pathname: `/panelcontrol/cliente/${row.id}`,
+                                        }}
+                                        exact
+                                    >
+                                        Ver más
+                                    </Link>
+                                    {/* <button type="button" class="btn btn-primary">Ver más</button> */}
+                                </td>
                                 </tr>
-                            ))} */}
+                                )
+                            })
+                        }
 
-                            <tr>
-                                <td>10772</td>
-                                <td>10</td>
-                                <td>NV10</td>
-                                <td>17-12-2020</td>
-                                <td>Turrón tradicional</td>
-                                <td>25</td>
-                                <td>225.00</td>
-                                <td>265.50</td>
-                            </tr>
-                            <tr>
-                                <td>10772</td>
-                                <td>10</td>
-                                <td>NV10</td>
-                                <td>17-12-2020</td>
-                                <td>Turrón tradicional</td>
-                                <td>25</td>
-                                <td>225.00</td>
-                                <td>265.50</td>
-                            </tr>
+                            
                     </tbody>
                 </table>
                 <div className="d-flex justify-content-end">
@@ -247,4 +292,4 @@ function Cliente() {
 
 }
 
-export default Cliente
+export default ListaClientes
