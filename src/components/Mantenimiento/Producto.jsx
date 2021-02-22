@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const Categoria = () => {
-
+const Producto = () => {
 
     const [buscador, setBuscador] = useState(false)
     const [metodoPago, setMetodoPago] = useState('todos')
@@ -39,7 +38,7 @@ const Categoria = () => {
         <>
             <div>
                 <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
-                    <h1 className="fw-bold h5">Mantenimiento / Categoría</h1>
+                    <h1 className="fw-bold h5">Mantenimiento / Producto</h1>
                     {/* <div>
                         <button type="button" className="btn btn-secondary btn-sm me-1">Copiar</button>
                         <button type="button" className="btn btn-secondary btn-sm me-1" >Imprimir</button>
@@ -94,7 +93,7 @@ const Categoria = () => {
                                 </div>
 
                                 <div className="col mb-3">
-                                    <button className="btn btn-primary">+ AGREGAR CATEGORÍA</button>
+                                    <button className="btn btn-primary">+ AGREGAR PRODUCTO</button>
                                 </div>
                                 
                             {/* </div>
@@ -106,8 +105,11 @@ const Categoria = () => {
                         <thead className="table-ligth">
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Nombre</th>
+                                <th scope="col">Código</th>
                                 <th scope="col">Marcas</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Presentación</th>
+                                <th scope="col">Precio</th>
                                 <th scope="col">Acciones</th>                                                 
                             </tr>
                         </thead>
@@ -132,8 +134,11 @@ const Categoria = () => {
                             }       */}
                             <tr>
                                 <td>1</td>
-                                <td>Turron</td>
+                                <td>1000002</td>
                                 <td>Doña Pepa</td>
+                                <td>DP Tradicional</td>
+                                <td>1/2 Kg</td>
+                                <td>S/. 50</td>
                                 <td>
                                     <div>
                                         <button className="btn btn-sm btn-primary mx-1">EDITAR</button>
@@ -164,4 +169,4 @@ const Categoria = () => {
     )
 }
 
-export default Categoria
+export default Producto

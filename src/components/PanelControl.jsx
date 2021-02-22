@@ -22,6 +22,9 @@ import CrearCliente from './Vendedora/Cliente/CrearCliente';
 import EditarCliente from './Vendedora/Cliente/EditarCliente';
 import ListaClientes from './Vendedora/Cliente/ListaClientes';
 import Cliente from './Vendedora/Cliente/Cliente';
+import Categoria from './Mantenimiento/Categoria';
+import Producto from './Mantenimiento/Producto';
+import Local from './Mantenimiento/Local';
 
 const PanelControl = (props) => {
 
@@ -173,6 +176,20 @@ const PanelControl = (props) => {
                                             >
                                                 CATEGORÍA
                                             </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/local"
+                                                exact
+                                            >
+                                                LOCAL
+                                            </NavLink>
+                                            <NavLink 
+                                                className="list-group-item text-start" 
+                                                to="/panelcontrol/producto"
+                                                exact
+                                            >
+                                                PRODUCTO
+                                            </NavLink>
                                         </div>
                                     </div>
                                 </div>
@@ -236,7 +253,13 @@ const PanelControl = (props) => {
                                 <Cliente />
                             </Route>
                             <Route path={`${path}/categoria`}>
-                                <CrearCliente />
+                                <Categoria />
+                            </Route>
+                            <Route path={`${path}/local`}>
+                                <Local />
+                            </Route>
+                            <Route path={`${path}/producto`}>
+                                <Producto />
                             </Route>
                         </Switch>
                     </main>

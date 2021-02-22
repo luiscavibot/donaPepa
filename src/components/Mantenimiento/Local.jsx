@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const Categoria = () => {
-
+const Local = () => {
 
     const [buscador, setBuscador] = useState(false)
     const [metodoPago, setMetodoPago] = useState('todos')
@@ -39,7 +38,7 @@ const Categoria = () => {
         <>
             <div>
                 <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-3 mb-3 border-bottom">
-                    <h1 className="fw-bold h5">Mantenimiento / Categoría</h1>
+                    <h1 className="fw-bold h5">Mantenimiento / Local</h1>
                     {/* <div>
                         <button type="button" className="btn btn-secondary btn-sm me-1">Copiar</button>
                         <button type="button" className="btn btn-secondary btn-sm me-1" >Imprimir</button>
@@ -66,35 +65,20 @@ const Categoria = () => {
                                 <div className="col mb-3">
                                     <div className="row">
                                         <div className="col-auto">
-                                            <label className="col-form-label">Categorías:</label>
+                                            <label className="col-form-label">Local:</label>
                                         </div>
                                         <div className="col-auto">
                                             <select className="form-select" value={metodoPago} onChange={e => setMetodoPago(e.target.value)}>
                                                 <option value="todos" selected>--</option>
-                                                <option value="tarjeta">tarjeta</option>
-                                                <option value="contado">contado</option>
+                                                <option value="tarjeta">Pepa Grande</option>
+                                                <option value="contado">Pepa Chica</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="col mb-3">
-                                    <div className="row">
-                                        <div className="col-auto">
-                                            <label className="col-form-label">Marcas:</label>
-                                        </div>
-                                        <div className="col-auto">
-                                            <select name="tipoCliente" className="form-select" onChange={e => setTipoCliente(e.target.value)}>
-                                                <option value="todos" selected>--</option>
-                                                <option value="tipo-1">tipo 1</option>
-                                                <option value="tipo-2">tipo 2</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="col mb-3">
-                                    <button className="btn btn-primary">+ AGREGAR CATEGORÍA</button>
+                                    <button className="btn btn-primary">+ AGREGAR LOCAL</button>
                                 </div>
                                 
                             {/* </div>
@@ -107,8 +91,9 @@ const Categoria = () => {
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Nombre</th>
-                                <th scope="col">Marcas</th>
-                                <th scope="col">Acciones</th>                                                 
+                                <th scope="col">Dirección</th>
+                                <th scope="col">Acciones</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,8 +117,8 @@ const Categoria = () => {
                             }       */}
                             <tr>
                                 <td>1</td>
-                                <td>Turron</td>
-                                <td>Doña Pepa</td>
+                                <td>Emancipación</td>
+                                <td>Av. Lorem Ipsum</td>
                                 <td>
                                     <div>
                                         <button className="btn btn-sm btn-primary mx-1">EDITAR</button>
@@ -141,6 +126,7 @@ const Categoria = () => {
                                         <button className="btn btn-sm btn-secondary mx-1">ELIMINAR</button>
                                     </div>
                                 </td>
+                                <td><a href="#" onClick>Ver más {'>'}</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -164,4 +150,4 @@ const Categoria = () => {
     )
 }
 
-export default Categoria
+export default Local
