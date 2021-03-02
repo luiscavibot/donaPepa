@@ -10,3 +10,15 @@ label {
     border: none;
     color: $color-text-gray;
 }
+
+input.fa::-webkit-input-placeholder { 
+    font-family: FontAwesome;
+    // font-weight: normal;
+    font-size: 11px !important;
+    overflow: visible;
+    vertical-align: top;
+    display: inline-block !important;
+    // padding-left: 5px;
+    // padding-top: 2px;
+    // color: hsl(9, 40%, 60%);
+}
