@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Button, Modal, Form, Row, Col } from 'react-bootstrap';
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const Local = () => {
 
+    const [listaLocales, setListaLocales] = useState([])
     const [buscador, setBuscador] = useState(false)
     const [metodoPago, setMetodoPago] = useState('todos')
     const [tipoCliente, setTipoCliente] = useState('todos')
@@ -10,6 +15,17 @@ const Local = () => {
     const [contador, setContador] = useState(1)
     const [desactivar, setDesactivar] = useState(false)
 
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const formik = useFormik({
+        initialValues: initialValues(),
+        // validationSchema:
+        onSubmit: (formData) => {
+            console.log(formData);
+        }
+    })
 
 
     const buscadorGeneral = (event) => {
@@ -33,6 +49,20 @@ const Local = () => {
     const siguiente = () => {
         
     }
+
+    useEffect(() => {
+        const getLocales = async () =>{
+            try {
+                console.log("activaremos el axios para obtener datos del cliente");
+                let res = await axios.get(`http://localhost:1337/locals`);
+                console.log("datos obtenidos de los locales",res.data);
+                setListaLocales(res.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        getLocales();
+    }, [])
 
     return (
         <>
@@ -78,7 +108,125 @@ const Local = () => {
                                 </div>
 
                                 <div className="col mb-3">
-                                    <button className="btn btn-primary">+ AGREGAR LOCAL</button>
+                                    <Button variant="primary" onClick={handleShow}>+ AGREGAR LOCAL</Button>
+                                    <Modal show={show} onHide={handleClose}>
+                                        <Modal.Header closeButton>
+                                            <Modal.Title></Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body className="px-5">
+                                            <div className="text-center h4 mb-4">Agregar local</div>
+                                            <div>
+                                            <Form onSubmit={formik.handleSubmit}>
+                                                <Form.Group controlId="nombre">
+                                                    <Form.Label>Nombre</Form.Label>
+                                                    <Form.Control onChange={formik.handleChange} name="nombre" type="text" placeholder="" />
+                                                </Form.Group>
+
+                                                <Row>
+                                                    <Col>
+                                                    <Form.Group controlId="razon_social">
+                                                        <Form.Label>Razón social</Form.Label>
+                                                        <Form.Control onChange={formik.handleChange} name="razon_social" as="select">
+                                                            <option>1</option>
+                                                            <option>2</option>
+                                                            <option>3</option>
+                                                            <option>4</option>
+                                                            <option>5</option>
+                                                        </Form.Control>
+                                                    </Form.Group>
+                                                    </Col>
+                                                    <Col>
+                                                        <Form.Group controlId="RUC">
+                                                            <Form.Label>RUC</Form.Label>
+                                                            <Form.Control onChange={formik.handleChange} name="RUC" type="text" placeholder="" />
+                                                        </Form.Group>
+                                                    </Col>
+                                                </Row>
+
+                                                <Row>
+                                                    <Col>
+                                                    <Form.Group controlId="departamento">
+                                                        <Form.Label>Departamento</Form.Label>
+                                                        <Form.Control onChange={formik.handleChange} name="departamento" as="select">
+                                                            <option>Seleccionar</option>
+                                                            <option>Arequipa</option>
+                                                            <option>Moquegua</option>
+                                                            <option>Tacna</option>
+                                                            <option>Piura</option>
+                                                        </Form.Control>
+                                                    </Form.Group>
+                                                    </Col>
+                                                    <Col>
+                                                        <Form.Group controlId="distrito">
+                                                            <Form.Label>Distrito</Form.Label>
+                                                            <Form.Control onChange={formik.handleChange} name="distrito" as="select">
+                                                                <option>Seleccionar</option>
+                                                                <option>Lince</option>
+                                                                <option>Ate</option>
+                                                                <option>Comas</option>
+                                                                <option>Los Olivos</option>
+                                                            </Form.Control>
+                                                        </Form.Group>
+                                                    </Col>
+                                                </Row>
+
+                                                <Form.Group controlId="direccion">
+                                                    <Form.Label>Dirección</Form.Label>
+                                                    <Form.Control onChange={formik.handleChange} name="direccion" type="text" placeholder="" />
+                                                </Form.Group>
+
+                                                <Row>
+                                                    <Col>
+                                                    <Form.Group controlId="telefono">
+                                                        <Form.Label>Numero de contacto</Form.Label>
+                                                        <Form.Control onChange={formik.handleChange} name="telefono" type="text" placeholder="" />
+                                                    </Form.Group>
+                                                    </Col>
+                                                    <Col>
+                                                        <Form.Group controlId="aforo">
+                                                            <Form.Label>Aforo</Form.Label>
+                                                            <Form.Control onChange={formik.handleChange} name="aforo" type="number" min="0" placeholder="" />
+                                                        </Form.Group>
+                                                    </Col>
+                                                </Row>
+                                                
+                                                <div key="custom-radio" className="mb-3">
+                                                <Form.Group controlId="regalos">
+                                                    <div>
+                                                        <Form.Label>Regalos</Form.Label>
+                                                    </div>
+                                                    <Form.Check
+                                                        inline
+                                                        onChange={formik.handleChange}
+                                                        type="radio"
+                                                        id="custom-radio-1"
+                                                        name="regalos"
+                                                        label="Sí"
+                                                    />
+
+                                                    <Form.Check
+                                                        inline
+                                                        onChange={formik.handleChange}
+                                                        type="radio"
+                                                        id="custom-radio-2"
+                                                        name="regalos"
+                                                        label="No"
+                                                    />
+                                                </Form.Group>
+                                                    
+                                                </div>
+
+                                                <div className="d-flex justify-content-center">
+                                                    <Button variant="danger" type="submit">
+                                                        AGREGAR
+                                                    </Button>
+                                                </div>
+
+                                            </Form>
+                                            </div>
+                                        </Modal.Body>
+                                    </Modal>
+                                    {/* <button className="btn btn-primary">+ AGREGAR LOCAL</button> */}
                                 </div>
                                 
                             {/* </div>
@@ -97,25 +245,26 @@ const Local = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {/* {
-                                listaLiquidacion.map((row) => (
+                            {
+                                listaLocales.map((row, index) => (
                                     <tr>
-                                        <td>{row.fecha_de_emision}</td>
-                                        <td >{row.tipo_de_comprobante===1?"Factura":
-                                        row.tipo_de_comprobante===2?"Boleta":
-                                        row.tipo_de_comprobante==="nv"?"Nota de Venta":null
-                                        }</td>
-                                        <td >{row.serie}</td>
-                                        <td >{row.numero}</td>
-                                        <td >{row.cliente_denominacion}</td>
-                                        <td >{row.total_gravada}</td>
-                                        <td >{row.total_igv}</td>
-                                        <td >{row.total_impuestos_bolsas}</td>
-                                        <td >{row.total}</td>
+                                        <td>{index + 1}</td>
+                                        <td>{row.nombre}</td>
+                                        <td >{row.direccion}</td>
+                                        <td>
+                                            <div>
+                                                <button className="btn btn-sm btn-primary mx-1">EDITAR</button>
+                                                <button className="btn btn-sm btn-danger mx-1">ELIMINAR</button>
+                                                <button className="btn btn-sm btn-secondary mx-1">DESACTIVAR</button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="#" onClick>Ver más {'>'}</a>
+                                        </td>
                                     </tr>        
                                 ))
-                            }       */}
-                            <tr>
+                            }
+                            {/* <tr>
                                 <td>1</td>
                                 <td>Emancipación</td>
                                 <td>Av. Lorem Ipsum</td>
@@ -127,7 +276,7 @@ const Local = () => {
                                     </div>
                                 </td>
                                 <td><a href="#" onClick>Ver más {'>'}</a></td>
-                            </tr>
+                            </tr> */}
                         </tbody>
                     </table>
                     <div className="d-flex justify-content-end">
@@ -151,3 +300,21 @@ const Local = () => {
 }
 
 export default Local
+
+const initialValues = () => {
+    return {
+        nombre: "",
+        razon_social: "",
+        RUC: "",
+        departamento: "",
+        distrito: "",
+        direccion: "",
+        telefono: "",
+        aforo: "",
+        regalos: null
+    }
+}
+
+const validationSchema = () => {
+    return {}
+}

@@ -3,6 +3,7 @@ import axios from 'axios';
 import DatePicker, {registerLocale} from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'moment/locale/es'
+import { Row, Col } from 'react-bootstrap';
 
 import {
     // BrowserRouter as Router,
@@ -100,9 +101,9 @@ const Cliente = () => {
                 {/* <button type="button" class="btn btn-danger">Crear Cliente</button> */}
             </div>
             <div>
-                <div className="row">
-                    <div className="col">
-                        <div className="row justify-content-between">
+                <div>
+                    <div>
+                        <Row className="justify-content-between">
                             <div className="col-7 d-flex justify-content-between">
                                 <div className="mb-3">
                                     <div className="row">
@@ -173,7 +174,7 @@ const Cliente = () => {
                                 </div>
                             </div>
                             
-                        </div>
+                        </Row>
                         <div className="d-flex justify-content-between">
 
                             <p className="mb-0">
