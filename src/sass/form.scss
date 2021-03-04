@@ -3,11 +3,11 @@ label {
 }
 
 .form-control {
-    border: none;
+    border: 1px solid $gray-light;
 }
 
 .form-select {
-    border: none;
+    border: 1px solid $gray-light;
     color: $color-text-gray;
 }
 

@@ -15,15 +15,56 @@ const Local = () => {
     const [contador, setContador] = useState(1)
     const [desactivar, setDesactivar] = useState(false)
 
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [showModalAgregarLocal, setShowModalAgregarLocal] = useState(false);
+    const handleCloseModalAgregarLocal = () => {
+        setShowModalAgregarLocal(false)
+        formik.resetForm()
+    }
+    const handleShowModalAgregarLocal = () => setShowModalAgregarLocal(true);
+
+    const [showModalEliminarLocal, setShowModalEliminarLocal] = useState(false);
+    const handleCloseModalEliminarLocal = () => {
+        setShowModalEliminarLocal(false)
+        formik.resetForm()
+    }
+    const handleShowModalEliminarLocal = () => setShowModalEliminarLocal(true);
+
+    const config = {
+        headers: { 
+            "Content-Type" : "application/json"
+        }
+    };
+
+    const agregarLocal = async (data) => {
+        await axios.post('http://localhost:1337/locals', data, config)
+        .then(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+            handleCloseModalAgregarLocal();
+            getLocales();
+        })
+        .catch(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+        })
+    }
+
+    const eliminarLocal = async (id) => {
+        await axios.delete(`http://localhost:1337/locals/${id}`)
+        .then(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+            getLocales();
+        })
+        .catch(function (params) {
+            console.log("Resultado de consulta: ", params.data );
+        })
+    }
 
     const formik = useFormik({
         initialValues: initialValues(),
-        // validationSchema:
-        onSubmit: (formData) => {
+        validationSchema: yup.object(validationSchema()),
+        onSubmit: (formData, {resetForm}) => {
             console.log(formData);
+            agregarLocal(formData);
+            resetForm();
         }
     })
 
@@ -50,17 +91,18 @@ const Local = () => {
         
     }
 
-    useEffect(() => {
-        const getLocales = async () =>{
-            try {
-                console.log("activaremos el axios para obtener datos del cliente");
-                let res = await axios.get(`http://localhost:1337/locals`);
-                console.log("datos obtenidos de los locales",res.data);
-                setListaLocales(res.data);
-            } catch (error) {
-                console.error(error);
-            }
+    const getLocales = async () =>{
+        try {
+            console.log("activaremos el axios para obtener datos del cliente");
+            let res = await axios.get(`http://localhost:1337/locals`);
+            console.log("datos obtenidos de los locales",res.data);
+            setListaLocales(res.data);
+        } catch (error) {
+            console.error(error);
         }
+    }
+
+    useEffect(() => {
         getLocales();
     }, [])
 
@@ -108,8 +150,8 @@ const Local = () => {
                                 </div>
 
                                 <div className="col mb-3">
-                                    <Button variant="primary" onClick={handleShow}>+ AGREGAR LOCAL</Button>
-                                    <Modal show={show} onHide={handleClose}>
+                                    <Button variant="primary" onClick={handleShowModalAgregarLocal}>+ AGREGAR LOCAL</Button>
+                                    <Modal show={showModalAgregarLocal} onHide={handleCloseModalAgregarLocal}>
                                         <Modal.Header closeButton>
                                             <Modal.Title></Modal.Title>
                                         </Modal.Header>
@@ -119,26 +161,43 @@ const Local = () => {
                                             <Form onSubmit={formik.handleSubmit}>
                                                 <Form.Group controlId="nombre">
                                                     <Form.Label>Nombre</Form.Label>
-                                                    <Form.Control onChange={formik.handleChange} name="nombre" type="text" placeholder="" />
+                                                    <Form.Control
+                                                        onChange={formik.handleChange}
+                                                        name="nombre"
+                                                        type="text"
+                                                        placeholder=""
+                                                        className={formik.touched.nombre && formik.errors.nombre ? "error" : null}
+                                                    />
                                                 </Form.Group>
 
                                                 <Row>
                                                     <Col>
                                                     <Form.Group controlId="razon_social">
                                                         <Form.Label>Razón social</Form.Label>
-                                                        <Form.Control onChange={formik.handleChange} name="razon_social" as="select">
+                                                        <Form.Control
+                                                            onChange={formik.handleChange}
+                                                            name="razon_social"
+                                                            as="select"
+                                                            className={formik.touched.razon_social && formik.errors.razon_social ? "error" : null}
+                                                        >
+                                                            <option value="">Seleccionar</option>
                                                             <option>1</option>
                                                             <option>2</option>
                                                             <option>3</option>
                                                             <option>4</option>
-                                                            <option>5</option>
                                                         </Form.Control>
                                                     </Form.Group>
                                                     </Col>
                                                     <Col>
                                                         <Form.Group controlId="RUC">
                                                             <Form.Label>RUC</Form.Label>
-                                                            <Form.Control onChange={formik.handleChange} name="RUC" type="text" placeholder="" />
+                                                            <Form.Control
+                                                                onChange={formik.handleChange}
+                                                                name="RUC"
+                                                                type="text"
+                                                                placeholder=""
+                                                                className={formik.touched.RUC && formik.errors.RUC ? "error" : null}
+                                                            />
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
@@ -147,8 +206,13 @@ const Local = () => {
                                                     <Col>
                                                     <Form.Group controlId="departamento">
                                                         <Form.Label>Departamento</Form.Label>
-                                                        <Form.Control onChange={formik.handleChange} name="departamento" as="select">
-                                                            <option>Seleccionar</option>
+                                                        <Form.Control
+                                                            onChange={formik.handleChange}
+                                                            name="departamento"
+                                                            as="select"
+                                                            className={formik.touched.departamento && formik.errors.departamento ? "error" : null}
+                                                        >
+                                                            <option value="">Seleccionar</option>
                                                             <option>Arequipa</option>
                                                             <option>Moquegua</option>
                                                             <option>Tacna</option>
@@ -159,7 +223,12 @@ const Local = () => {
                                                     <Col>
                                                         <Form.Group controlId="distrito">
                                                             <Form.Label>Distrito</Form.Label>
-                                                            <Form.Control onChange={formik.handleChange} name="distrito" as="select">
+                                                            <Form.Control
+                                                                onChange={formik.handleChange}
+                                                                name="distrito"
+                                                                as="select"
+                                                                className={formik.touched.distrito && formik.errors.distrito ? "error" : null}
+                                                            >
                                                                 <option>Seleccionar</option>
                                                                 <option>Lince</option>
                                                                 <option>Ate</option>
@@ -172,20 +241,40 @@ const Local = () => {
 
                                                 <Form.Group controlId="direccion">
                                                     <Form.Label>Dirección</Form.Label>
-                                                    <Form.Control onChange={formik.handleChange} name="direccion" type="text" placeholder="" />
+                                                    <Form.Control
+                                                        onChange={formik.handleChange}
+                                                        name="direccion"
+                                                        type="text"
+                                                        placeholder=""
+                                                        className={formik.touched.direccion && formik.errors.direccion ? "error" : null}
+                                                    />
                                                 </Form.Group>
 
                                                 <Row>
                                                     <Col>
                                                     <Form.Group controlId="telefono">
                                                         <Form.Label>Numero de contacto</Form.Label>
-                                                        <Form.Control onChange={formik.handleChange} name="telefono" type="text" placeholder="" />
+                                                        <Form.Control
+                                                            onChange={formik.handleChange}
+                                                            name="telefono"
+                                                            type="text"
+                                                            placeholder=""
+                                                            className={formik.touched.telefono && formik.errors.telefono ? "error" : null}
+                                                        />
                                                     </Form.Group>
                                                     </Col>
                                                     <Col>
                                                         <Form.Group controlId="aforo">
                                                             <Form.Label>Aforo</Form.Label>
-                                                            <Form.Control onChange={formik.handleChange} name="aforo" type="number" min="0" placeholder="" />
+                                                            <Form.Control
+                                                                onChange={formik.handleChange}
+                                                                name="aforo"
+                                                                type="number"
+                                                                value={formik.values.aforo}
+                                                                min="0"
+                                                                placeholder=""
+                                                                className={formik.touched.aforo && formik.errors.aforo ? "error" : null}
+                                                            />
                                                         </Form.Group>
                                                     </Col>
                                                 </Row>
@@ -202,6 +291,8 @@ const Local = () => {
                                                         id="custom-radio-1"
                                                         name="regalos"
                                                         label="Sí"
+                                                        value="true"
+                                                        className={formik.touched.regalos && formik.errors.regalos ? "error" : null}
                                                     />
 
                                                     <Form.Check
@@ -211,6 +302,8 @@ const Local = () => {
                                                         id="custom-radio-2"
                                                         name="regalos"
                                                         label="No"
+                                                        value="false"
+                                                        className={formik.touched.regalos && formik.errors.regalos ? "error" : null}
                                                     />
                                                 </Form.Group>
                                                     
@@ -251,10 +344,11 @@ const Local = () => {
                                         <td>{index + 1}</td>
                                         <td>{row.nombre}</td>
                                         <td >{row.direccion}</td>
+                                        <td >{row.id}</td>
                                         <td>
                                             <div>
                                                 <button className="btn btn-sm btn-primary mx-1">EDITAR</button>
-                                                <button className="btn btn-sm btn-danger mx-1">ELIMINAR</button>
+                                                {/* <button className="btn btn-sm btn-danger mx-1" onClick={eliminarLocal(row.id)}>ELIMINAR</button> */}
                                                 <button className="btn btn-sm btn-secondary mx-1">DESACTIVAR</button>
                                             </div>
                                         </td>
@@ -310,11 +404,21 @@ const initialValues = () => {
         distrito: "",
         direccion: "",
         telefono: "",
-        aforo: "",
+        aforo: null,
         regalos: null
     }
 }
 
 const validationSchema = () => {
-    return {}
+    return {
+        nombre: yup.string().required(),
+        razon_social: yup.string().required(),
+        RUC: yup.string().required(),
+        departamento: yup.string().required(),
+        distrito: yup.string().required(),
+        direccion: yup.string().required(),
+        telefono: yup.string().required(),
+        aforo: yup.number().required().integer(),
+        regalos: yup.boolean().required()
+    }
 }
